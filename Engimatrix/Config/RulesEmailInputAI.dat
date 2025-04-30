@@ -1,0 +1,19 @@
+Como um modelo de IA, a tua tarefa é processar a seguinte cadeia de e-mails e extrair informações relevantes, retornando-as exclusivamente no formato JSON especificado anteriormente. Não podes incluir nenhum texto ou explicação fora deste formato JSON. Apenas preencha e retorne o JSON conforme os campos indicados. Estas são as regras que deves usar para preencher os campos do resultado:
+- Campo de Confiança: Atribui um valor numérico entre 0 a 100 para indicar a tua confiança nos dados extraídos. Escala: entre 90 a 100 para confiança alta, entre 60 a 90 para confiança moderada, e menos de 50 para muita incerteza.
+- Intenção do E-mail: Identifica a intenção do remetente do e-mail (intencaoEmail), que poderá ser: 'encomenda', 'servico', 'reparacao', 'informacao' ou 'outros'. Classifique como 'outros' se o e-mail não tiver um contexto claro ou não tiveres a certeza.
+- Campo de Retificação: Determine se existem retificações relativamente aos dados da encomenda, exemplo mudança de produtos ou quantidades. Marcando como true se houver possibilidade de correções, e false caso contrário.
+- Tratamento de Retificações: Se houver correções na encomenda ao longo da cadeia de e-mails, considera sempre a informação da encomenda no e-mail mais recente enviado pelo remetente.
+- E-mail do Remetente: Extrai o e-mail do remetente (emailRemetente), ignora emails com um domínio 'fonteviva' ou 'culligan'.
+- Morada de Entrega: Extrai a morada de entrega sugerida pelo remetente, se evidenciado na cadeia de emails. 
+- Produtos (Os produtos devem corresponder exatamente a um dos items entre pelicas/aspas da frase seguinte, que muitas vezes será diferente do que está no email. No resultado devolve o item desta lista que mais se aproxima): 
+	- Identifique os produtos como sendo exclusivamente um dos da lista seguinte: 'garrafão de água', 'pack de garrafa de água 0.33L', 'pack de garrafa de água 0.50L', 'pack de garrafa de água 1.5L', 'pack de garrafa de água 0.33L TetraPack', manga de copos', 'máquina' ou 'outros'.
+	- Se o produto for qualquer tipo de 'Garrafão de água' deves considerar só "garrafão de água".
+	- Deves considerar "garrafão de água" se o pedido for de galões ou bidões.
+	- Quantidade: Se o produto for um 'pack de garrafa de água' deves considerar a quantidade de packs do pedido e não dos produtos individualmente. Se a quantidade não for mencionada ou for um campo nulo, assume como 1. A quantidade é um valor inteiro.
+- NIF/NIPC: Extraia o NIF ou NIPC (nif) do remetente do documento, consistindo em 9 dígitos sem espaços.
+- Número da Ordem de Compra: Identifique o número da ordem de compra se mencionado.
+- Número do Cliente: Extrai o número do cliente (numeroCliente) se presente no email, normalmente indicado como 'cliente nº' ou com um menção semelhantes.
+Se não tiveres a certeza de valores, indica o mais aproxidado considerando as regras.
+Agora, analisa o seguinte texto do corpo do email (que poderá ser um email individual ou uma cadeia) e extrai as informações conforme as regras e o JSON indicado, enviando sempre sem excepção em formato JSON sem qualquer resposta adicional.
+Ignora elementos do e-mail que não estão diretamente relacionados à intenção de encomenda ou reposição, como saudações ou assinaturas.
+Texto do email a processares:

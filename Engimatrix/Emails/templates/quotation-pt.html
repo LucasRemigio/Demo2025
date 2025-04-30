@@ -1,0 +1,464 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{documentNumber}}</title>
+    <style>
+      /* Base styling */
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin: 20px;
+        line-height: 1.4;
+        color: #000;
+      }
+
+      /* Logo container */
+      .logo {
+        margin-bottom: 10px;
+      }
+
+      /* Container for enterprise + client info side by side */
+      .top-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        position: relative; /* Added for positioning */
+        min-height: 180px; /* Set a minimum height to ensure space for both elements */
+      }
+
+      /* Enterprise info (left) */
+      .enterprise-info {
+        width: 50%; /* Set a fixed width */
+      }
+
+      .enterprise-info p {
+        margin: 2px 0;
+      }
+
+      /* Client info (right) */
+      .client-info {
+        position: absolute; /* Position absolutely within the container */
+        right: 0; /* Align to right edge */
+        bottom: 0; /* Align to bottom */
+        width: 50%; /* Width slightly less than 50% */
+        text-align: left; /* Center text horizontally */
+        font-size: 14px; /* Increase text size from default 12px to 14px */
+      }
+
+      .client-info p {
+        margin: 2px 0;
+      }
+
+      /* Document info table (the block between enterprise info and products) */
+      .doc-info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+      }
+      .doc-info-table th {
+        text-align: left;
+        width: 10%; /* Adjust widths as needed */
+        font-weight: bold;
+        padding: 3px 5px;
+        border-bottom: 1px solid #ccc;
+      }
+      .doc-info-table td {
+        width: 23%;
+        padding: 3px 5px;
+      }
+      .doc-info-table th,
+      .doc-info-table td {
+        vertical-align: top;
+      }
+
+      /* Divider */
+      hr {
+        border: 0;
+        border-top: 1px solid #000;
+        margin: 15px 0;
+      }
+
+      /* Invoice info */
+      .invoice-info {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .invoice-info p {
+        margin: 3px 0;
+      }
+
+      /* Invoice details table */
+      table.invoice-details {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      table.invoice-details th,
+      table.invoice-details td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: left;
+      }
+      table.invoice-details th {
+        background-color: #f0f0f0;
+        font-size: 11px;
+      }
+      table.invoice-details td {
+        font-size: 11px;
+      }
+
+      /* Post-products container (the new part) */
+      .post-products {
+        margin-top: 15px;
+        font-size: 11px;
+      }
+      .post-products-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      /* Left column: Resumo Impostos + Carga/Descarga + disclaimers */
+      .left-col {
+        width: 58%; /* Adjust as needed */
+        margin-right: 2%;
+      }
+      .left-col h4 {
+        margin: 8px 0 4px;
+      }
+      .impostos-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      .impostos-table th,
+      .impostos-table td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: left;
+        font-size: 10px;
+      }
+      .impostos-table th {
+        background-color: #f0f0f0;
+      }
+
+      /* Right column: Totals summary */
+      .right-col {
+        width: 40%; /* Adjust as needed */
+      }
+      .totals-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .totals-table th,
+      .totals-table td {
+        border: 1px solid #000;
+        padding: 5px;
+        font-size: 10px;
+      }
+      .totals-table th {
+        background-color: #f0f0f0;
+        text-align: left;
+      }
+      .totals-table td {
+        text-align: right;
+      }
+      .totals-table .total-label {
+        font-weight: bold;
+        font-size: medium;
+      }
+      .totals-table .total-value {
+        font-weight: bold;
+        font-size: medium;
+      }
+
+      /* Notes section */
+      .notes {
+        margin-top: 15px;
+        font-style: italic;
+        font-size: 10px;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 10px;
+        padding-top: 10px;
+      }
+
+      .asterisk-note {
+        text-align: left;
+        margin-top: 5px;
+      }
+
+      .no-link {
+        color: inherit;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .small-text {
+        font-size: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Logo -->
+    <div class="logo">
+      <img
+        src="data:image/png;base64,{{masterferroLogo}}"
+        alt="Company Logo"
+        width="300"
+      />
+    </div>
+
+    <!-- Top Info: Enterprise (left) and Client (right) -->
+    <div class="top-info">
+      <!-- Enterprise Info -->
+      <div class="enterprise-info">
+        <p><strong>Master Ferro, Lda.</strong></p>
+        <p>Contribuinte N.º 514400188</p>
+        <p>Av. Barros e Soares, 531</p>
+        <p>Nogueira</p>
+        <p>4715-213 Braga</p>
+        <p>Telef. +351 253689010 * &bull; Fax +351 253684753</p>
+        <p>Capital Social: 50 000,00 EUR</p>
+        <p>Cons. Reg. Com. Guimarães</p>
+        <p>Matrícula N. 514400188</p>
+      </div>
+
+      <!-- Client Info -->
+      <div class="client-info">
+        <p><strong>Exmo.(s) Sr.(s)</strong></p>
+        {{clientInfo}}
+      </div>
+    </div>
+
+    <!-- Invoice Info -->
+    <div class="invoice-info">
+      <h2>Orçamentos {{documentNumber}}</h2>
+      <p>Proposta</p>
+    </div>
+
+    <hr />
+
+    <!-- Document Info Table (Under Enterprise Info / Above Products) -->
+    <table class="doc-info-table">
+      <thead>
+        <!-- First row of headings -->
+        <tr>
+          <th>V/N.º Contrib.</th>
+          <th>Moeda</th>
+          <th>Câmbio</th>
+          <th>Data</th>
+          <th>Cliente</th>
+          <th>Vendedor</th>
+          <th>Referências</th>
+        </tr>
+        <!-- First row of data -->
+        <tr>
+          <td>{{clientContribuinte}}</td>
+          <td>EUR</td>
+          <td>1,00</td>
+          <td>{{dataDoc}}</td>
+          <td>{{clientCode}}</td>
+          <td>{{vendedor}}</td>
+          <td>{{referencias}}</td>
+        </tr>
+        <!-- Third row of headings -->
+        <tr>
+          <th>Desc. Cli.</th>
+          <th>Desc. Fin.</th>
+          <th>Vencimento</th>
+          <th>Cond. Pagamento</th>
+          <th>Ref.</th>
+        </tr>
+        <!-- Third row of data -->
+        <tr>
+          <td>{{descontoCliente}}</td>
+          <td>{{descontoFinal}}</td>
+          <td>{{vencimentoFatura}}</td>
+          <td>{{condPagamento}}</td>
+          <td>{{referencia}}</td>
+        </tr>
+      </thead>
+    </table>
+
+    <hr />
+    <!-- Invoice Details Table -->
+    <table class="invoice-details">
+      <thead>
+        <tr>
+          <th>Artigo</th>
+          <th>Descrição</th>
+          <th>Qtd.</th>
+          <th>Un.</th>
+          <th>QTD UN</th>
+          <th>Pr. Unitário</th>
+          <th>Desc.</th>
+          <th>IVA</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{productsTable}}
+      </tbody>
+    </table>
+
+    <!-- Additional Notes -->
+    <div class="notes">
+      <p>Validade da proposta: 1 a 3 dias úteis.</p>
+      <p>Preços líquidos.</p>
+      <p>Pesos aproximados.</p>
+      <p>Material disponível salvo venda.</p>
+    </div>
+
+    <hr />
+
+    <!-- Post-Products Section -->
+    <div class="post-products">
+      <div class="post-products-row">
+        <!-- Left Column -->
+        <div class="left-col">
+          <!-- Quadro Resumo de Impostos -->
+          <p><strong>Quadro Resumo de Impostos</strong></p>
+
+          <table class="impostos-table">
+            <thead>
+              <tr>
+                <th>Taxa/Valor</th>
+                <th>Incid./Qtd.</th>
+                <th>Total</th>
+                <th>Motivo Isenção</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>IVA (23,00)</td>
+                <td>{{incidenteQtd}}</td>
+                <td>{{incidenteTotal}}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Table for Carga & Descarga side by side -->
+          <table class="doc-info-table">
+            <thead>
+              <tr>
+                <th>Carga</th>
+                <th>Descarga</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <p>N/ Morada - {{dataDocHora}}</p>
+                  <p>Av. Barros e Soares, 531</p>
+                  <p>Nogueira</p>
+                  <p>4715-213 Braga</p>
+                  <p>Portugal</p>
+                </td>
+                <td>
+                  <p>V/ Morada</p>
+                  {{deliveryAddress}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Recebi a Mercadoria (assinatura legível) ______________________</p>
+        </div>
+
+        <!-- Right Column: Totals -->
+        <div class="right-col">
+          <table class="totals-table">
+            <tbody>
+              <tr>
+                <th>Mercadoria/Serviços</th>
+                <td>{{valorMercadoria}}</td>
+              </tr>
+              <tr>
+                <th>Descontos Comerciais</th>
+                <td>{{descontosComerciais}}</td>
+              </tr>
+              <tr>
+                <th>Desconto Financeiro</th>
+                <td>{{descontoFinanceiro}}</td>
+              </tr>
+              <tr>
+                <th>Portes</th>
+                <td>0,00</td>
+              </tr>
+              <tr>
+                <th>Outros</th>
+                <td>0,00</td>
+              </tr>
+              <tr>
+                <th>Acerto</th>
+                <td>0,00</td>
+              </tr>
+              <tr>
+                <th>Adiantamentos</th>
+                <td>0,00</td>
+              </tr>
+              <tr>
+                <th>IEC/Outras Contribuições</th>
+                <td>0,00</td>
+              </tr>
+              <tr>
+                <th>IVA</th>
+                <td>{{incidenteTotal}}</td>
+              </tr>
+              <tr>
+                <th class="total-label">Total ( EUR )</th>
+                <td class="total-value">{{orderTotal}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Additional disclaimers or notes -->
+      <div class="notes">
+        <p>
+          Os artigos Facturados foram colocados à disposição do adquirente nesta
+          data
+        </p>
+        <p>
+          Consulte as nossas condições gerais de venda em
+          <a href="http://www.masterferro.pt" target="_blank" class="no-link"
+            >www.masterferro.pt</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="small-text">
+        Sede e Armazém: Avenida Barros e Soares, 531 - Nogueira, 4715 - 213
+        Braga | Tel.: (+351) 253 689 010 * &bull; Fax: (+351) 253 684 753 &bull;
+        Fax Comercial (+351) 253 686 154
+      </p>
+      <p class="small-text">
+        Armazém 2 : Rua dos Mártires - Azurém - 4800 - 054 Guimarães | Tel.:
+        (+351) 253 413 685 * &bull; Fax: (+351) 253 412 155
+      </p>
+      <p class="small-text">
+        <a href="http://www.masterferro.pt" target="_blank" class="no-link"
+          >www.masterferro.pt</a
+        >
+        |
+        <a href="mailto:geral@masterferro.pt" class="no-link"
+          >geral@masterferro.pt</a
+        >
+      </p>
+      <!-- Asterisk footnote -->
+      <p class="small-text asterisk-note">*Chamada para a rede fixa nacional</p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+
+Designações Alternativas:
+Barra Quadrada: Vergalhão.
+Barra Retangular: Prancheta ou barra chata.
+Barra T: Ferro T ou perfil T.
+Barra UPN: Perfil U, UPN, Barra U, canal U.
+Barra Cantoneira: Barra L.
+
+Considerações:
+Quando o cliente solicita "Vergalhão", trata como produto "Barra" com forma "Vergalhão".
+Quando o cliente solicita "Perfil UPN" ou "Viga UPN", trata como produto "Barra" com forma "UPN".
+Mesmo que não seja explicíto se a barra é quadrada ou retangular, podes verificar a sua forma pelas medidas. Se o comprimento for igual á largura, então é quadrada, senão é retangular.
+

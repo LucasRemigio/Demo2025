@@ -1,0 +1,124 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("conversions") }}
+            </div>
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <div class="flex flex-row mr-20">
+                    <!-- Update product catalogs with primavera button -->
+                    <button
+                        mat-button
+                        class="ml-4 mt-7 orange-btn"
+                        (click)="syncPrimaveraConversions()"
+                        [disabled]="isSyncingConversions"
+                    >
+                        <ng-container *ngIf="!isSyncingConversions">
+                            <p
+                                class="mr-2 font-semibold text-center text-white text-md"
+                            >
+                                {{ t("sync-product-conversions-primavera") }}
+                            </p>
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:refresh'"
+                            >
+                            </mat-icon>
+                        </ng-container>
+                        <ng-container *ngIf="isSyncingConversions">
+                            <mat-spinner
+                                class="icon-size-5"
+                                diameter="24"
+                            ></mat-spinner>
+                        </ng-container>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 overflow-auto sm:mb-18 sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+                style="max-height: 90vh; overflow-y: auto"
+            >
+                <kendo-grid
+                    [kendoGridBinding]="conversions"
+                    [sortable]="true"
+                    [pageSize]="50"
+                    [pageable]="true"
+                    [resizable]="true"
+                    filterable="menu"
+                    class="h-full"
+                >
+                    <!-- Product code column -->
+                    <kendo-grid-column
+                        field="product_code"
+                        title="{{ t('Order.product-code') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.product_code }}
+                        </ng-template>
+                    </kendo-grid-column>
+                  
+                  <!-- Product code column -->
+                  <kendo-grid-column
+                      field="product_catalog_description"
+                      title="{{ t('description') }}"
+                      [headerStyle]="getHeaderStyle()"
+                  >
+                      <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ dataItem.product_catalog_description }}
+                      </ng-template>
+                  </kendo-grid-column>
+
+                  <!-- Origin Unit Slug column -->
+                  <kendo-grid-column
+                      field="origin_unit.slug"
+                      title="{{ t('origin-unit') }}"
+                      [headerStyle]="getHeaderStyle()"
+                  >
+                      <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ t("Units." + dataItem.origin_unit.slug) }}
+                      </ng-template>
+                  </kendo-grid-column>
+
+                  <!-- End Unit Slug Column -->
+                  <kendo-grid-column
+                      field="end_unit.slug"
+                      title="{{ t('end-unit') }}"
+                      [headerStyle]="getHeaderStyle()"
+                  >
+                      <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ t("Units." + dataItem.end_unit.slug) }}
+                      </ng-template>
+                  </kendo-grid-column>
+
+                  <!-- Conversion Rate Column -->
+                  <kendo-grid-column
+                      field="rate"
+                      title="{{ t('conversion-rate') }}"
+                      [headerStyle]="getHeaderStyle()"
+                  >
+                      <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ dataItem.rate }}
+                      </ng-template>
+                  </kendo-grid-column>
+              </kendo-grid>
+
+            </div>
+
+        </div>
+    </div>
+</ng-container>

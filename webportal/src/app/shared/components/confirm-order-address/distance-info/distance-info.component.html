@@ -1,0 +1,26 @@
+<ng-container *transloco="let t">
+    <div
+        class="flex items-center justify-between w-full px-4 py-2 text-white rounded shadow bg-gradient-to-r"
+    >
+        <!-- Distance section with an optional icon -->
+        <div class="flex items-center space-x-3">
+            <mat-icon
+                [svgIcon]="'heroicons_solid:location-marker'"
+                class="w-6 h-6 text-gray-900"
+            ></mat-icon>
+            <span class="text-lg font-bold text-gray-900">
+                {{ distanceKms }}
+            </span>
+        </div>
+        <!-- Duration section with an optional icon -->
+        <div class="flex items-center space-x-2">
+            <mat-icon
+                [svgIcon]="'heroicons_solid:clock'"
+                class="w-6 h-6 text-gray-600"
+            ></mat-icon>
+            <span class="text-sm font-medium text-gray-600">{{
+                travelTimeMins
+            }}</span>
+        </div>
+    </div>
+</ng-container>

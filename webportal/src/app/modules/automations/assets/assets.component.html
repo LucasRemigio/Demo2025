@@ -1,0 +1,232 @@
+<ng-container *transloco="let t">
+    <div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-0 border-b ml-20 mr-20"
+        >
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("Scripts.assets") }}
+            </div>
+            <!-- Actions -->
+            <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+                <button
+                    class="ml-4 mb-4 sm:mb-0 flex-shrink-0"
+                    mat-flat-button
+                    [color]="'primary'"
+                    style="
+                        background-color: #df4d11;
+                        color: #ffffff;
+                        min-width: 320px;
+                    "
+                    (click)="addAsset()"
+                >
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:plus'"
+                        style="color: #ffffff"
+                    ></mat-icon>
+                    <span
+                        class="ml-2 mr-1 truncate"
+                        style="color: #ffffff; max-width: 100%"
+                    >
+                        {{ t("Scripts.add_asset") }}
+                    </span>
+                </button>
+            </div>
+        </div>
+        <style>
+            .expanded-row {
+                margin-top: 10px;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+
+        <!-- Main -->
+        <div class="flex flex-auto overflow-hidden">
+            <!-- Logs list -->
+            <div
+                class="flex flex-col flex-auto sm:mb-18 ml-20 mr-20 mt-10 overflow-hidden sm:overflow-y-auto border"
+            >
+                <ng-container *ngIf="gridData.length > 0; else noAssets">
+                    <kendo-grid
+                        [kendoGridBinding]="gridData"
+                        style="min-width: 100%"
+                        [sortable]="true"
+                        [trackBy]="trackById"
+                        [pageSize]="state.take"
+                        [skip]="state.skip"
+                        [sort]="state.sort"
+                        [filter]="state.filter"
+                        filterable="menu"
+                        [pageable]="true"
+                        [resizable]="true"
+                        [detailRow]="expandDetails"
+                    >
+                        <!-- Columns definition -->
+
+                        <kendo-grid-column
+                            field="description"
+                            title="{{ t('description') }}"
+                            [headerStyle]="{
+                                'background-color': '#383838',
+                                color: 'white',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="type"
+                            title="{{ t('Scripts.type') }}"
+                            [headerStyle]="{
+                                'background-color': '#383838',
+                                color: 'white',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field=""
+                            title="{{ t('Scripts.actions') }}"
+                            [headerStyle]="{
+                                'background-color': '#383838',
+                                color: 'white',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                            <ng-template kendoGridCellTemplate let-assetsItem>
+                                <button
+                                    class="w-8 h-8 min-h-8 ml-2 mt-2"
+                                    [matTooltip]="
+                                        this.translocoService.translate(
+                                            'edit',
+                                            {}
+                                        )
+                                    "
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="editAsset(assetsItem)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:pencil'"
+                                    ></mat-icon>
+                                </button>
+
+                                <button
+                                    [matTooltip]="
+                                        this.translocoService.translate(
+                                            'delete',
+                                            {}
+                                        )
+                                    "
+                                    class="w-8 h-8 min-h-8 ml-2 mt-2"
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="deleteAsset(assetsItem.id)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:trash'"
+                                    ></mat-icon>
+                                </button>
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-messages
+                            pagerNextPage="{{ t('GridMessage.NextPage') }}"
+                            pagerPreviousPage="{{
+                                t('GridMessage.PreviousPage')
+                            }}"
+                            pagerLastPage="{{ t('GridMessage.LastPage') }}"
+                            pagerFirstPage="{{ t('GridMessage.FirstPage') }}"
+                            pagerOf="{{ t('GridMessage.de') }}"
+                            pagerItems="{{ t('GridMessage.Transactions') }}"
+                            pagerItemsPerPage="{{
+                                t('GridMessage.PageTransactions')
+                            }}"
+                            filterFilterButton="{{ t('GridMessage.Filter') }}"
+                            filterClearButton="{{ t('GridMessage.Clean') }}"
+                            filterBeforeOrEqualOperator="{{
+                                t('GridMessage.BeforeOrEqual')
+                            }}"
+                            filterBeforeOperator="{{ t('GridMessage.Before') }}"
+                            filterAfterOrEqualOperator="{{
+                                t('GridMessage.AfterOrEqual')
+                            }}"
+                            filterAfterOperator="{{ t('GridMessage.After') }}"
+                            filterDateToday="{{ t('GridMessage.Today') }}"
+                            filterAndLogic="{{ t('GridMessage.And') }}"
+                            filterOrLogic="{{ t('GridMessage.Or') }}"
+                            filterContainsOperator="{{
+                                t('GridMessage.Contains')
+                            }}"
+                            filterEndsWithOperator="{{
+                                t('GridMessage.EndsWith')
+                            }}"
+                            filterEqOperator="{{ t('GridMessage.Equals') }}"
+                            filterNotEqOperator="{{
+                                t('GridMessage.Different')
+                            }}"
+                            filterNotContainsOperator="{{
+                                t('GridMessage.NotContains')
+                            }}"
+                            filterStartsWithOperator="{{
+                                t('GridMessage.StartsWith')
+                            }}"
+                            filterIsNullOperator="{{ t('GridMessage.IsNull') }}"
+                            filterIsNotNullOperator="{{
+                                t('GridMessage.IsNotNull')
+                            }}"
+                            filterIsEmptyOperator="{{
+                                t('GridMessage.IsEmpty')
+                            }}"
+                            filterIsNotEmptyOperator="{{
+                                t('GridMessage.IsNotEmpty')
+                            }}"
+                            noRecords="{{ t('GridMessage.NoRecords') }}"
+                        >
+                        </kendo-grid-messages>
+
+                        <ng-template
+                            kendoPagerTemplate
+                            let-totalPages="totalPages"
+                            let-currentPage="currentPage"
+                        >
+                            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+                            <kendo-pager-page-sizes
+                                [pageSizes]="pagesizes"
+                            ></kendo-pager-page-sizes>
+                            <kendo-pager-numeric-buttons
+                                [buttonCount]="5"
+                            ></kendo-pager-numeric-buttons>
+                            <kendo-pager-next-buttons></kendo-pager-next-buttons>
+                            <kendo-pager-info></kendo-pager-info>
+                        </ng-template>
+                    </kendo-grid>
+                </ng-container>
+
+                <ng-template #noAssets>
+                    <div
+                        class="p-8 sm:p-16 border-t text-2xl tracking-tight text-center"
+                    >
+                        {{ t("no-records") }}
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-container>

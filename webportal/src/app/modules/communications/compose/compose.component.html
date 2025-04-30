@@ -1,0 +1,153 @@
+<ng-container *transloco="let t">
+    <div
+        class="flex flex-col flex-auto w-full min-w-0 overflow-auto sm:inset-0 bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="flex flex-col px-6 py-8 ml-8 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("NavBar.compose") }}
+            </div>
+        </div>
+
+        <!-- Panel header -->
+        <div
+            class="flex flex-col items-center justify-center w-full px-4 pb-10"
+        >
+            <!-- Warning multiple commas-->
+            <div
+                *ngIf="showCommaEmailInfo"
+                class="max-w-xl p-4 mx-10 mb-10 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg shadow-lg"
+            >
+                <div class="flex items-center justify-center w-full text-lg">
+                    <!-- Message about multiple addresses -->
+                    <p class="mr-4 text-lg">
+                        {{ t("separate-with-commas") }}
+                    </p>
+
+                    <!-- Close button next to the message, centered -->
+                    <button
+                        mat-icon-button
+                        (click)="closeForwardedEmailInfo()"
+                        [tabIndex]="-1"
+                    >
+                        <mat-icon
+                            class="text-current"
+                            [svgIcon]="'heroicons_outline:x'"
+                        ></mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <form [formGroup]="emailForm">
+                <div>
+                    <app-email-form> </app-email-form>
+
+                    <!-- Body (Quill editor) -->
+                    <quill-editor
+                        matInput
+                        formControlName="body"
+                        [modules]="quillModules"
+                        placeholder="Enter email body"
+                    ></quill-editor>
+                    <mat-error
+                        *ngIf="emailForm.get('body').hasError('required')"
+                    >
+                        {{ t("email-body-mandatory") }}
+                    </mat-error>
+
+                    <!-- Attachment File Input -->
+                    <div class="mt-4">
+                        <mat-label
+                            ><b>{{ t("attachments") }}:</b></mat-label
+                        >
+                        <br />
+
+                        <div class="hidden">
+                            <input
+                                type="file"
+                                (change)="onFileSelected($event)"
+                                multiple
+                                #fileUpload
+                            />
+                        </div>
+
+                        <!-- Display Selected Files -->
+                        <div>
+                            <div *ngIf="selectedFiles.length > 0; else noFiles">
+                                <ul>
+                                    <li *ngFor="let file of selectedFiles">
+                                        {{ file.name }}
+                                        -
+                                        {{ getFileSizeInMB(file.size) }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <ng-template #noFiles>
+                                <p>
+                                    {{ t("no-attachments") }}
+                                </p>
+                            </ng-template>
+                        </div>
+
+                        <!-- Display Validation Errors -->
+                        <div
+                            *ngIf="invalidFiles.length > 0"
+                            class="relative px-4 py-3 mt-4 text-red-700 bg-red-100 border border-red-400 rounded"
+                        >
+                            <p>
+                                <strong>
+                                    {{ t("invalid-attachments") }}
+                                </strong>
+                            </p>
+                            <ul class="mt-2 list-disc list-inside">
+                                <li *ngFor="let invalidFile of invalidFiles">
+                                    {{ invalidFile.name }}
+                                    -
+                                    {{ getFileSizeInMB(invalidFile.size) }}
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Attachment button -->
+                        <button
+                            class="flex items-center px-2 py-1 mt-2 text-white transition duration-300 bg-blue-500 shadow-lg upload-btn rounded-2xl hover:bg-blue-700"
+                            (click)="fileUpload.click()"
+                        >
+                            <mat-icon
+                                svgIcon="heroicons_outline:paper-clip"
+                            ></mat-icon>
+                            <p class="mx-2 text-xl bold">
+                                {{ t("Email.attach") }}
+                            </p>
+                        </button>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="flex justify-center mt-6">
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            type="submit"
+                            (click)="sendEmail()"
+                            [disabled]="emailForm.invalid"
+                            class="max-w-sm px-10 text-white orange-bg hover:bg-orange-600"
+                        >
+                            <mat-icon
+                                class="mr-2"
+                                svgIcon="heroicons_solid:paper-airplane"
+                            ></mat-icon>
+                            <p>
+                                {{ t("Notifications.send") }}
+                            </p>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit template form / Panel -->
+</ng-container>

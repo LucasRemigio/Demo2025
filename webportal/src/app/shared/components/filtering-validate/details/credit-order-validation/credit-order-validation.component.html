@@ -1,0 +1,368 @@
+<ng-container *transloco="let t">
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+        <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+
+    <!-- Loader -->
+    <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+        <mat-progress-bar
+            class="orange-loader"
+            [mode]="'indeterminate'"
+        ></mat-progress-bar>
+    </div>
+
+    <mat-drawer-container
+        class="flex-auto h-full overflow-hidden"
+        *ngIf="!isLoading"
+    >
+        <!-- Drawer -->
+        <mat-drawer
+            class="overflow-y-auto w-90 dark:bg-gray-900"
+            [autoFocus]="false"
+            [mode]="drawerMode"
+            [opened]="drawerOpened"
+            #matDrawer
+        >
+            <div class="flex flex-col items-start h-full p-6">
+                <!-- Back button - better alignment -->
+                <div class="flex justify-center w-full">
+                    <button
+                        class="inline-flex items-center p-2 leading-6 hover:underline"
+                        [routerLink]="['..']"
+                    >
+                        <span class="inline-flex items-center">
+                            <mat-icon
+                                class="text-gray-900 icon-size-5"
+                                [svgIcon]="'heroicons_solid:arrow-sm-left'"
+                            ></mat-icon>
+                            <span class="ml-1.5 font-medium leading-5">{{
+                                t("Filtering.back-to-validate")
+                            }}</span>
+                        </span>
+                    </button>
+                </div>
+
+                <hr class="w-full mt-2 mb-6 border-gray-200" />
+
+                <!-- Client details header - better spacing -->
+                <h2 class="w-full mb-4 text-lg font-semibold text-gray-800">
+                    {{ t("client-details") }}
+                </h2>
+
+                <!-- Sidebar info - consistent spacing between cards -->
+                <div class="w-full mb-6 space-y-4">
+                    <!-- Credit Section - cleaner spacing -->
+                    <div
+                        class="p-5 bg-white border-l-4 border-blue-500 rounded-lg shadow-sm"
+                    >
+                        <h3 class="mb-2 text-lg font-medium text-gray-800">
+                            {{ t("client-credit-limit") }}
+                        </h3>
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="text-2xl font-bold text-blue-600"
+                                *ngIf="
+                                    order.client?.primavera_client
+                                        ?.plafoundCesce;
+                                    else noPlafound
+                                "
+                            >
+                                {{
+                                    order.client?.primavera_client
+                                        ?.plafoundCesce
+                                        | currency : "EUR" : "symbol" : "1.2-2"
+                                }}
+                            </span>
+                            <ng-template #noPlafound>
+                                <span
+                                    class="text-2xl font-bold text-blue-600"
+                                    >{{ t("Invoice.not-defined") }}</span
+                                >
+                            </ng-template>
+
+                            <!-- Only show the percentage indicator if plafoundCesce is defined -->
+                            <div
+                                class="flex items-center"
+                                *ngIf="
+                                    order.client?.primavera_client
+                                        ?.plafoundCesce
+                                "
+                            >
+                                <div
+                                    class="w-16 h-2 mr-2 bg-gray-200 rounded-full"
+                                >
+                                    <div
+                                        class="h-2 rounded-full"
+                                        [ngClass]="
+                                            'bg-' +
+                                            getColorByPercentage(
+                                                creditPercentage
+                                            ) +
+                                            '-500'
+                                        "
+                                        [ngStyle]="{
+                                            width: creditPercentage + '%'
+                                        }"
+                                    ></div>
+                                </div>
+                                <span
+                                    class="text-sm"
+                                    [ngClass]="
+                                        'text-' +
+                                        getColorByPercentage(creditPercentage) +
+                                        '-500'
+                                    "
+                                    >{{ creditPercentage }}%</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Summary - consistent padding -->
+                    <div
+                        class="p-5 bg-white border-l-4 border-green-500 rounded-lg shadow-sm"
+                    >
+                        <h3 class="mb-2 text-lg font-medium text-gray-800">
+                            {{ t("pending-orders-summary") }}
+                        </h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">{{
+                                t("total-orders")
+                            }}</span>
+                            <span class="font-semibold">{{
+                                orders?.length || 0
+                            }}</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-sm text-gray-600">{{
+                                t("total-amount")
+                            }}</span>
+                            <span class="font-semibold text-green-600">{{
+                                ordersTotal
+                                    | currency : "EUR" : "symbol" : "1.2-2"
+                            }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Invoices Summary - consistent padding -->
+                    <div
+                        class="p-5 bg-white border-l-4 border-purple-500 rounded-lg shadow-sm"
+                    >
+                        <h3 class="mb-2 text-lg font-medium text-gray-800">
+                            {{ t("pending-invoices-summary") }}
+                        </h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">{{
+                                t("total-invoices")
+                            }}</span>
+                            <span class="font-semibold">{{
+                                invoices?.length || 0
+                            }}</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-sm text-gray-600">{{
+                                t("total-amount")
+                            }}</span>
+                            <span class="font-semibold text-purple-600">{{
+                                invoicesTotal.valor_pendente
+                                    | currency : "EUR" : "symbol" : "1.2-2"
+                            }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="w-full mt-2 mb-6 border-gray-200" />
+
+                <!-- Order details section -->
+                <h2 class="w-full mb-4 text-lg font-semibold text-gray-800">
+                    {{ t("current-order-details") }}
+                </h2>
+
+                <div class="w-full mb-4">
+                    <app-show-order-total
+                        [orderTotal]="order.order_total"
+                    ></app-show-order-total>
+                </div>
+
+                <hr class="w-full mt-2 mb-6 border-gray-200" />
+
+                <!-- Action buttons: accept or reject the order -->
+
+                <!-- Action buttons: accept or reject the order - now side by side -->
+                <div class="flex w-full mb-6 space-x-3">
+                    <button
+                        mat-flat-button
+                        [disabled]="isUpdatingCredit"
+                        class="flex-1 px-3 text-white bg-green-600 h-9 hover:bg-green-700"
+                        (click)="approveCredit()"
+                    >
+                        <div class="flex items-center justify-center">
+                            <mat-icon
+                                class="mr-1 icon-size-4"
+                                [svgIcon]="'heroicons_outline:check'"
+                            ></mat-icon>
+                            <span class="text-sm">{{ t("approve") }}</span>
+                        </div>
+                    </button>
+
+                    <button
+                        mat-flat-button
+                        [disabled]="isUpdatingCredit"
+                        class="flex-1 px-3 text-white bg-red-600 h-9 hover:bg-red-700"
+                        (click)="rejectCredit()"
+                    >
+                        <div class="flex items-center justify-center">
+                            <mat-icon
+                                class="mr-1 icon-size-4"
+                                [svgIcon]="'heroicons_outline:x'"
+                            ></mat-icon>
+                            <span class="text-sm">{{ t("reject") }}</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="py-12 my-12"></div>
+            </div>
+        </mat-drawer>
+
+        <!-- Drawer content with better spacing -->
+        <mat-drawer-content class="flex flex-col overflow-hidden">
+            <!-- Header - reduced bottom padding -->
+            <div
+                class="flex items-center py-2 pl-4 pr-6 border-b lg:hidden flex-0 sm:py-3 md:pl-6 md:pr-8 lg:border-b-0 bg-card dark:bg-transparent"
+            >
+                <button mat-icon-button (click)="matDrawer.toggle()">
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:arrow-sm-left'"
+                    ></mat-icon>
+                </button>
+            </div>
+
+            <!-- Main content with proper scrolling -->
+            <div class="flex-auto overflow-y-auto" cdkScrollable>
+                <mat-tab-group
+                    class="fuse-mat-no-header"
+                    [animationDuration]="'200'"
+                >
+                    <mat-tab>
+                        <ng-template matTabContent>
+                            <!-- Container with consistent spacing -->
+                            <div
+                                class="px-6 py-6 mx-auto max-w-7xl sm:px-8 sm:py-8"
+                            >
+                                <!-- Client details with spacing after -->
+                                <div class="mb-4">
+                                    <app-client-details
+                                        [client]="order.client"
+                                        [orderToken]="order.token"
+                                        [orderNif]="order.client_nif"
+                                        [isLoadingClient]="isLoadingClient"
+                                        [isDisabled]="true"
+                                    ></app-client-details>
+                                </div>
+
+                                <!-- Section divider -->
+                                <div
+                                    class="mb-4 text-2xl font-bold tracking-tight"
+                                >
+                                    {{ t("client-history") }}
+                                    <div class="my-4 border-t"></div>
+                                </div>
+
+                                <!-- Grid with consistent spacing -->
+                                <div
+                                    class="grid grid-cols-1 gap-10 md:grid-cols-2"
+                                >
+                                    <div class="w-full">
+                                        <!-- Header with centered button - matching the invoices section -->
+                                        <div
+                                            class="flex items-center justify-between mb-4"
+                                        >
+                                            <h3
+                                                class="text-lg font-medium text-gray-700"
+                                            >
+                                                {{ t("recent-pending-orders") }}
+                                            </h3>
+
+                                            <!-- Button centered in its container -->
+                                            <button
+                                                mat-icon-button
+                                                (click)="viewClientPastOrders()"
+                                                class="w-8 h-8 min-h-8"
+                                                style="
+                                                    background-color: #5a5a5a;
+                                                "
+                                                [matTooltip]="
+                                                    t('view-client-orders')
+                                                "
+                                            >
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    [svgIcon]="
+                                                        'heroicons_outline:eye'
+                                                    "
+                                                ></mat-icon>
+                                            </button>
+                                        </div>
+
+                                        <div>
+                                            <app-view-client-primavera-orders
+                                                [orders]="orders"
+                                                [clientTotal]="ordersTotal"
+                                            ></app-view-client-primavera-orders>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full">
+                                        <!-- Header with centered button -->
+                                        <div
+                                            class="flex items-center justify-between mb-4"
+                                        >
+                                            <h3
+                                                class="text-lg font-medium text-gray-700"
+                                            >
+                                                {{
+                                                    t("recent-pending-invoices")
+                                                }}
+                                            </h3>
+
+                                            <!-- Button centered in its container -->
+                                            <button
+                                                mat-icon-button
+                                                (click)="viewClientInvoices()"
+                                                class="w-8 h-8 min-h-8"
+                                                style="
+                                                    background-color: #5a5a5a;
+                                                "
+                                                [matTooltip]="
+                                                    t('view-client-invoices')
+                                                "
+                                            >
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    [svgIcon]="
+                                                        'heroicons_outline:eye'
+                                                    "
+                                                ></mat-icon>
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <app-view-client-primavera-invoices
+                                                [invoices]="invoices"
+                                                [invoicesTotal]="invoicesTotal"
+                                            ></app-view-client-primavera-invoices>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Added bottom padding to ensure last content is visible when scrolled -->
+                                <div class="h-16"></div>
+                            </div>
+                        </ng-template>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</ng-container>

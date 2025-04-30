@@ -1,0 +1,173 @@
+<ng-container *transloco="let t">
+    <form [formGroup]="addressForm">
+        <!-- Districts dropdown field-->
+        <div class="flex flex-col">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>{{ t("district") }}</mat-label>
+                <mat-select formControlName="district_dd">
+                    <mat-option
+                        *ngFor="let district of districts"
+                        [value]="district.dd"
+                    >
+                        {{ district.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Once a district is selected, show the municipalities of the district dropdown-->
+        <div class="flex flex-col" *ngIf="municipalities">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>{{ t("municipality") }}</mat-label>
+                <mat-select formControlName="municipality_cc">
+                    <mat-option
+                        *ngFor="let municipality of municipalities"
+                        [value]="municipality.cc"
+                    >
+                        {{ municipality.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Postal Code and City Side by Side -->
+        <!-- postal code is only visible when municipality has been chosen-->
+        <!-- City is only visible when postal code has been chosen-->
+        <div
+            class="flex flex-wrap gap-4"
+            *ngIf="uniqueCp4 && uniqueCp4.length > 0"
+        >
+            <!-- Postal Code CP4 -->
+            <div class="flex-grow">
+                <mat-form-field appearance="fill" class="w-full">
+                    <mat-label>{{ t("postal-code-cp4") }}</mat-label>
+                    <mat-select formControlName="postal_code_cp4">
+                        <mat-option *ngFor="let cp4 of uniqueCp4" [value]="cp4">
+                            {{ cp4 }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div>
+                <!-- Hyphen between cp4 and cp3-->
+                <div class="mt-8">
+                    <p class="text-3xl text-gray-600">-</p>
+                </div>
+            </div>
+
+            <!-- Postal Code CP3 -->
+            <div class="flex-grow">
+                <mat-form-field appearance="fill" class="w-full">
+                    <mat-label>{{ t("postal-code-cp3") }}</mat-label>
+                    <mat-select formControlName="postal_code_cp3">
+                        <mat-option
+                            *ngFor="let cp3 of matchingCp3"
+                            [value]="cp3"
+                        >
+                            {{ cp3 }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div>
+                <mat-icon
+                    [svgIcon]="'heroicons_solid:arrow-right'"
+                    class="mt-8 text-gray-600"
+                ></mat-icon>
+            </div>
+
+            <!-- City -->
+            <div class="flex-grow">
+                <mat-form-field
+                    appearance="fill"
+                    class="w-full"
+                    style="min-height: 80px"
+                >
+                    <mat-label>{{ t("city") }}</mat-label>
+                    <input
+                        matInput
+                        id="city"
+                        type="text"
+                        formControlName="city"
+                    />
+                    <mat-error
+                        *ngIf="
+                            addressForm.get('city').invalid &&
+                            addressForm.get('city').touched
+                        "
+                    >
+                        {{ t("city-invalid") }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Address Field -->
+        <div class="flex flex-col" *ngIf="availableStreets">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>{{ t("order-address") }}</mat-label>
+                <input
+                    matInput
+                    [matAutocomplete]="autoAddress"
+                    id="address"
+                    type="text"
+                    formControlName="address"
+                />
+                <mat-autocomplete #autoAddress="matAutocomplete">
+                    <mat-option
+                        *ngFor="let address of availableStreets"
+                        [value]="address"
+                    >
+                        {{ address }}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error
+                    *ngIf="
+                        addressForm.get('address').invalid &&
+                        addressForm.get('address').touched
+                    "
+                >
+                    {{ t("order-address-invalid-format") }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="currentMapsAddress" class="mb-2">
+            <app-distance-info
+                [distanceMatrix]="currentMapsAddress"
+            ></app-distance-info>
+        </div>
+
+        <div *ngIf="transports && !isClient">
+            <!-- Dropdown to select the transport -->
+            <div class="relative flex flex-col">
+                <mat-form-field appearance="fill" class="w-full">
+                    <mat-label>{{ t("Transports.select") }}</mat-label>
+                    <mat-select formControlName="transport_id">
+                        <mat-option
+                            *ngFor="let transport of transports"
+                            [value]="transport.id"
+                        >
+                            {{ t("Transports." + transport.slug) }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+
+    <!-- Toggle for clients -->
+    <div
+        *ngIf="isClient && isShowToggleForBigCar"
+        class="flex justify-center mt-4"
+    >
+        <mat-slide-toggle
+            [checked]="roadDoesNotHandleBigCar"
+            (change)="onBigCarToggleChange($event)"
+        >
+            {{ t("Order.big-transport-allowed") }}
+        </mat-slide-toggle>
+    </div>
+</ng-container>

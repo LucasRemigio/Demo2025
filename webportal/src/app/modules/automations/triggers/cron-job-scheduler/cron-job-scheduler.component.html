@@ -1,0 +1,57 @@
+<div [formGroup]="cronJobForm">
+    <label>Schedule Type:</label>
+    <select formControlName="scheduleType" (change)="emitCronExpression()">
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly</option>
+      <option value="monthlyDayOfMonth">Monthly (Day of Month)</option>
+      <option value="monthlyDayOfWeek">Monthly (Day of Week)</option>
+      <option value="advanced">Advanced</option>
+    </select>
+
+    <div *ngIf="cronJobForm.get('scheduleType').value === 'daily'">
+      <label>Daily Time:</label>
+      <input type="number" formControlName="dailyTime.hour" placeholder="Hour">
+      <input type="number" formControlName="dailyTime.minute" placeholder="Minute">
+    </div>
+
+    <div *ngIf="cronJobForm.get('scheduleType').value === 'weekly'">
+      <label>Weekly Schedule:</label>
+      <select multiple formControlName="weeklySchedule.dayOfWeek">
+        <option value="1">Sunday</option>
+        <option value="2">Monday</option>
+        <option value="3">Tuesday</option>
+        <option value="4">Wednesday</option>
+        <option value="5">Thursday</option>
+        <option value="6">Friday</option>
+        <option value="7">Saturday</option>
+      </select>
+      <input type="text" formControlName="weeklySchedule.time" placeholder="Time">
+    </div>
+
+    <div *ngIf="cronJobForm.get('scheduleType').value === 'monthlyDayOfMonth'">
+      <label>Monthly (Day of Month):</label>
+      <input type="number" formControlName="monthlyDayOfMonth.dayOfMonth" placeholder="Day of Month">
+      <input type="number" formControlName="monthlyDayOfMonth.monthInterval" placeholder="Month Interval">
+      <input type="text" formControlName="monthlyDayOfMonth.time" placeholder="Time">
+    </div>
+
+    <div *ngIf="cronJobForm.get('scheduleType').value === 'monthlyDayOfWeek'">
+      <label>Monthly (Day of Week):</label>
+      <select multiple formControlName="monthlyDayOfWeek.dayOfWeek">
+        <option value="1">Sunday</option>
+        <option value="2">Monday</option>
+        <option value="3">Tuesday</option>
+        <option value="4">Wednesday</option>
+        <option value="5">Thursday</option>
+        <option value="6">Friday</option>
+        <option value="7">Saturday</option>
+      </select>
+      <input type="number" formControlName="monthlyDayOfWeek.monthInterval" placeholder="Month Interval">
+      <input type="text" formControlName="monthlyDayOfWeek.time" placeholder="Time">
+    </div>
+
+    <div *ngIf="cronJobForm.get('scheduleType').value === 'advanced'">
+      <label>Advanced Cron Expression:</label>
+      <textarea formControlName="advancedCronExpression"></textarea>
+    </div>
+  </div>

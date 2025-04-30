@@ -1,0 +1,159 @@
+<ng-container *transloco="let t">
+    <!-- Ratings -->
+    <div class="flex flex-col justify-center mb-8">
+        <div class="mb-4 text-2xl font-bold tracking-tight">
+            {{ t("order-ratings") }}
+            <div class="my-4 border-t"></div>
+        </div>
+        <app-rating-card
+            [ratings]="order.ratings"
+            [ratingRequests]="order.rating_change_requests"
+        ></app-rating-card>
+        <!-- Button to propose new ratings for different discounts -->
+        <div class="flex justify-center">
+            <button
+                *ngIf="!isDisabled; else showAcceptRatings"
+                mat-raised-button
+                class="justify-center mt-4 text-center text-white align-middle w-60 gray-bg"
+                [disabled]="isLoading || !isOrderValid"
+                (click)="proposeNewRatings()"
+            >
+                {{ t("propose-new-ratings") }}
+                <mat-icon
+                    style="margin-left: 10px"
+                    [svgIcon]="'heroicons_solid:star'"
+                ></mat-icon>
+            </button>
+            <ng-template #showAcceptRatings>
+                <button
+                    mat-raised-button
+                    class="justify-center mt-4 text-center text-white align-middle w-90 orange-bg"
+                    [disabled]="isLoading || !isOrderValid"
+                    (click)="replyProposedRatings()"
+                >
+                    {{ t("reply-new-proposed-rating") }}
+                    <mat-icon
+                        style="margin-left: 10px"
+                        [svgIcon]="'heroicons_solid:star'"
+                    ></mat-icon>
+                </button>
+            </ng-template>
+        </div>
+    </div>
+    <!-- Produtos -->
+    <div>
+        <div class="mb-4 text-2xl font-bold tracking-tight">
+            {{ t("Order.products") }}
+            <div class="my-4 border-t"></div>
+        </div>
+        <div class="mb-4">
+            <app-email-product-table
+                [products]="orderProducts"
+                [orderToken]="order.token"
+                [orderTotal]="order.order_total"
+                [isDisabled]="isDisabled"
+            ></app-email-product-table>
+        </div>
+    </div>
+
+    <div class="my-4 mt-20 border-t"></div>
+
+    <!-- Order contact field-->
+    <form [formGroup]="observationsForm">
+        <div class="flex flex-col mb-2">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>{{ t("Order.contact") }}</mat-label>
+                <input
+                    matInput
+                    id="contact"
+                    type="text"
+                    formControlName="contact"
+                />
+            </mat-form-field>
+            <mat-error
+                *ngIf="
+                    observationsForm.get('contact').invalid &&
+                    observationsForm.get('contact').touched
+                "
+            >
+                {{ errorMessage("contact") }}
+            </mat-error>
+        </div>
+
+        <!-- Observations Input -->
+        <div class="flex flex-col mb-2">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>{{ t("observations") }}</mat-label>
+                <textarea
+                    matInput
+                    id="observations"
+                    rows="3"
+                    formControlName="observations"
+                ></textarea>
+            </mat-form-field>
+            <mat-error
+                *ngIf="
+                    observationsForm.get('observations').invalid &&
+                    observationsForm.get('observations').touched
+                "
+            >
+                {{ errorMessage("observations") }}
+            </mat-error>
+        </div>
+    </form>
+
+    <!-- ACTION BUTTONS-->
+    <div class="flex gap-4" *ngIf="!isDisabled">
+        <!-- Button to trigger confirm order function -->
+        <div *ngIf="!isPendingClientApproval">
+            <button
+                mat-raised-button
+                class="justify-center mt-4 text-center text-white align-middle orange-bg"
+                [disabled]="isLoading || !isOrderValid || !isFormValid"
+                (click)="confirmProducts()"
+            >
+                <div
+                    class="flex items-center"
+                    *ngIf="!isConfirmingOrder; else confirmingOrder"
+                >
+                    {{ t("generate-document") }}
+                    <mat-icon
+                        style="margin-left: 10px"
+                        [svgIcon]="'heroicons_solid:clipboard-check'"
+                    ></mat-icon>
+                </div>
+                <ng-template #confirmingOrder>
+                    <mat-spinner diameter="20" color="accent"></mat-spinner>
+                </ng-template>
+            </button>
+        </div>
+        <div *ngIf="isPendingClientApproval">
+            <button
+                mat-raised-button
+                class="justify-center mt-4 text-center text-white align-middle orange-bg"
+                (click)="confirmClientAdjudicated()"
+                [disabled]="isConfirmingOrder"
+            >
+                {{ t("confirm-request") }}
+                <mat-icon
+                    style="margin-left: 10px"
+                    [svgIcon]="'heroicons_solid:clipboard-check'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- button to cancel the order -->
+        <button
+            mat-raised-button
+            class="justify-center mt-4 text-center text-white align-middle gray-bg"
+            [disabled]="isLoading"
+            (click)="cancelOrder()"
+        >
+            {{ t("Cancel-Reason.cancel-request") }}
+            <mat-icon
+                style="margin-left: 10px"
+                [svgIcon]="'heroicons_solid:x'"
+            ></mat-icon>
+        </button>
+    </div>
+</ng-container>

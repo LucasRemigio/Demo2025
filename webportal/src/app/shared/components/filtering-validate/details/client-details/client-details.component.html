@@ -1,0 +1,80 @@
+<ng-container *transloco="let t">
+    <div class="mb-8" *ngIf="client && !isLoadingClient">
+        <div class="mb-4 text-2xl font-bold tracking-tight">
+            {{ t("client-ratings") }}
+            <div class="my-4 border-t"></div>
+        </div>
+        <app-rating-card
+            [ratings]="client.ratings"
+            [ratingRequests]="ratingChangeRequests"
+        ></app-rating-card>
+    </div>
+
+    <div class="mb-4 text-2xl font-bold tracking-tight">
+        {{ t("client") }}
+        <div class="my-4 border-t"></div>
+    </div>
+
+    <div
+        class="flex justify-center mt-10 mb-10"
+        *ngIf="isLoadingClient; else clientLoaded"
+    >
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <ng-template #clientLoaded>
+        <form
+            class="flex flex-col flex-auto overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <!-- INPUTS -->
+            <div class="flex flex-col w-full">
+                <mat-form-field class="flex-1">
+                    <mat-label>{{ t("client-name") }}</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'client_name'"
+                        class="text-gray-800"
+                    />
+                    <mat-error
+                        *ngIf="
+                            composeForm.get('client_name').hasError('required')
+                        "
+                    >
+                        {{ t("sender-mandatory") }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="flex-1">
+                    <mat-label>{{ t("Exclusions.client-vat") }}</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'nif'"
+                        class="text-gray-800"
+                    />
+                    <mat-error
+                        *ngIf="composeForm.get('nif').hasError('required')"
+                    >
+                        {{ t("sender-mandatory") }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- BUTTON -->
+            <div *ngIf="!isDisabled" class="flex justify-center mt-4">
+                <button
+                    mat-raised-button
+                    class="text-center text-white align-middle gray-bg"
+                    (click)="editClient()"
+                >
+                    {{ t("edit-client") }}
+                    <mat-icon
+                        style="margin-left: 10px"
+                        [svgIcon]="'heroicons_solid:pencil'"
+                    ></mat-icon>
+                </button>
+            </div>
+        </form>
+
+    </ng-template>
+</ng-container>

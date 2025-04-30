@@ -1,0 +1,141 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col h-full -m-6 overflow-hidden">
+        <!-- Header with fixed height -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("edit-client") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Flash message with fixed height -->
+        <div class="flex items-center px-6 py-3" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div class="flex items-center justify-center flex-1" *ngIf="isLoading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form - Make this scrollable but contained -->
+        <div class="flex-1 px-6 py-4 overflow-y-auto" *ngIf="!isLoading">
+            <div class="flex flex-col">
+                <!-- Product family -->
+                <div class="flex flex-col mb-6">
+                    <label
+                        for="primavera_client_name"
+                        class="mb-2 font-semibold text-gray-700 text-md"
+                    >
+                        {{ t("current-client") }}
+                    </label>
+
+                    <p class="text-gray-800">
+                        {{ getFormattedClientName(client) }}
+                    </p>
+                </div>
+            </div>
+
+            <form (ngSubmit)="saveChanges()" [formGroup]="composeForm">
+                <!-- Client input with autocomplete -->
+                <div class="flex flex-col mb-4">
+                    <!-- Input field with mat-autocomplete -->
+                    <mat-form-field class="w-full">
+                        <mat-label>{{ t("edit-client") }}</mat-label>
+                        <input
+                            matInput
+                            id="client_name"
+                            type="text"
+                            name="client_name"
+                            formControlName="client_name"
+                            [matAutocomplete]="auto"
+                            (input)="onSearchChange($event.target.value)"
+                            class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+                        <!-- Autocomplete options -->
+                        <mat-autocomplete
+                            #auto="matAutocomplete"
+                            (optionSelected)="selectClient($event.option.value)"
+                        >
+                            <mat-option
+                                *ngFor="let client of filteredClients"
+                                [value]="client"
+                            >
+                                {{ getFormattedClientName(client) }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+
+                <!-- show the selected client name -->
+                <div class="flex flex-col mb-6" *ngIf="selectedClient">
+                    <p>{{ getFormattedClientName(selectedClient) }}</p>
+                </div>
+
+                <!-- When a client is selected, show a non editable field to expose the selected client-->
+                <div class="flex flex-col mb-6">
+                    <mat-form-field class="flex-1">
+                        <mat-label>{{ t("Exclusions.client-vat") }}</mat-label>
+                        <input
+                            matInput
+                            formControlName="nif"
+                            class="text-gray-800"
+                        />
+                        <mat-error
+                            *ngIf="composeForm.get('nif').hasError('required')"
+                        >
+                            {{ t("sender-mandatory") }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 mr-2 text-white transition-colors duration-200 bg-gray-500 rounded-md hover:bg-gray-400"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+                        type="submit"
+                        [disabled]="!isFormValid"
+                    >
+                        {{ t("Order.save-changes") }}
+                    </button>
+                </div>
+            </form>
+
+            <!-- Add bottom padding to ensure last items are visible -->
+            <div class="h-4"></div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,78 @@
+<ng-container *transloco="let t">
+    <div class="mb-2" *ngIf="showTitle">
+        <div class="text-2xl font-bold tracking-tight">
+            {{ t("preview-email") }}
+        </div>
+        <div class="my-4 border-t"></div>
+    </div>
+
+    <form
+        class="flex flex-col flex-auto px-6 py-2 overflow-y-auto sm:py-2 sm:px-4"
+        [formGroup]="composeForm"
+    >
+        <!-- CLIENT  -->
+        <mat-form-field>
+            <mat-label>{{ t("sender") }} </mat-label>
+            <input
+                matInput
+                [formControlName]="'email_sender'"
+                [readonly]="true"
+            />
+            <mat-error
+                *ngIf="composeForm.get('email_sender').hasError('required')"
+            >
+                {{ t("sender-mandatory") }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- ORDER DATE-->
+        <mat-form-field>
+            <mat-label>{{ t("email-date") }} </mat-label>
+
+            <input
+                matInput
+                [formControlName]="'email_date'"
+                [readonly]="true"
+            />
+            <mat-datepicker-toggle matSuffix [for]="MHDatepicker">
+            </mat-datepicker-toggle>
+            <mat-datepicker #MHDatepicker></mat-datepicker>
+            <mat-error
+                *ngIf="composeForm.get('email_date').hasError('required')"
+            >
+                {{ t("email-date-mandatory") }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Subject -->
+        <mat-form-field>
+            <mat-label>{{ t("Notifications.subject") }} </mat-label>
+            <input
+                matInput
+                [formControlName]="'email_subject'"
+                [readonly]="true"
+            />
+            <mat-error
+                *ngIf="composeForm.get('email_subject').hasError('required')"
+            >
+                {{ t("Notifications.subject-mandatory") }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- E-mail body -->
+
+        <div>
+            <mat-label>{{ t("email-body") }} </mat-label>
+
+            <!-- Display Email HTML content-->
+            <div
+                [readonly]="true"
+                style="width: 100%"
+                class="p-2 overflow-y-auto bg-white email-body-container"
+                [innerHTML]="sanitizedEmailBody"
+            ></div>
+        </div>
+
+        <br />
+    </form>
+</ng-container>

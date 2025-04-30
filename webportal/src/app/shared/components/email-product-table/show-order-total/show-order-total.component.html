@@ -1,0 +1,42 @@
+<ng-container *transloco="let t">
+    <div
+        class="w-full max-w-3xl max-h-screen p-4 mx-auto bg-gray-100 rounded-lg shadow-sm"
+    >
+        <div class="grid grid-cols-2 gap-4 pb-2 mb-2 border-b border-gray-300">
+            <div class="flex flex-col">
+                <span class="text-md">{{ t("order-liquid-total") }}</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="font-bold text-md">
+                    {{
+                        orderTotal.totalDiscount
+                            | currency : "EUR" : "symbol" : "1.2-2"
+                    }}
+                </span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 py-2 mb-2 border-b border-gray-300">
+            <div class="flex flex-col">
+                <span class="text-md">IVA</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="font-bold text-md">
+                    {{ getOrderTax | currency : "EUR" : "symbol" : "1.2-2" }}
+                </span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 py-2">
+            <div class="flex flex-col">
+                <span class="text-lg font-medium">{{ t("total") }}</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-lg font-bold">
+                    {{
+                        orderTotal.totalDiscountPlusTax
+                            | currency : "EUR" : "symbol" : "1.2-2"
+                    }}
+                </span>
+            </div>
+        </div>
+    </div>
+</ng-container>

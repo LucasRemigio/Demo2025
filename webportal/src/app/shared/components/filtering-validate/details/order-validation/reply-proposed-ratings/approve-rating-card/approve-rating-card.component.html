@@ -1,0 +1,56 @@
+<ng-container *transloco="let t">
+    <div
+        class="bg-white shadow-md p-6 rounded-lg flex-1 min-w-[250px] text-center"
+    >
+        <!-- Display rating information -->
+        <div class="h-12 overflow-hidden">
+            <h3 class="text-lg font-semibold">
+                {{ ratingGroup.get("name")?.value }}
+            </h3>
+        </div>
+
+        <div class="flex items-center justify-center mb-4">
+            <p class="text-2xl">
+                {{ currentRating }}
+            </p>
+            <mat-icon
+                class="mx-2 text-gray-500"
+                [svgIcon]="'heroicons_solid:arrow-right'"
+            ></mat-icon>
+            <p class="text-4xl text-gray-900">
+                {{ ratingGroup.get("rating")?.value }}
+            </p>
+        </div>
+
+        <!-- Accept/Reject Buttons -->
+        <div class="flex justify-around mt-4">
+            <!-- Accepted Button -->
+            <button
+                type="button"
+                (click)="ratingGroup.get('accepted').setValue('true')"
+                [ngClass]="
+                    ratingGroup.get('accepted').value === 'true'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-green-100 text-green-700'
+                "
+                class="px-4 py-2 transition-colors duration-200 rounded hover:bg-green-600"
+            >
+                {{ t("accept") }}
+            </button>
+
+            <!-- Rejected Button -->
+            <button
+                type="button"
+                (click)="ratingGroup.get('accepted').setValue('false')"
+                [ngClass]="
+                    ratingGroup.get('accepted').value === 'false'
+                        ? 'bg-red-500 text-white'
+                        : 'bg-red-100 text-red-700'
+                "
+                class="px-4 py-2 transition-colors duration-200 rounded hover:bg-red-600"
+            >
+                {{ t("reject") }}
+            </button>
+        </div>
+    </div>
+</ng-container>

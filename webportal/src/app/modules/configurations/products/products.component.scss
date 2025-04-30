@@ -1,0 +1,34 @@
+/* Style the tab label */
+.mat-tab-label {
+    min-width: 25px;
+    padding: 5px;
+    font-weight: 700;
+}
+
+/* Style the active tab label */
+.mat-tab-label-active {
+    min-width: 25px;
+    padding: 5px;
+    font-weight: 700;
+    color: white !important;
+    position: relative;
+}
+
+.mat-tab-label-active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: hsl(17deg, 86%, 47%);
+    z-index: -1; /* Place the background behind the tab content */
+}
+
+.mat-tab-label-active .mat-tab-label-content {
+    color: white;
+}
+
+.mat-tab-label-content {
+    color: hsl(0deg, 0%, 10%);
+}

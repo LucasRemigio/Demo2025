@@ -1,0 +1,13 @@
+/* Target images specifically within the Quill editor */
+div.ql-editor p > img {
+    width: auto !important;
+    max-width: 200px !important;
+    height: auto !important;
+    display: inline-block !important;
+}
+
+/* Adjust <p> tag styling to control spacing */
+div.ql-editor p {
+    margin: 0 !important;
+    padding: 0 !important;
+}

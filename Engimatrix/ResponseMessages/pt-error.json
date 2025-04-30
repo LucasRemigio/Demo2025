@@ -1,0 +1,328 @@
+{
+  "messages": [
+    {
+      "code": -1,
+      "message": "Os argumentos são inválidos"
+    },
+    {
+      "code": -2,
+      "message": "Erro interno"
+    },
+    {
+      "code": -3,
+      "message": "O utilizador já existe"
+    },
+    {
+      "code": -4,
+      "message": "O email encontra-se registado"
+    },
+    {
+      "code": -5,
+      "message": "Não foi possível registar o utilizador"
+    },
+    {
+      "code": -6,
+      "message": "Não foi possível fazer o login do utilizador"
+    },
+    {
+      "code": -7,
+      "message": "Login inválido"
+    },
+    {
+      "code": -8,
+      "message": "Não foi possível renovar o token de acesso"
+    },
+    {
+      "code": -9,
+      "message": "Não foi possível remover o utilizar"
+    },
+    {
+      "code": -10,
+      "message": "O utilizador não existe"
+    },
+    {
+      "code": -11,
+      "message": "Não é possível remover um utilizador com permissões de administrador"
+    },
+    {
+      "code": -12,
+      "message": "Não foi possível atualizar o utilizador"
+    },
+    {
+      "code": -13,
+      "message": "Não é possível atualizar um utilizador com permissões de administrador"
+    },
+    {
+      "code": -14,
+      "message": "Não é possível registar o empregado"
+    },
+    {
+      "code": -15,
+      "message": "O empregado com email fornecido já existe"
+    },
+    {
+      "code": -16,
+      "message": "Não foi possível remover o empregado"
+    },
+    {
+      "code": -17,
+      "message": "O empregado com email fornecido não existe"
+    },
+    {
+      "code": -18,
+      "message": "Não foi possível atualizar o empregado"
+    },
+    {
+      "code": -19,
+      "message": "O perfil do empregado não existe"
+    },
+    {
+      "code": -20,
+      "message": "Não foi possível atualizar o perfil do empregado"
+    },
+    {
+      "code": -21,
+      "message": "Não foi possível fazer o upload da assinatura"
+    },
+    {
+      "code": -22,
+      "message": "Não foi possível encontrar a assinatura do responsável"
+    },
+    {
+      "code": -23,
+      "message": "Não foi possível fazer o upload do ficheiro do Rhn"
+    },
+    {
+      "code": -24,
+      "message": "Não foi possível fazer o upload do ficheiro do CV"
+    },
+    {
+      "code": -25,
+      "message": "A entrado no mapa não existe"
+    },
+    {
+      "code": -26,
+      "message": "A entrada no mapa já existe"
+    },
+    {
+      "code": -27,
+      "message": "A password do utilizador expirou, foi enviado um email com instruções para gerar um nova password"
+    },
+    {
+      "code": -28,
+      "message": "O link para recuperar a password é invalido ou pode ter expirado"
+    },
+    {
+      "code": -29,
+      "message": "A nova password deve ser diferente de outras antigas"
+    },
+    {
+      "code": -30,
+      "message": "Erro ao actualizar o recibo"
+    },
+    {
+      "code": -31,
+      "message": "Erro ao eliminar o recibo"
+    },
+    {
+      "code": -32,
+      "message": "O recibo não existe"
+    },
+    {
+      "code": -33,
+      "message": "Erro ao submeter o recibo"
+    },
+    {
+      "code": -34,
+      "message": "O recibo já existe"
+    },
+    {
+      "code": -35,
+      "message": "Erro ao assinar recibo"
+    },
+    {
+      "code": -36,
+      "message": "Erro ao assinar o recibo, a imagem da assinatura não foi encontrada. Por favor dirija-se ao seu Profile e submeta uma assinatura válida"
+    },
+    {
+      "code": -37,
+      "message": "Erro ao fazer download dos recibos, não existem recibos com o mês e ano indicados."
+    },
+    {
+      "code": -38,
+      "message": "Erro a actualizar password."
+    },
+    {
+      "code": -39,
+      "message": "A nova password é igual á password actual."
+    },
+    {
+      "code": -40,
+      "message": "A password submetida não é igual á que está a ser utilizada para Login."
+    },
+    {
+      "code": -41,
+      "message": "Não é possível criar o registo com data anterior à data de início de contrato."
+    },
+    {
+      "code": -42,
+      "message": "Não foi possível gerar um CSV entre as datas enviadas."
+    },
+    {
+      "code": -43,
+      "message": "Erro ao remover Script"
+    },
+    {
+      "code": -44,
+      "message": "Não foi possível editar o Script"
+    },
+    {
+      "code": -45,
+      "message": "Erro ao iniciar a execução do Script"
+    },
+    {
+      "code": -46,
+      "message": "Não foi possível carregar a lista de Scripts"
+    },
+    {
+      "code": -47,
+      "message": "Erro ao atualizar o estado do Script"
+    },
+    {
+      "code": -48,
+      "message": "Não foi possível carregar a lista de Queues"
+    },
+    {
+      "code": -49,
+      "message": "Erro ao adicionar Queue"
+    },
+    {
+      "code": -50,
+      "message": "Não foi possível remover a Queue"
+    },
+    {
+      "code": -51,
+      "message": "Erro ao editar Queue"
+    },
+    {
+      "code": -52,
+      "message": "Não foi possível adicionar a Transação"
+    },
+    {
+      "code": -53,
+      "message": "Erro ao remover Transação"
+    },
+    {
+      "code": -54,
+      "message": "Não foi possível editar a Transação"
+    },
+    {
+      "code": -55,
+      "message": "Não foi possível carregar a lista de Execuções"
+    },
+    {
+      "code": -56,
+      "message": "Não foi possível carregar a lista de Assets"
+    },
+    {
+      "code": -57,
+      "message": "Erro ao adicionar Asset"
+    },
+    {
+      "code": -58,
+      "message": "Erro ao editar Asset"
+    },
+    {
+      "code": -59,
+      "message": "Não foi possível remover o Asset"
+    },
+    {
+      "code": -60,
+      "message": "Erro token de email fornecida não foi encontrada no registo de concurrências"
+    },
+    {
+      "code": -61,
+      "message": "Outro utilizador é o dono deste registo de concurrência"
+    },
+    {
+      "code": -62,
+      "message": "Email com o token fornecido não foi encontrado"
+    },
+    {
+      "code": -63,
+      "message": "Nome da tabela fornecido não é válido"
+    },
+    {
+      "code": -64,
+      "message": "Rating fornecido não é válido"
+    },
+    {
+      "code": -65,
+      "message": "Erro a enviar email ao destinatário"
+    },
+    {
+      "code": -66,
+      "message": "Erro a guardar o email"
+    },
+    {
+      "code": -67,
+      "message": "Erro a guardar o anexo"
+    },
+    {
+      "code": -68,
+      "message": "Already loading recourse"
+    },
+    {
+      "code": -69,
+      "message": "Recurso não encontrado"
+    },
+    {
+      "code": -70,
+      "message": "Erro a consultar a base de dados"
+    },
+    {
+      "code": -71,
+      "message": "Recurso está vazio"
+    },
+    {
+      "code": -72,
+      "message": "A API do Primavera retornou um erro"
+    },
+    {
+      "code": -73,
+      "message": "Email encontra-se em processamento"
+    },
+    {
+      "code": -74,
+      "message": "Produto com stock inválido"
+    },
+    {
+      "code": -75,
+      "message": "Item já existe"
+    },
+    {
+      "code": -76,
+      "message": "Apenas permitido a administradores"
+    },
+    {
+      "code": -77,
+      "message": "Erro ao adicionar trigger"
+    },
+    {
+      "code": -78,
+      "message": "Erro ao editar trigger"
+    },
+    {
+      "code": -79,
+      "message": "Erro ao remover trigger"
+    },
+    {
+      "code": -80,
+      "message": "Erro ao executar trigger"
+    },
+    {
+      "code": -81,
+      "message": "Não autorizado"
+    }
+  ]
+}

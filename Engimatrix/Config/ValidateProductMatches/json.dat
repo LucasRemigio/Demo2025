@@ -1,0 +1,20 @@
+Faz um parse para retornar uma estrutura JSON com este formato:
+
+"{
+    "confianca": "",
+    "produtos": [
+        {
+            "idProdutoSolicitado": "",
+            "nomeProdutoSolicitado": "",
+            "medidasProdutoSolicitado": "",
+            "idProdutoCatalogo": "",
+            "nomeProdutoCatalogo": "",
+            "medidasProdutoCatalogo": "",
+            "quantidade": "",
+            "unidadeQuantidade": "",
+            "justificacao": "",
+            "confianca": ""
+        }
+    ]
+}"
+

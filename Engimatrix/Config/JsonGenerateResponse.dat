@@ -1,0 +1,5 @@
+Le o email e retorna uma estrutura JSON com este formato:
+
+"{
+"resposta": "",
+}"

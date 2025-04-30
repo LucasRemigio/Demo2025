@@ -1,0 +1,181 @@
+<ng-container *transloco="let t">
+    <table class="w-full border border-collapse border-gray-300 table-auto">
+        <thead>
+            <tr class="bg-gray-200">
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 10%"
+                >
+                    {{ t("Order.product-code") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 20%"
+                >
+                    {{ t("Order.product-matched") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 10%"
+                >
+                    {{ t("Invoice.price") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 10%"
+                >
+                    {{ t("Order.quantity") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 5%"
+                >
+                    {{ t("unit") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 10%"
+                >
+                    {{ t("quantity-in-converted-unit") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 10%"
+                >
+                    {{ t("total-price") }}
+                </th>
+                <th
+                    class="p-2 text-center align-middle border border-gray-300"
+                    style="width: 5%"
+                    *ngIf="!isDisabled"
+                >
+                    {{ t("Scripts.actions") }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- High Confidence Header -->
+            <tr *ngIf="highConfidenceProducts.length > 0">
+                <td colspan="7" class="font-bold text-center bg-gray-100">
+                    {{ t("high-confidence-products") }}
+                </td>
+            </tr>
+            <!-- High Confidence Rows -->
+            <ng-container *ngFor="let product of highConfidenceProducts">
+                <ng-container
+                    *ngTemplateOutlet="
+                        productRow;
+                        context: { product: product }
+                    "
+                ></ng-container>
+            </ng-container>
+
+            <!-- Low Confidence Header -->
+            <tr *ngIf="lowConfidenceProducts.length > 0">
+                <td colspan="7" class="font-bold text-center bg-gray-100">
+                    {{ t("low-confidence-products") }}
+                </td>
+            </tr>
+            <!-- Low Confidence Rows -->
+            <ng-container *ngFor="let product of lowConfidenceProducts">
+                <ng-container
+                    *ngTemplateOutlet="
+                        productRow;
+                        context: { product: product }
+                    "
+                ></ng-container>
+            </ng-container>
+        </tbody>
+    </table>
+
+    <!-- Template for a single product row -->
+    <ng-template #productRow let-product="product">
+        <tr
+            class="text-center"
+            [ngClass]="{ 'border-2 border-orange-300': isPriceEmpty(product) }"
+        >
+            <td class="p-2 border border-gray-300">
+                {{ product.product_catalog.product_code }}
+            </td>
+            <td class="p-2 border border-gray-300">
+                {{ product.product_catalog.description }}
+                <div
+                    class="mt-1 text-sm text-gray-500 border-t-2"
+                    *ngIf="!isClient"
+                >
+                    Stock: {{ formatStock(product) }}
+                </div>
+            </td>
+            <td class="p-2 border border-gray-300">
+                <div class="flex items-center">
+                    <span class="flex-grow text-center">{{
+                        formatPrice(product.calculated_price) +
+                            " / " +
+                            product.product_catalog.unit
+                    }}</span>
+                    <mat-icon
+                        *ngIf="product.is_price_locked"
+                        class="flex-shrink-0 ml-2 text-amber-500 icon-size-4"
+                        [svgIcon]="'heroicons_solid:lock-closed'"
+                        [matTooltip]="t('Order.locked-price')"
+                    ></mat-icon>
+                    <!-- Warning icon for zero prices -->
+                    <mat-icon
+                        *ngIf="isPriceEmpty(product)"
+                        class="flex-shrink-0 ml-2 text-red-500 icon-size-4"
+                        [svgIcon]="'heroicons_solid:exclamation-circle'"
+                        [matTooltip]="t('Order.zero-price-warning')"
+                    ></mat-icon>
+                </div>
+            </td>
+            <td class="bg-white border border-gray-300">
+                <input
+                    type="number"
+                    [(ngModel)]="product.quantity"
+                    [disabled]="isDisabled"
+                    (ngModelChange)="onQuantityChange(product)"
+                    class="w-full p-2 text-center"
+                    name="quantity_{{ product.id }}"
+                    min="1"
+                    onkeydown="return event.key !== '-'"
+                />
+            </td>
+            <td class="p-2 bg-white border border-gray-300">
+                <select
+                    [(ngModel)]="product.product_unit.abbreviation"
+                    [disabled]="isDisabled"
+                    (change)="onUnitChange(product)"
+                    class="w-full p-1 text-center"
+                    name="quantity_unit_{{ product.id }}"
+                >
+                    <option
+                        *ngFor="let unit of getAvailableUnits(product)"
+                        [value]="unit.abbreviation"
+                    >
+                        {{ unit.abbreviation }}
+                    </option>
+                </select>
+            </td>
+            <td class="p-2 border border-gray-300">
+                {{ getProductQuantityInOtherUnit(product) }}
+            </td>
+            <td class="p-2 border border-gray-300">
+                {{ getProductTotalPrice(product) }}
+            </td>
+            <td *ngIf="!isDisabled" class="p-2 border border-gray-300">
+                <button
+                    type="button"
+                    class="items-center justify-center px-2 py-1 text-white rounded gray-bg focus:outline-none"
+                    (click)="removeProduct.emit(product.id)"
+                    aria-label="Delete Product"
+                    [matTooltip]="t('Order.delete-product')"
+                >
+                    <mat-icon
+                        class="text-white icon-size-4"
+                        [svgIcon]="'heroicons_solid:trash'"
+                    ></mat-icon>
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</ng-container>

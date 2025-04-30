@@ -1,0 +1,79 @@
+<ng-container *transloco="let t">
+    <div
+        *ngIf="emailForwardList && emailForwardList.length > 0"
+        class="flex justify-center flex-1"
+    >
+        <div
+            class="max-w-xl p-4 mx-10 mt-4 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg shadow-lg"
+        >
+            <div class="flex flex-col items-center text-lg">
+                <!-- Container for title and close button -->
+                <div class="flex items-center justify-between w-full mb-2">
+                    <p class="text-lg font-semibold">
+                        {{ t("Email.forwarded").trim() }}
+                    </p>
+
+                    <!-- Close button on the right -->
+                    <button
+                        mat-icon-button
+                        (click)="closeForwardedEmailInfo()"
+                        [tabIndex]="-1"
+                        class="ml-auto"
+                    >
+                        <mat-icon
+                            class="text-current"
+                            [svgIcon]="'heroicons_outline:x'"
+                        ></mat-icon>
+                    </button>
+                </div>
+
+                <!-- List for forwarded emails -->
+                <ul class="space-y-4">
+                    <li
+                        *ngFor="let forward of emailForwardList"
+                        class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100"
+                    >
+                        <p>
+                            <span class="font-semibold">{{
+                                forward.forwarded_by
+                            }}</span>
+                            {{ t("Email.forwarded-to") }}
+                            <span class="font-semibold">{{
+                                forward.forwarded_to
+                            }}</span>
+                            {{ t("at") }}
+                            <span class="font-semibold">
+                                {{
+                                    forward.forwarded_at
+                                        | date : "dd/MM/yyyy HH:mm:ss"
+                                }}
+                            </span>
+                        </p>
+
+                        <!-- Info button with tooltip -->
+                        <div
+                            *ngIf="forward.message"
+                            class="flex justify-center w-10"
+                        >
+                            <button
+                                class="flex items-center justify-center p-1 rounded-full hover:bg-gray-300 focus:outline-none"
+                                matTooltip="{{
+                                    t('sent-message') + ': \n' + forward.message
+                                }}"
+                                matTooltipClass="text-center whitespace-pre-line text-md px-2 py-2"
+                                aria-label="View message"
+                            >
+                                <mat-icon
+                                    class="w-8 h-8 text-gray-900"
+                                    [svgIcon]="
+                                        'heroicons_outline:information-circle'
+                                    "
+                                ></mat-icon>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</ng-container>

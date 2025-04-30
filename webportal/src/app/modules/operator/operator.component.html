@@ -1,0 +1,249 @@
+<ng-container *transloco="let t">
+    <div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-0 ml-8 mr-20"
+        >
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("Operators.operators") }}
+            </div>
+            <!-- Actions -->
+            <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+                <button
+                    class="ml-4"
+                    mat-flat-button
+                    [color]="'primary'"
+                    style="background-color: #b2deff; color: #005e9c"
+                    (click)="openPopUpInfo()"
+                >
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:plus'"
+                        style="color: #005e9c"
+                    ></mat-icon>
+                    <span class="ml-2 mr-1" style="color: #005e9c">
+                        {{ t("Operators.add") }}
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center ml-30 mr-30 mt-10" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Main -->
+        <div class="flex flex-auto overflow-auto">
+            <!-- Logs list -->
+            <div
+                class="flex flex-col flex-auto mb-18 mt-10 ml-10 mr-10 overflow-x-auto overflow-auto sm:overflow-y-auto border"
+                [style.min-width.%]="isSmallScreen() ? 150 : null"
+            >
+                <ng-container *ngIf="operators.length > 0; else noOperators">
+                    <kendo-grid
+                        [kendoGridBinding]="operators"
+                        [sortable]="true"
+                        [pageSize]="state.take"
+                        [skip]="state.skip"
+                        [sort]="state.sort"
+                        [filter]="state.filter"
+                        filterable="menu"
+                        [pageable]="true"
+                        (pageChange)="onPageChange($event)"
+                        [resizable]="true"
+                        [style]="{ 'background-color': '#f1f5f9' }"
+                    >
+                        <!-- Columns definition -->
+
+                        <kendo-grid-column
+                            field="operator_name"
+                            title="{{ t('name') }}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                        >
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <span
+                                    style="padding: 8px 12px; display: block"
+                                    [style.backgroundColor]="
+                                        colorCode(dataItem.operator_name)
+                                    "
+                                >
+                                    {{ dataItem.operator_name }}
+                                </span>
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="operator_email"
+                            title="{{ t('email') }}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                        >
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <span
+                                    style="padding: 8px 12px; display: block"
+                                    [style.backgroundColor]="
+                                        colorCode(dataItem.operator_email)
+                                    "
+                                >
+                                    {{ dataItem.operator_email }}
+                                </span>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column
+                            title="{{ t('action') }}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{
+                                padding: '5px'
+                            }"
+                        >
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <button
+                                    class="w-8 h-8 min-h-8 ml-2 mt-2"
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="openPopUpInfo(dataItem)"
+                                    [matTooltip]=""
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:pencil'"
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <button
+                                    class="w-8 h-8 min-h-8 ml-2 mt-2"
+                                    [matTooltip]=""
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="remove(dataItem)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:trash'"
+                                    >
+                                    </mat-icon>
+                                </button>
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-messages
+                            pagerNextPage="{{ t('GridMessage.NextPage') }}"
+                            pagerPreviousPage="{{
+                                t('GridMessage.PreviousPage')
+                            }}"
+                            pagerLastPage="{{ t('GridMessage.LastPage') }}"
+                            pagerFirstPage="{{ t('GridMessage.FirstPage') }}"
+                            pagerOf="{{ t('GridMessage.de') }}"
+                            pagerItems="{{ t('GridMessage.Transactions') }}"
+                            pagerItemsPerPage="{{
+                                t('GridMessage.PageTransactions')
+                            }}"
+                            filterFilterButton="{{ t('GridMessage.Filter') }}"
+                            filterClearButton="{{ t('GridMessage.Clean') }}"
+                            filterBeforeOrEqualOperator="{{
+                                t('GridMessage.BeforeOrEqual')
+                            }}"
+                            filterBeforeOperator="{{ t('GridMessage.Before') }}"
+                            filterAfterOrEqualOperator="{{
+                                t('GridMessage.AfterOrEqual')
+                            }}"
+                            filterAfterOperator="{{ t('GridMessage.After') }}"
+                            filterDateToday="{{ t('GridMessage.Today') }}"
+                            filterAndLogic="{{ t('GridMessage.And') }}"
+                            filterOrLogic="{{ t('GridMessage.Or') }}"
+                            filterContainsOperator="{{
+                                t('GridMessage.Contains')
+                            }}"
+                            filterEndsWithOperator="{{
+                                t('GridMessage.EndsWith')
+                            }}"
+                            filterEqOperator="{{ t('GridMessage.Equals') }}"
+                            filterNotEqOperator="{{
+                                t('GridMessage.Different')
+                            }}"
+                            filterNotContainsOperator="{{
+                                t('GridMessage.NotContains')
+                            }}"
+                            filterStartsWithOperator="{{
+                                t('GridMessage.StartsWith')
+                            }}"
+                            filterIsNullOperator="{{ t('GridMessage.IsNull') }}"
+                            filterIsNotNullOperator="{{
+                                t('GridMessage.IsNotNull')
+                            }}"
+                            filterIsEmptyOperator="{{
+                                t('GridMessage.IsEmpty')
+                            }}"
+                            filterIsNotEmptyOperator="{{
+                                t('GridMessage.IsNotEmpty')
+                            }}"
+                            noRecords="{{ t('GridMessage.NoRecords') }}"
+                        >
+                        </kendo-grid-messages>
+
+                        <ng-template
+                            kendoPagerTemplate
+                            let-totalPages="totalPages"
+                            let-currentPage="currentPage"
+                        >
+                            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+                            <kendo-pager-page-sizes
+                                [pageSizes]="pagesizes"
+                            ></kendo-pager-page-sizes>
+                            <kendo-pager-numeric-buttons
+                                [buttonCount]="5"
+                            ></kendo-pager-numeric-buttons>
+                            <kendo-pager-next-buttons></kendo-pager-next-buttons>
+                            <kendo-pager-info></kendo-pager-info>
+                        </ng-template>
+                    </kendo-grid>
+                </ng-container>
+
+                <!-- No operators -->
+                <ng-template #noOperators>
+                    <div
+                        class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent"
+                    >
+                        <mat-icon
+                            class="icon-size-20"
+                            [svgIcon]="'iconsmind:file_search'"
+                        ></mat-icon>
+                        <div
+                            class="mt-6 text-2xl font-semibold tracking-tight text-secondary"
+                        >
+                            {{ t("Operators.no-records") }}
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-container>

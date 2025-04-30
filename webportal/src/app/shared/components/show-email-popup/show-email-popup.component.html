@@ -1,0 +1,93 @@
+<ng-container *transloco="let t">
+    <!-- Remove negative margin and set explicit width constraints -->
+    <div class="flex flex-col w-full h-full max-w-full overflow-hidden">
+        <!-- Header -->
+        <div
+            *ngIf="data"
+            class="flex items-center justify-between h-16 pl-6 pr-3 orange-bg flex-0 sm:pr-5 sm:pl-8"
+        >
+            <div class="text-lg font-medium">
+                {{ t("preview-email") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Remove nested drawer-container, simplify structure -->
+        <div class="flex flex-col flex-auto overflow-hidden">
+            <!-- Panel links - sidebar -->
+            <div class="flex border-t border-b">
+                <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
+                    <div
+                        class="flex px-4 py-3 text-sm cursor-pointer"
+                        [ngClass]="{
+                            'hover:bg-gray-100 dark:hover:bg-hover':
+                                !selectedPanel || selectedPanel !== panel.id,
+                            'bg-primary-50 dark:bg-hover border-b-2 border-orange-500':
+                                selectedPanel && selectedPanel === panel.id
+                        }"
+                        (click)="goToPanel(panel.id)"
+                    >
+                        <mat-icon
+                            [ngClass]="'text-secondary'"
+                            [svgIcon]="panel.icon"
+                        ></mat-icon>
+                        <div class="ml-2">
+                            <div
+                                class="font-medium"
+                                [ngClass]="{
+                                    'text-primary dark:text-primary-500':
+                                        selectedPanel &&
+                                        selectedPanel === panel.id
+                                }"
+                            >
+                                {{ panel.title }}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+
+            <!-- Content area -->
+            <div class="flex-auto overflow-x-hidden overflow-y-auto">
+                <ng-template #emailForm>
+                    <div>
+                        <app-email-details
+                            [showTitle]="false"
+                            [email]="email"
+                        ></app-email-details>
+                    </div>
+                </ng-template>
+
+                <ng-template #attachmentForm>
+                    <div>
+                        <app-attachment-details
+                            [showTitle]="false"
+                            [attachments]="attachments"
+                        ></app-attachment-details>
+                    </div>
+                </ng-template>
+
+                <!-- Load panel content -->
+                <div>
+                    <ng-container [ngSwitch]="selectedPanel">
+                        <ng-container *ngSwitchCase="'emailPanel'">
+                            <ng-container
+                                *ngTemplateOutlet="emailForm"
+                            ></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'attachmentPanel'">
+                            <ng-container
+                                *ngTemplateOutlet="attachmentForm"
+                            ></ng-container>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,76 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ t("Clients.add") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+        <div class="flex items-center ml-30 mr-30 mt-2" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+        <form
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <!-- file -->
+            <div class="flex flex-row items-center pt-4 pr-10">
+                <mat-form-field class="flex-auto w-60">
+                    <mat-label class="text-base font-medium text-black w-40"
+                        >Ficheiro JSON
+                    </mat-label>
+                    <input matInput [formControlName]="'file'" />
+                    <input
+                        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none mt-2"
+                        type="file"
+                        [multiple]="false"
+                        [accept]="'application/json'"
+                        (change)="uploadFile(fileInput.files)"
+                        #fileInput
+                    />
+                </mat-form-field>
+                <div>
+                    <button
+                        class="fuse-mat-no-subscript w-full mt-2 ml-7"
+                        mat-flat-button
+                        [color]="'primary'"
+                        (click)="fileInput.value = ''; fileInput.click()"
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_outline:upload'"
+                        ></mat-icon>
+                        <span class="">{{ t("upload") }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <button
+                class="p-6 bg-gray-300 mt-10"
+                mat-flat-button
+                (click)="saveAndClose()"
+                [disabled]="composeForm.get('file').hasError('required')"
+            >
+                {{ t("confirm") }}
+            </button>
+        </form>
+    </div>
+</ng-container>

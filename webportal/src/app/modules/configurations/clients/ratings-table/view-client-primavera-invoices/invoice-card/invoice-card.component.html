@@ -1,0 +1,134 @@
+<ng-container *transloco="let t">
+    <!-- Invoice Card -->
+    <div
+        class="p-4 mb-4 bg-white border rounded-lg shadow-lg"
+        [ngClass]="{
+            'border-red-200 border-4': isOverdue
+        }"
+    >
+        <!-- Header Section -->
+        <div class="flex items-center justify-between pb-2 mb-4 border-b">
+            <!-- Left Section -->
+            <div>
+                <h3 class="text-xl text-gray-800">
+                    {{ invoice.tipoDoc }}-{{ invoice.serie }}/{{
+                        invoice.numDoc
+                    }}
+                </h3>
+                <p class="text-sm text-gray-500">
+                    {{ t("Invoice.module") + ": " + invoice.modulo }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    {{ t("Invoice.year") + ": " + invoice.ano }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    {{ t("Invoice.code") }}: {{ invoice.codigo }}
+                </p>
+            </div>
+
+            <!-- Right Section -->
+            <div class="text-right">
+                <!-- Add overdue indicator badge -->
+                <div
+                    *ngIf="isOverdue"
+                    class="inline-block px-2 py-1 mb-2 text-xs font-medium text-red-700 bg-red-100 rounded-full"
+                >
+                    {{ t("Invoice.overdue") }}
+                </div>
+
+                <p class="text-lg font-bold text-gray-800">
+                    {{ invoice.valorTotal | currency : invoice.moeda }}
+                </p>
+                <p class="text-lg text-gray-900">
+                    {{ t("Invoice.pending-value") + ": " }}
+                    <span
+                        [ngClass]="
+                            invoice.valorPendente === 0
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                        "
+                    >
+                        {{ invoice.valorPendente | currency : invoice.moeda }}
+                    </span>
+                </p>
+                <div *ngIf="invoice.valorPendente === 0">
+                    <!-- Time to Pay -->
+                    <p class="text-lg text-gray-500">
+                        {{ t("Invoice.paid-after") + ": " }}
+                        <span class="font-bold text-gray-800">
+                            {{ timeToPay }} {{ t("days") }}
+                        </span>
+                    </p>
+                    <!-- Days Relative to Due Date -->
+                    <p class="text-lg text-gray-500">
+                        {{ t("Invoice.paid-relative-due-date") + ": " }}
+                        <span class="font-bold text-gray-800">
+                            {{ daysRelativeToDueDate }} {{ t("days") }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body Section -->
+        <div class="space-y-2">
+            <!-- Entity type and code on the same line -->
+            <p class="text-sm text-gray-500">
+                {{ t("Invoice.movement-type") + ": " + invoice.tipoMov }}
+                <span class="mx-2">•</span>
+                {{
+                    t("Invoice.entity-type") +
+                        ": " +
+                        invoice.tipoEntidade +
+                        " - " +
+                        invoice.entidade
+                }}
+            </p>
+            <p class="text-sm text-gray-500"></p>
+        </div>
+
+        <!-- Dates Section - Table Format -->
+        <div class="mt-4">
+            <table class="w-full border-collapse text-md">
+                <thead>
+                    <tr>
+                        <th class="pb-2 text-left text-gray-700">
+                            {{ t("Invoice.document-date") }}
+                        </th>
+                        <th class="pb-2 text-left text-gray-700">
+                            {{ t("Invoice.due-date") }}
+                        </th>
+                        <th class="pb-2 text-left text-gray-700">
+                            {{ t("Invoice.liquidation-date") }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 pr-4 border-t border-gray-200">
+                            {{
+                                invoice.dataDoc
+                                    ? (invoice.dataDoc | date)
+                                    : "N/A"
+                            }}
+                        </td>
+                        <td class="py-2 pr-4 border-t border-gray-200">
+                            {{
+                                invoice.dataVencimento
+                                    ? (invoice.dataVencimento | date)
+                                    : "N/A"
+                            }}
+                        </td>
+                        <td class="py-2 border-t border-gray-200">
+                            {{
+                                invoice.dataLiquidacao
+                                    ? (invoice.dataLiquidacao | date)
+                                    : "N/A"
+                            }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-container>

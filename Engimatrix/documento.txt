@@ -1,0 +1,125 @@
+Alexandre Ribeiro
+aubay
+Nascido em 1992
+Consultor
+HABILITAÇÕES ACADÉMICAS
+2016
+Mestrado em Engenharia Biomédica - Instituto Superior Técnico
+DOMÍNIOS DE COMPETÊNCIAS
+TÉCNICAS
+Desenvolvimento
+Java, C#, Javascript, PL/SQL CSS, HTML, Matlab
+Ferramentas
+PowerBi, Power Query, Entity Framework, Apache Wicket, Hibernate
+Bases de Dados
+SQL Server, Oracle
+Sistemas Operativos
+Windows, Linux
+LÍNGUAS
+Inglês
+Fluente
+Última actualização: 28 de junho de 2018
+1/3
+
+Alexandre Ribeiro
+EXPERIÊNCIA PROFISSIONAL
+ALTRAN
+CONSULTOR JAVA
+Desde Setembro 2017
+Responsabilidades:
+Back Office da Transparência - Desenvolvimento Web em Java (Desde
+Fevereiro 2018):
+SPMS - Serviços Partilhados do Ministério da Saúde, EPE
+Atualmente, o processo de actualização dos dados no Portal da
+Transparência envolve a receção via email de dados pelas instituições de
+saúde, validação da estrutura e fiabilidade dos dados e, quando
+necessário, transformações de forma a adequar os novos dados aos que
+estão publicados no portal. Dado que este processo de validação manual
+está sujeito a erros, e dado o aumento no número de indicadores no portal,
+é necessário automatizar o processo de receção, processamento e
+integração dos dados.
+Como tal, começámos recentemente a desenvolver um Back Office para o
+Portal da Transparência, de forma a:
+- Permitir a submissão de dados pelas instituições no back office;
+- Automatizar o processo de validação, verificando se os novos dados
+respeitam a estrutura e se são coerentes com os dados existentes no
+portal;
+- Alertar o responsável pela submissão dos dados de possíveis erros de
+validação, de forma a que os mesmos possam ser imediatamente corrigidos
+e novamente submetidos;
+- Criar serviços web para atualizar automaticamente o Portal da
+Transparência com os dados validados.
+Tecnologias: De forma a construir o back office, foi dada uma arquitetura
+com base noutros sistemas da SPMS, de forma a adaptar a arquitetura base
+ao back office da transparência. Estou neste momento desenvolver a partir
+dessa arquitetura base e, para tal, tenho estado a aprender como construir
+aplicações web com Java 8, usando a web framework do Apache Wicket e
+a framework Hibernate para mapeamento dos objectos Java com as
+entidades numa
+base
+de dados. Tenho aprofundado os
+meus
+conhecimentos em SQL e gestão de base de dados Oracle de forma a criar
+o repositório para o back office. Sendo o meu primeiro projeto de
+desenvolvimento web, estou a ter contacto pela primeira vez com as
+típicas ferramentas de web - HTML, CSS e JavaScript.
+A trabalhar nos Serviços Compartilhados do Ministério da Saúde (desde
+outubro de 2017):
+- Business Intelligence e Análise de Dados na plataforma aberta de dados
+do National Healthcare Service;
+- Desenvolvimento Web em Java com um sistema Back Office para o Portal
+Transparência.
+BI no Portal da Transparência do SNS (desde setembro 2017) :
+SPMS - Serviços Partilhados do Ministério da Saúde, EPE
+Nos últimos 5 meses, tenho trabalhado com 2 colegas nas operações diárias
+do Portal da Transparência do Serviço Nacional de Saúde. O Portal da
+Transparência é uma plataforma de open data com o objectivo de
+Última actualização: 28 de junho de 2018
+2 /3
+
+Alexandre Ribeiro
+disponibilizar publicamente dados sobre eficiência e acessibilidade do SNS,
+bem como sobre a saúde pública dos portugueses. As tarefas diárias
+envolvem:
+Processamento e analise de métricas e indicadores, com Excel e Power
+Query, de forma a atualizar os dados existentes no portal;
+- Construir dashboards públicos em Power BI para a página da
+Monitorização do SNS, onde os diferentes indicadores podem ser analisados
+e correlacionados;
+- Reunir com colegas da SPMS e de outras entidades de saúde para planear
+a inclusão de novos indicadores no portal.
+Os dados podem ser consultados no Portal da Transparência, e os
+dashboards em Power BI na página da Monitorização do SNS.
+Tecnologias: As operações diárias no Portal da Transparência envolvem o
+uso do Power BI para criação de relatórios dinâmicos, bem como do Power
+Query para extração e processamento de dados.
+Monitor SNS - Desenvolvimento em C# com .NET Core (desde setembro
+2017):
+SPMS - Serviços Partilhados do Ministério da Saúde, EPE
+Em paralelo com as operações no Portal da Transparência, tive a
+oportunidade de ajudar um colega no desenvolvimento do Monitor SNS.
+O Monitor SNS permite o envio automático de dados a cada instituição de
+saúde (hospitais e centros de saúde), com dados referentes a indicadores
+de qualidade e eficiência nos serviços prestados pela instituição,
+permitindo que a mesma evolua no sentido de melhorar o desempenho
+face aos indicadores.
+O projeto envolveu o desenvolvimento inicial da aplicação, onde tive a
+oportunidade de aprender com o meu colega a programar com C# e com
+ferramentas .NET Core. Desde então, tenho sido responsável pelo
+melhoramento contínuo da aplicação, bem como da integração de novos
+dados para envio automático às instituições.
+Tecnologias: Monitor SNS foi desenvolvido em C# com a web framework
+.NET Core, e com a Entity Framework para mapeamento dos objectos C#
+com entidades numa base de dados SQL Server.
+UNIVERSITY MEDICAL CENTER UTRECHT
+De Julho 2016
+INVESTIGADOR
+A Junho 2017
+Responsabilidades:
+Trabalho como estudante de doutoramento com uma bolsa do Conselho
+Europeu de Pesquisa sobre impressão 3D de cartilagem e osso para reparo
+de juntas, ganhando experiência em design 3D e tecnologias de impressão
+3D para aplicações clínicas, especialmente em cirurgia ortopédica.
+Última actualização: 28 de junho de 2018
+3/3
+

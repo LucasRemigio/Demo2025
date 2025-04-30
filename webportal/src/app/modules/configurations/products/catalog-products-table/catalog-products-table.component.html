@@ -1,0 +1,251 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("catalog") }}
+            </div>
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <div class="flex flex-row mr-20">
+                    <!-- Filter by product family dropdown-->
+                    <mat-form-field class="flex-auto w-full mr-8 md:w-64">
+                        <mat-label>{{
+                            t("Dashboard.filter-by-family")
+                        }}</mat-label>
+                        <mat-select
+                            [(value)]="selectedProductFamilyId"
+                            (selectionChange)="refreshData()"
+                        >
+                            <mat-option [value]="''">
+                                {{ t("Dashboard.tudo") }}
+                            </mat-option>
+                            <mat-option
+                                *ngFor="let productFamily of productFamilies"
+                                [value]="productFamily.id"
+                                >{{ productFamily.name }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Update product catalogs with primavera button -->
+                    <button
+                        mat-button
+                        class="ml-4 mt-7 orange-btn"
+                        (click)="syncPrimaveraPrices()"
+                        [disabled]="isSyncingPrices"
+                    >
+                        <ng-container *ngIf="!isSyncingPrices">
+                            <p
+                                class="mr-2 font-semibold text-center text-white text-md"
+                            >
+                                {{ t("sync-product-catalogs-primavera") }}
+                            </p>
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:refresh'"
+                            >
+                            </mat-icon>
+                        </ng-container>
+                        <ng-container *ngIf="isSyncingPrices">
+                            <mat-spinner
+                                class="icon-size-5"
+                                diameter="24"
+                            ></mat-spinner>
+                        </ng-container>
+                    </button>
+
+                    <!-- Change pricing strategy button -->
+                    <button
+                        mat-button
+                        class="ml-4 mt-7 orange-btn"
+                        (click)="changePricingStrategy()"
+                    >
+                        <p
+                            class="mr-2 font-semibold text-center text-white text-md"
+                        >
+                            {{ t("change-pricing-strategy") }}
+                        </p>
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:currency-euro'"
+                        >
+                        </mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 overflow-auto sm:mb-18 sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+                style="max-height: 90vh; overflow-y: auto"
+            >
+                <kendo-grid
+                    [kendoGridBinding]="catalogProducts"
+                    [sortable]="true"
+                    [pageSize]="50"
+                    [pageable]="true"
+                    [resizable]="true"
+                    filterable="menu"
+                    class="h-full"
+                >
+                    <!-- Product code column -->
+                    <kendo-grid-column
+                        field="product_code"
+                        title="{{ t('Order.product-code') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.product_code }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Description column -->
+                    <kendo-grid-column
+                        field="description"
+                        title="{{ t('description') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.description }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Stock Current Column -->
+                    <kendo-grid-column
+                        field="stock_current"
+                        title="{{ t('stock-current') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.stock_current }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Unit Column -->
+                    <kendo-grid-column
+                        field="unit"
+                        title="{{ t('unit') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.unit }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Pvp Price Column -->
+                    <kendo-grid-column
+                        field="price_pvp"
+                        title="{{ t('price-pvp') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ formatPrice(dataItem.price_pvp) }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Average Price Column-->
+                    <kendo-grid-column
+                        field="price_avg"
+                        title="{{ t('price-average') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ formatPrice(dataItem.price_avg) }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Last price column -->
+                    <kendo-grid-column
+                        field="price_last"
+                        title="{{ t('price-last') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ formatPrice(dataItem.price_last) }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Family name column -->
+                    <kendo-grid-column
+                        field="desc_max"
+                        title="{{ t('max-discount') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.family.name }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Pricing strategy column -->
+                    <kendo-grid-column
+                        field="pricing_strategy.name"
+                        title="{{ t('pricing-strategy') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                t(
+                                    "PricingStrategies." +
+                                        dataItem.pricing_strategy.slug
+                                )
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <!-- Buttons -->
+                            <!-- Change pricing for item button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8"
+                                [matTooltip]="t('change-pricing-strategy', {})"
+                                style="background-color: #5a5a5a"
+                                (click)="changePricingStrategy(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:currency-euro'"
+                                >
+                                </mat-icon>
+                            </button>
+
+                            <!-- Check product details button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 ml-2 min-h-8"
+                                [matTooltip]="
+                                    t('catalog-product-see-details', {})
+                                "
+                                style="background-color: #5a5a5a"
+                                (click)="openDetails(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="
+                                        'heroicons_solid:information-circle'
+                                    "
+                                >
+                                </mat-icon>
+                            </button>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

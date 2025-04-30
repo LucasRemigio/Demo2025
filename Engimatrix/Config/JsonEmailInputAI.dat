@@ -1,0 +1,19 @@
+Faz um parse à cadeia de emails nas próximas mensagens para retornar uma estrutura JSON com este formato:
+
+"{
+"confianca": "",
+"retificao": "",
+"intencaoEmail": "",
+"emailRemetente": "",
+"nif": "",
+"moradaEntrega": "",
+"numeroOrdemCompra": "",
+"numeroCliente": "",
+  "produtos": [
+    {
+      "produto": "",
+      "quantidade": ""     
+    }
+  ]
+}"
+

@@ -1,0 +1,120 @@
+<ng-container *transloco="let t">
+    <!-- Remove negative margin (-m-6) and set proper height constraints -->
+    <div class="flex flex-col h-full overflow-hidden">
+        <!-- Header with fixed height -->
+        <div
+            *ngIf="isPopup"
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("Order.invoices") + " - " + client.primavera_client.nome }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div class="flex items-center justify-center flex-1" *ngIf="isLoading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div
+            *ngIf="!isLoading && invoices.length === 0"
+            class="flex items-center justify-center flex-1"
+        >
+            <p class="text-lg text-gray-500">
+                {{ t("Order.no-invoices") }}
+            </p>
+        </div>
+
+        <!-- Client invoices - Make this scrollable but contained -->
+        <div
+            class="flex-1 px-6 py-4 overflow-y-auto"
+            *ngIf="!isLoading && invoices.length > 0"
+        >
+            <div class="p-4 mb-4 bg-orange-100 rounded-lg shadow-lg">
+                <!-- Client Total Card -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">
+                            {{ t("Invoice.total-number") }}
+                            <!-- This can be the translation key for "Client Total" -->
+                        </h3>
+                        <p class="text-xl">
+                            {{ t("overall") + ": " }}
+                            <span class="font-bold">
+                                {{
+                                    invoicesTotal.valor_total | currency : "EUR"
+                                }}
+                            </span>
+                        </p>
+                        <p class="text-xl">
+                            {{ t("Invoice.pending-total") + ": " }}
+                            <span class="font-bold">
+                                {{
+                                    invoicesTotal.valor_pendente
+                                        | currency : "EUR"
+                                }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="p-4 mb-4 bg-orange-100 rounded-lg shadow-lg"
+                *ngIf="averagePaymentTime"
+            >
+                <!-- Title -->
+                <h3 class="mb-4 text-xl font-bold">
+                    {{ t("Order.average-payment-time") }}
+                </h3>
+
+                <div class="grid grid-cols-2 text-xl gap-y-4">
+                    <!-- Payment Time -->
+                    <span>
+                        {{ t("Order.payment-time") + ": " }}
+                    </span>
+                    <span>
+                        <span class="font-bold">
+                            {{
+                                (
+                                    averagePaymentTime.average_payment_time_days ||
+                                    0
+                                ).toFixed(1)
+                            }}
+                        </span>
+                        {{ t("days").toLowerCase() }}
+                    </span>
+
+                    <!-- Deadline Time -->
+                    <span>
+                        {{ t("Order.deadline-time") + ": " }}
+                    </span>
+                    <span>
+                        <span class="font-bold">
+                            {{
+                                (
+                                    averagePaymentTime.average_deadline_time_days ||
+                                    0
+                                ).toFixed(1)
+                            }}
+                        </span>
+                        {{ t("days").toLowerCase() }}
+                    </span>
+                </div>
+            </div>
+
+            <div *ngFor="let invoice of invoices">
+                <app-invoice-card [invoice]="invoice"></app-invoice-card>
+            </div>
+
+            <!-- Add bottom padding to ensure last items are visible -->
+            <div class="h-4"></div>
+        </div>
+    </div>
+</ng-container>

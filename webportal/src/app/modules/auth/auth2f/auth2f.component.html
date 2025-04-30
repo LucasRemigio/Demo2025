@@ -1,0 +1,46 @@
+<div class="flex flex-col max-h-screen -m-6">
+    <!-- Header -->
+    <div
+        class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 orange-bg text-on-primary"
+    >
+        <div class="text-lg font-medium text-white">Autenticação 2 Fatores</div>
+        <button mat-icon-button (click)="close()" [tabIndex]="-1">
+            <mat-icon
+                class="text-current text-white"
+                [svgIcon]="'heroicons_outline:x'"
+            ></mat-icon>
+        </button>
+    </div>
+
+    <form
+        class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+        [formGroup]="composeForm"
+    >
+        <div class="flex flex-row items-center pt-4">
+            <!-- TOKEN -->
+            <mat-form-field class="flex-auto w-60">
+                <mat-label class="text-base font-medium text-black w-40">
+                    Insira o código enviado para o seu e-mail:
+                </mat-label>
+                <input matInput [formControlName]="'auth2f_clientInput'" />
+            </mat-form-field>
+        </div>
+
+        <button
+            class="p-6 bg-gray-300 mt-10"
+            mat-flat-button
+            (click)="saveAndClose()"
+        >
+            Submeter
+        </button>
+
+        <button
+            class="p-6 bg-gray-300 mt-5"
+            mat-flat-button
+            (click)="sendNewAuth2fCode(); clicked = true; blockButton()"
+            [disabled]="clicked"
+        >
+            Enviar novo código para o e-mail
+        </button>
+    </form>
+</div>

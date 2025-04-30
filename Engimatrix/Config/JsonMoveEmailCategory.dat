@@ -1,0 +1,9 @@
+Le o email e retorna uma estrutura JSON com este formato:
+
+"{
+	"confianca": "",
+	"categoria": "",
+	"justificacao": "",
+	"email_remetente": "",
+	"confianca_reencaminhamento": "",
+}"

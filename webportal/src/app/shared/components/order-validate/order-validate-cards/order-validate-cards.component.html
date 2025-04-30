@@ -1,0 +1,148 @@
+<ng-container *transloco="let t">
+    <!-- Totals Emails to Validate -->
+    <div class="mt-2 text-lg font-medium">
+        {{ t("Filtering.total-to-validate") }}
+        {{ orders.length }}
+    </div>
+
+    <hr class="my-4" />
+
+    <!-- email -->
+    <div
+        class="grid grid-cols-1 gap-8 mt-4 sm:grid-cols-2 lg:grid-cols-4 sm:mt-5"
+    >
+        <ng-container *ngFor="let order of orders; trackBy: trackByFn">
+            <!-- email -->
+            <div
+                class="flex flex-col mb-5 overflow-hidden shadow h-105 rounded-2xl"
+            >
+                <div class="flex flex-col p-6">
+                    <div class="flex items-center justify-between">
+                        <!-- email category -->
+                        <ng-container>
+                            <div
+                                class="text-center py-0.5 px-3 rounded-full text-sm font-semibold"
+                                [ngClass]="getReasonClass(order.status)"
+                                style="margin-top: 16px"
+                            >
+                                {{ getStatusDescription(order.status) }}
+                            </div>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="order.filtered_email; else noEmail">
+                        <!-- order title & description -->
+                        <div class="mt-4 text-lg font-medium">
+                            {{ order.filtered_email.category.title }}
+                        </div>
+                        <div class="mt-0.5 line-clamp-2 text-secondary">
+                            {{ order.filtered_email.email.subject }}
+                        </div>
+                        <!-- confidence -->
+                        <div class="mt-4 text-lg font-medium">
+                            {{ t("Dashboard.confidence") }} :
+                            {{ order.filtered_email.confidence }}
+                        </div>
+                    </ng-container>
+                    <ng-template #noEmail>
+                        <div class="mt-4 text-lg font-medium">
+                            {{ t("Order.created-in-platform") }}
+                        </div>
+                    </ng-template>
+
+                    <div class="w-12 h-1 my-6 border-t-2"></div>
+
+                    <div
+                        class="flex items-center mt-2 leading-5 text-md text-secondary"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-hint"
+                            [svgIcon]="'heroicons_solid:calendar'"
+                        ></mat-icon>
+                        <div class="ml-1.5">
+                            {{
+                                order.created_at | date : "dd/MM/yyyy HH:mm:ss"
+                            }}
+                        </div>
+                    </div>
+
+                    <!-- order completion -->
+                    <div
+                        class="flex items-center mt-2 leading-5 text-md text-secondary"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-hint"
+                            [svgIcon]="'heroicons_solid:user'"
+                        ></mat-icon>
+                        <div class="ml-1.5">
+                            <ng-container
+                                *ngIf="order.filtered_email; else noEmailFrom"
+                            >
+                                {{ order.filtered_email.email.from }}
+                            </ng-container>
+                            <ng-template #noEmailFrom>
+                                {{ order.created_by }}
+                            </ng-template>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex items-center mt-2 leading-5 text-md text-secondary"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-hint"
+                            [svgIcon]="'heroicons_solid:mail'"
+                        ></mat-icon>
+                        <div class="ml-1.5">
+                            <ng-container
+                                *ngIf="order.filtered_email; else noEmailTo"
+                            >
+                                {{ order.filtered_email.email.to }}
+                            </ng-container>
+                            <ng-template #noEmailTo>
+                                <ng-container
+                                    *ngIf="order.client; else noClient"
+                                >
+                                    {{ order.client.primavera_client.nome }}
+                                </ng-container>
+                                <ng-template #noClient>
+                                    {{ t("Order.no-associated-client") }}
+                                </ng-template>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="flex flex-col w-full mt-auto gray-bg">
+                    <!-- email progress -->
+                    <div class="relative h-0.5 orange-bg">
+                        <div class="absolute inset-x-0 z-10 h-6 -mt-3"></div>
+                        <mat-progress-bar
+                            class="h-0.5"
+                            [value]="100"
+                        ></mat-progress-bar>
+                    </div>
+
+                    <!-- email launch button -->
+                    <div class="grid grid-cols-2 px-6 py-4 text-left">
+                        <button
+                            [disabled]="isPendingApproval(order.status)"
+                            mat-stroked-button
+                            [routerLink]="[order.token]"
+                            class="orange-bg"
+                        >
+                            <span class="inline-flex items-center text-white">
+                                <!-- Edit -->
+                                <span>{{ t("Order.validate") }}</span>
+
+                                <mat-icon
+                                    class="ml-1.5 icon-size-5"
+                                    [svgIcon]="'heroicons_solid:check'"
+                                ></mat-icon>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>

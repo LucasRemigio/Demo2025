@@ -1,0 +1,1 @@
+ng serve --prod --ssl --ssl-key "./certs/private.key" --ssl-cert "./certs/public.crt" --port 443 --host 0.0.0.0 --disableHostCheck true

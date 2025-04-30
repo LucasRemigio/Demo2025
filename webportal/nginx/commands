@@ -1,0 +1,7 @@
+link para o Nginx: https://premissahibrida.sharepoint.com/:u:/s/PREMISSAHBRIDA/EeszP5Tbm0xJgyu_tvYDbZsB_xKuV_tDzZTnF55p2o8SPQ?e=w5hg17
+
+start nginx
+nginx -s reload
+nginx -s stop
+
+Colocar o nginx a arrancar no startup folder

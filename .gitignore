@@ -1,0 +1,27 @@
+/Engimatrix/.vs
+/Engimatrix/bin
+/Engimatrix/Logs
+/Engimatrix/obj
+/Engimatrix/Data/full_cache
+.vscode
+
+/Engimatrix/DifferentEmails
+/Engimatrix/DifferentEmails/*
+/Engimatrix/DifferentResults
+/Engimatrix/DifferentResults/*
+/sql/MasterFerroDataImport/.env
+/Engimatrix/Tests
+
+/Engimatrix/Emails/invoices/*
+
+
+# remove any venv
+venv/
+
+# remove any pycache
+__pycache__/
+
+# remove Engimatrix/Scripts/*
+Engimatrix/Scripts/*
+
+.cursor/

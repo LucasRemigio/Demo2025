@@ -1,0 +1,89 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ t("Scripts.edit_asset") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <form
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <mat-form-field>
+                <mat-label>{{ t("description") }}</mat-label>
+                <input matInput [formControlName]="'description'" />
+                <mat-error *ngIf="composeForm.get('description').hasError()">{{t("require-field")}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>{{ t("Scripts.type") }}</mat-label>
+                <input matInput [formControlName]="'type'" readonly />
+                <mat-error *ngIf="composeForm.get('type').hasError()">{{t("require-field")}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="!isCredentialsType()">
+                <mat-label>{{ t("Scripts.text") }}</mat-label>
+                <input matInput [formControlName]="'text'" />
+                <mat-error *ngIf="composeForm.get('text').hasError()">{{t("require-field")}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="isCredentialsType()">
+                <mat-label>{{ t("user") }}</mat-label>
+                <input matInput [formControlName]="'user'" />
+                <mat-error *ngIf="composeForm.get('user').hasError()">{{t("require-field")}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="isCredentialsType()" appearance="fill">
+                <!-- <input
+                    matInput
+                    [formControlName]="'password'"
+                    type="password"
+                    #passwordField
+                />
+                <button
+                    mat-icon-button
+                    type="button"
+                    (click)="togglePasswordVisibility(passwordField)"
+                    matSuffix
+                >
+                     -->
+                <mat-label>{{ t("password") }}</mat-label>
+                <input name="password" type="password" [formControlName]="'password'" matInput [type]="passwordVisible ? 'text' : 'password'" #passwordfield>
+                <button mat-icon-button matSuffix (click)="passwordVisible = !passwordVisible; " [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="!passwordVisible">
+                  <mat-icon>{{passwordVisible ? 'visibility' : 'visibility_off'}}</mat-icon>
+                  <!-- <mat-icon
+                        class="icon-size-5"
+                        *ngIf="passwordField.type === 'password'"
+                        [svgIcon]="'heroicons_solid:eye'"
+                    ></mat-icon>
+                    <mat-icon
+                        class="icon-size-5"
+                        *ngIf="passwordField.type === 'text'"
+                        [svgIcon]="'heroicons_solid:eye-off'"
+                    ></mat-icon> -->
+                </button>
+                <mat-error
+                    *ngIf="composeForm.get('password').hasError('required')"
+                    >{{ t("require-field") }}</mat-error>
+              </mat-form-field>
+
+            <button
+                class="p-6 bg-gray-300 mt-10"
+                mat-flat-button
+                (click)="saveAndClose()"
+                [disabled]="composeForm.invalid"
+            >
+                {{ t("confirm") }}
+            </button>
+        </form>
+    </div>
+</ng-container>

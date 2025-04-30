@@ -1,0 +1,31 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ t("Jobs.execution") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="p-4">
+            <div class="font-bold mb-2">{{ t("Jobs.details") }}</div>
+            <div>
+                <p *ngFor="let line of jobDetails.split(',')">{{ line }}</p>
+            </div>
+        </div>
+
+        <button
+            class="p-6 bg-gray-300 mt-10 mb-4 mx-4"
+            mat-flat-button
+            (click)="close()"
+        >
+            {{ t("confirm") }}
+        </button>
+    </div>
+</ng-container>

@@ -1,0 +1,101 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 orange-bg text-white"
+        >
+            <div class="text-lg font-medium">
+                {{ getTitle() }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex items-center ml-30 mr-30 mt-10" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div
+            class="flex items-center justify-center h-full w-full my-auto"
+            *ngIf="isLoading"
+        >
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form -->
+        <div
+            class="flex flex-col text-black text-lg flex-auto p-6 sm:p-8 overflow-y-auto"
+            *ngIf="!isLoading"
+        >
+            <form [formGroup]="ratingForm" (ngSubmit)="save()">
+                <!-- segment selection -->
+                <mat-form-field class="w-full">
+                    <mat-label>{{ t("rating") }}</mat-label>
+                    <mat-select
+                        formControlName="rating"
+                        required
+                        placeholder="{{ t('rating') }}"
+                    >
+                        <mat-option
+                            *ngFor="let rating of ratings"
+                            [value]="rating.rating"
+                        >
+                            {{
+                                rating.rating + " (" + rating.percentage + "%)"
+                            }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="
+                            ratingForm.get('rating')?.hasError('required') &&
+                            ratingForm.get('rating')?.touched
+                        "
+                    >
+                        {{ t("Order.segment-required") }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 bg-gray-500 text-white rounded-md mr-2 hover:bg-gray-400 transition-colors duration-200"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-500 transition-colors duration-200"
+                        [disabled]="ratingsForm?.invalid"
+                        type="submit"
+                    >
+                        {{ t("Order.save-changes") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

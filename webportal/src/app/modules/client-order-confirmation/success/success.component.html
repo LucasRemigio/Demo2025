@@ -1,0 +1,32 @@
+<ng-container *transloco="let t">
+    <!-- Container that fills the parent div -->
+    <div class="flex items-center justify-center h-full w-full bg-gray-100">
+        <div class="text-center">
+            <!-- Logo header -->
+            <div class="flex items-center justify-center mb-8">
+                <img
+                    src="assets/images/logo/masterferro_logo.png"
+                    alt="logo"
+                    class="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
+                    style="min-width: 200px; max-width: 300px; height: auto"
+                />
+            </div>
+
+            <!-- Content container -->
+            <div class="p-8 rounded-lg max-w-md w-full mx-auto items-center">
+                <div class="flex justify-center mb-4">
+                    <mat-icon
+                        class="w-10 h-10 text-green-600"
+                        [svgIcon]="'heroicons_outline:shield-check'"
+                    ></mat-icon>
+                </div>
+                <p class="text-gray-900 text-lg font-semibold">
+                    {{ t("order-thank-you") }}
+                </p>
+                <p class="text-gray-600 mt-2">
+                    {{ t("order-already-validated") }}
+                </p>
+            </div>
+        </div>
+    </div>
+</ng-container>

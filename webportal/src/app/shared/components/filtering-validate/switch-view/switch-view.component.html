@@ -1,0 +1,30 @@
+<ng-container *transloco="let t">
+    <div class="flex space-x-2">
+        <!-- View Options Buttons -->
+        <ng-container *ngFor="let option of viewOptions">
+            <button
+                type="button"
+                (click)="setViewType(option.value)"
+                [ngClass]="
+                    (viewType$ | async) === option.value
+                        ? 'gray-btn text-white'
+                        : 'bg-gray-200 text-black'
+                "
+                matTooltip="{{ option.tooltip }}"
+                class="p-2 shadow-md hover:shadow-lg transition duration-300 {{
+                    option.extraClasses
+                }}"
+            >
+                <mat-icon
+                    class="mx-2 icon-size-5"
+                    [ngClass]="
+                        (viewType$ | async) === option.value
+                            ? 'text-white'
+                            : 'text-black'
+                    "
+                    [svgIcon]="option.icon"
+                ></mat-icon>
+            </button>
+        </ng-container>
+    </div>
+</ng-container>

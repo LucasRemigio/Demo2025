@@ -1,0 +1,111 @@
+<ng-container *transloco="let t">
+    <div
+        class="flex flex-col flex-auto min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 py-8 ml-8 mr-20 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("platform-settings") }}
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <!-- Settings list -->
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 overflow-auto sm:mb-18 sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+            >
+                <!-- Kendo Grid -->
+                <kendo-grid
+                    [kendoGridBinding]="settings"
+                    [sortable]="true"
+                    [pageSize]="10"
+                    [pageable]="true"
+                    [resizable]="true"
+                    class="h-full"
+                >
+                    <!-- Setting Key Column -->
+                    <kendo-grid-column
+                        field="setting_key"
+                        title="{{ t('setting-name') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ t(dataItem.setting_key) }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Setting Value Column -->
+                    <kendo-grid-column
+                        field="setting_value"
+                        title="{{ t('setting-value') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.setting_value }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Updated At Column -->
+                    <kendo-grid-column
+                        field="updated_at"
+                        title="{{ t('updated-at') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.updated_at
+                                    | date : "dd/MM/yyyy HH:mm:ss"
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Updated By Column -->
+                    <kendo-grid-column
+                        field="updated_by"
+                        title="{{ t('updated-by') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.updated_by ||
+                                    t("platform.not-available")
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [width]="100"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <!-- Edit Button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8"
+                                [matTooltip]="t('edit-setting')"
+                                style="background-color: #5a5a5a"
+                                (click)="editSetting(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:pencil'"
+                                >
+                                </mat-icon>
+                            </button>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

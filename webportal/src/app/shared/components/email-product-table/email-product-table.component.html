@@ -1,0 +1,110 @@
+<ng-container *transloco="let t">
+    <form>
+        <!-- PRODUCT TABLES -->
+        <div *ngIf="loadingReadyCount < 1">
+            <div class="flex items-center justify-center mt-10">
+                <mat-spinner diameter="48"></mat-spinner>
+            </div>
+        </div>
+        <div *ngIf="loadingReadyCount === 1">
+            <div class="overflow-x-auto">
+                <app-quote-product-table
+                    [products]="localProducts"
+                    [productUnits]="productUnits"
+                    [isDisabled]="isDisabled"
+                    [isClient]="isClient"
+                    (removeProduct)="removeProduct($event)"
+                    (updateProduct)="onUpdatedProducts($event)"
+                >
+                </app-quote-product-table>
+            </div>
+
+            <!-- display the total pricing with the get function -->
+            <app-show-order-total
+                [orderTotal]="orderTotal"
+            ></app-show-order-total>
+        </div>
+
+        <!-- Input to add product-->
+        <div class="mt-4 mb-4" *ngIf="showAddProduct">
+            <mat-form-field class="w-full">
+                <mat-label>{{ t("Invoice.add-product") }}</mat-label>
+                <input
+                    matInput
+                    type="text"
+                    [(ngModel)]="selectedCatalogName"
+                    name="catalogName"
+                    placeholder="{{ t('Order.add-product-by-name-or-code') }}"
+                    (input)="onSearchChange(selectedCatalogName)"
+                    (keydown.enter)="$event.preventDefault()"
+                    [matAutocomplete]="auto"
+                    class="px-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:border-gray-200"
+                />
+                <mat-autocomplete
+                    #auto="matAutocomplete"
+                    (optionSelected)="addProductByCatalog($event.option.value)"
+                >
+                    <mat-option
+                        *ngFor="let catalog of filteredCatalogProducts"
+                        [value]="catalog"
+                    >
+                        <div class="flex justify-between">
+                            <div>
+                                {{ catalog.product_code }} -
+                                {{ catalog.description }}
+                            </div>
+                            <div *ngIf="!isClient">
+                                {{ formatStock(catalog) }}
+                            </div>
+                        </div>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+
+        <!-- Button to toggle the input to add product-->
+        <div class="flex justify-between mt-4" *ngIf="!isDisabled">
+            <button
+                mat-raised-button
+                class="mt-4 text-white gray-bg"
+                (click)="toggleAddProduct()"
+                aria-label="Add Product"
+                [matTooltip]="t('product-add')"
+            >
+                <div class="flex items-center justify-center">
+                    {{ t("product-add") }}
+                    <mat-icon
+                        class="w-6 h-6 ml-2 text-white"
+                        [svgIcon]="'heroicons_solid:plus'"
+                    >
+                    </mat-icon>
+                </div>
+            </button>
+
+            <!-- Update Quoting Button -->
+            <button
+                mat-raised-button
+                *ngIf="!isDisabled"
+                class="mt-4 text-white gray-bg"
+                (click)="updateProducts()"
+                [disabled]="isUpdatingProducts"
+                aria-label="Update Quoting"
+                [matTooltip]="t('update-quoting')"
+            >
+                <div class="flex items-center justify-center">
+                    <ng-container *ngIf="!isUpdatingProducts; else isLoading">
+                        {{ t("update-quoting") }}
+                        <mat-icon
+                            class="w-6 h-6 ml-2 text-white"
+                            [svgIcon]="'heroicons_solid:refresh'"
+                        >
+                        </mat-icon>
+                    </ng-container>
+                    <ng-template #isLoading>
+                        <mat-spinner diameter="24"></mat-spinner>
+                    </ng-template>
+                </div>
+            </button>
+        </div>
+    </form>
+</ng-container>

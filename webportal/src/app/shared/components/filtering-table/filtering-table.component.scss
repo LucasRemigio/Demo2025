@@ -1,0 +1,35 @@
+.custom-badge .mat-badge-content {
+    background-color: #df4d11 !important;
+    color: white !important;
+    font-size: 15px;
+    box-shadow: 0 0 0 0 rgb(0 0 0 / 100%);
+    transform: scale(1);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgb(0 0 0 / 70%);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 5px rgb(0 0 0 / 0%);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgb(0 0 0 / 0%);
+    }
+}
+.email-body-container ul,
+.email-body-container ol {
+    list-style: initial;
+    margin-left: 20px;
+}
+
+li.MsoListParagraph {
+    margin-left: 0 !important;
+}
+

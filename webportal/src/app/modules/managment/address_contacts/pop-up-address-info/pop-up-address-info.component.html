@@ -1,0 +1,109 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col min-w-300 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium"></div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <form
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <!-- ADDRESSES -->
+
+            <ng-container
+                *ngFor="let address of composeForm.get('addresses')['controls']"
+            >
+                <label class="text-secondary mt-2" style="margin-bottom: -1%">
+                    {{ t("Clients.address") }}
+                    :
+                    <b
+                        >{{ address.get("address").value }},
+                        {{ address.get("zip_code").value }}
+
+                        {{ address.get("locality").value }}
+                    </b>
+                </label>
+                <div class="flex flex-col pt-6 sm:flex-row sm:items-center">
+                    <!-- Name -->
+                    <mat-form-field class="flex-auto w-full sm:w-1/4 mr-8">
+                        <mat-label class="text-base font-medium text-black w-40"
+                            >{{ t("name")
+                            }}<label style="color: red; margin-left: 0.2%"
+                                >*</label
+                            ></mat-label
+                        >
+                        <input matInput [formControl]="address.get('name')" />
+                        <mat-error *ngIf="address.get('name').errors">{{
+                            t("name-not-valid")
+                        }}</mat-error>
+                    </mat-form-field>
+                    <!-- Phone -->
+                    <mat-form-field class="flex-auto w-full sm:w-1/4 mr-8">
+                        <mat-label class="text-base font-medium text-black w-40"
+                            >{{ t("Clients.phone")
+                            }}<label style="color: red; margin-left: 0.2%"
+                                >*</label
+                            ></mat-label
+                        >
+                        <input
+                            pattern="[1-8][0-9]{8}"
+                            matInput
+                            [formControl]="address.get('phone')"
+                        />
+                        <mat-error *ngIf="address.get('phone').errors">{{
+                            t("phone-not-valid")
+                        }}</mat-error>
+                    </mat-form-field>
+                    <!-- mobile_phone -->
+                    <mat-form-field class="flex-auto w-full sm:w-1/4 mr-8">
+                        <mat-label class="text-base font-medium text-black w-40"
+                            >{{ t("Clients.mobile-phone")
+                            }}<label style="color: red; margin-left: 0.2%"
+                                >*</label
+                            ></mat-label
+                        >
+                        <input
+                            matInput
+                            pattern="9[0-9]{8}"
+                            [formControl]="address.get('mobile_phone')"
+                        />
+                        <mat-error *ngIf="address.get('mobile_phone').errors">{{
+                            t("mobile-phone-not-valid")
+                        }}</mat-error>
+                    </mat-form-field>
+                    <!-- email -->
+                    <mat-form-field class="flex-auto w-full sm:w-1/4 mr-2">
+                        <mat-label class="text-base font-medium text-black w-40"
+                            >{{ t("Clients.email")
+                            }}<label style="color: red; margin-left: 0.2%"
+                                >*</label
+                            ></mat-label
+                        >
+                        <input matInput [formControl]="address.get('email')" />
+                        <mat-error *ngIf="address.get('email').errors">{{
+                            t("email-address-not-valid")
+                        }}</mat-error>
+                    </mat-form-field>
+                </div>
+            </ng-container>
+
+            <button
+                class="p-6 bg-gray-300 mt-10"
+                mat-flat-button
+                (click)="saveAndClose()"
+                [disabled]="composeForm.invalid || disableSendButton"
+            >
+                {{ t("Order.send-to-erp") }}
+            </button>
+        </form>
+    </div>
+</ng-container>

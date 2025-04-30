@@ -1,0 +1,131 @@
+<ng-container *transloco="let t">
+    <!-- Match the same flex structure as invoices component -->
+    <div class="flex flex-col h-full overflow-hidden">
+        <!-- Header with fixed height -->
+        <div
+            *ngIf="isPopup"
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("Order.orders") + " - " + client.primavera_client.nome }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div class="flex items-center justify-center flex-1" *ngIf="isLoading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div
+            *ngIf="!isLoading && orders.length === 0"
+            class="flex items-center justify-center flex-1"
+        >
+            <p class="text-lg text-gray-500">
+                {{ t("Order.no-orders") }}
+            </p>
+        </div>
+
+        <!-- Client orders - Make this scrollable but contained -->
+        <div
+            class="flex-1 px-6 py-4 overflow-y-auto"
+            *ngIf="!isLoading && orders.length > 0"
+        >
+            <div class="p-4 mb-4 bg-orange-100 rounded-lg shadow-lg">
+                <!-- Client Total Card -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">
+                            {{ t("Order.total-number") }}
+                        </h3>
+                        <p class="text-xl">
+                            {{ t("overall") + ": " }}
+                            <span class="font-bold">
+                                {{ clientTotal | currency : "EUR" }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div *ngFor="let order of orders">
+                <!-- Order Card -->
+                <div class="p-4 mb-4 bg-white rounded-lg shadow-lg">
+                    <div
+                        class="flex items-center justify-between pb-2 mb-4 border-b"
+                    >
+                        <div>
+                            <h3 class="text-xl">
+                                {{ order.primavera_order_header.TipoDoc }}
+                                #{{ order.primavera_order_header.NumDoc }}
+                            </h3>
+                            <p class="text-xl">
+                                {{ t("overall") + ": " }}
+                                <span class="font-bold">{{
+                                    order.primavera_order_header.TotalDocumento
+                                        | currency : "EUR"
+                                }}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-900 text-md">
+                                Status:
+                                {{ order.primavera_order_header.DescEstado }}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{
+                                    t("seller") +
+                                        ": " +
+                                        order.primavera_order_header
+                                            .NomeVendedorCabec
+                                }}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{ t("Order.document-date") + ": " }}
+                                {{
+                                    order.primavera_order_header.DataDoc | date
+                                }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Products Section -->
+                    <div class="space-y-4">
+                        <div *ngFor="let line of order.primavera_order_line">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <p class="text-gray-800 text-md">
+                                        {{ line.Descricao }}
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col items-end">
+                                    <p class="text-md">
+                                        {{ t("Order.quantity") + ": " }}
+                                        <span class="font-bold"
+                                            >{{ line.Quantidade }}
+                                            {{ line.Unidade || "N/A" }}</span
+                                        >
+                                    </p>
+                                    <p class="text-md">
+                                        {{ t("Invoice.price") + ": " }}
+                                        <span class="font-bold">{{
+                                            line.PrecoLiquido | currency : "EUR"
+                                        }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add bottom padding to ensure last items are visible -->
+            <div class="h-4"></div>
+        </div>
+    </div>
+</ng-container>

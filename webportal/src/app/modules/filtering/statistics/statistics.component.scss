@@ -1,0 +1,33 @@
+.header-cell {
+    display: flex;
+    align-items: center;
+}
+
+.column-title {
+    margin-right: 8px;
+}
+
+.column-options {
+    margin-left: auto;
+}
+
+.column-options button {
+    padding: 4px;
+}
+
+.mat-menu-panel {
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mat-menu-item {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.mat-menu-item:hover {
+    background-color: #ebebeb;
+}
+.menu-icon {
+    color: #003a5d;
+}

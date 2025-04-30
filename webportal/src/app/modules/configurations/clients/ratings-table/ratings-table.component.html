@@ -1,0 +1,224 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <div
+                class="absolute inset-x-0 bottom-0"
+                *ngIf="isLoading || isAnyRatingLoading"
+            >
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("clients-ratings") }}
+            </div>
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <div class="flex flex-row justify-center mr-20">
+                    <!-- Button to sync ratings with primavera -->
+                    <button
+                        mat-raised-button
+                        class="mt-6 text-white orange-btn"
+                        (click)="syncAllRatings()"
+                        [disabled]="isAnyRatingLoading"
+                    >
+                        <ng-container *ngIf="isAnyRatingLoading; else showText">
+                            <!-- Loading spinner when syncing -->
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </ng-container>
+                        <ng-template #showText>
+                            <p
+                                class="mr-2 font-semibold text-center text-white text-md"
+                            >
+                                {{ t("sync-ratings-primavera") }}
+                            </p>
+
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:refresh'"
+                            >
+                            </mat-icon>
+                        </ng-template>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 sm:mb-18 sm:overflow-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+                style="max-height: 90vh; overflow-y: auto"
+                *ngIf="isLoadingRatingTypes === false"
+            >
+                <kendo-grid
+                    [kendoGridBinding]="clients"
+                    [sortable]="true"
+                    [pageSize]="50"
+                    [pageable]="true"
+                    [resizable]="true"
+                    class="h-full"
+                    filterable="menu"
+                >
+                    <!-- Client id column -->
+                    <kendo-grid-column
+                        field="code"
+                        title="{{ t('client-code') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.code }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client Name column -->
+                    <kendo-grid-column
+                        field="primavera_client.nome"
+                        title="{{ t('client-name') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.primavera_client?.nome || "N/A" }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client email address column -->
+                    <kendo-grid-column
+                        field="primavera_client.email"
+                        title="{{ t('client-email') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.primavera_client?.email || "N/A" }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Dynamic Rating Columns -->
+                    <ng-container *ngFor="let ratingType of ratingTypes">
+                        <kendo-grid-column
+                            [field]="'rating_' + ratingType.id"
+                            [title]="t('Ratings.' + ratingType.slug)"
+                            [headerStyle]="getHeaderStyle()"
+                            [sortable]="true"
+                            [sortField]="'rating_discount.rating'"
+                            [sortDirection]="'asc'"
+                        >
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <!-- Lookup the rating for this client and rating type id -->
+                                <span
+                                    [matTooltip]="
+                                        getRatingTooltip(
+                                            dataItem.code,
+                                            ratingType.id
+                                        )
+                                    "
+                                    matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                    class="flex items-center justify-center whole-cell"
+                                    [style.backgroundColor]="
+                                        getRatingColor(
+                                            dataItem.code,
+                                            ratingType.id
+                                        )
+                                    "
+                                >
+                                    {{
+                                        getRatingByClientCodeAndType(
+                                            dataItem.code,
+                                            ratingType.id
+                                        )?.rating_discount.rating || "N/A"
+                                    }}
+                                </span>
+                            </ng-template>
+                        </kendo-grid-column>
+                    </ng-container>
+
+                    <!-- Client weighted rating column -->
+                    <kendo-grid-column
+                        field="weighted_rating"
+                        title="{{ t('client-weighted-rating') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <div
+                                class="flex items-center justify-center h-full"
+                            >
+                                {{
+                                    dataItem.weighted_rating +
+                                        " / " +
+                                        maxPossibleScore || "N/A"
+                                }}
+                            </div>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <div class="flex flex-wrap space-x-2">
+                                <!-- Edit client potential volume rating button -->
+                                <button
+                                    mat-icon-button
+                                    class="w-8 h-8 min-h-8"
+                                    [matTooltip]="
+                                        t('edit-potential-volume-rating', {})
+                                    "
+                                    style="background-color: #5a5a5a"
+                                    (click)="
+                                        editRating(dataItem, 'potential-volume')
+                                    "
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="
+                                            'heroicons_solid:trending-up'
+                                        "
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <!-- View client orders button -->
+                                <button
+                                    mat-icon-button
+                                    class="w-8 h-8 min-h-8"
+                                    style="background-color: #5a5a5a"
+                                    [matTooltip]="t('view-client-orders', {})"
+                                    (click)="viewClientPastOrders(dataItem)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:archive'"
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <!-- View client invoices button -->
+                                <button
+                                    mat-icon-button
+                                    class="w-8 h-8 min-h-8"
+                                    style="background-color: #5a5a5a"
+                                    [matTooltip]="t('view-client-invoices', {})"
+                                    (click)="viewClientInvoices(dataItem)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="
+                                            'heroicons_solid:document-currency-euro'
+                                        "
+                                    >
+                                    </mat-icon>
+                                </button>
+                            </div>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

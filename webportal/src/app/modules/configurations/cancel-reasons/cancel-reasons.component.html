@@ -1,0 +1,171 @@
+<ng-container *transloco="let t"
+    ><div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-0 ml-8 mr-20"
+        >
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("Cancel-Reason.cancel-reason") }}
+            </div>
+
+            <!-- Create new cancel reason button-->
+            <button
+                mat-raised-button
+                class="h-12 orange-btn text-white"
+                [matTooltip]="t('Cancel-Reason.create-new', {})"
+                (click)="createCancelReason()"
+            >
+                <p>{{ t("Cancel-Reason.create-new") }}</p>
+                <mat-icon
+                    class="icon-size-5 ml-2"
+                    [svgIcon]="'heroicons_solid:plus'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <!-- Logs list -->
+            <div
+                class="flex flex-col flex-auto sm:mb-18 ml-20 mr-20 mt-5 overflow-auto sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+            >
+                <!-- Kendo Grid -->
+                <kendo-grid
+                    [kendoGridBinding]="cancelReasons"
+                    [sortable]="true"
+                    [pageSize]="10"
+                    [pageable]="true"
+                    [resizable]="true"
+                    class="h-full"
+                >
+                    <!-- Reason Column -->
+                    <kendo-grid-column
+                        field="reason"
+                        title="{{ t('Cancel-Reason.reason-for-cancelation') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.reason }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Description Column -->
+                    <kendo-grid-column
+                        field="description"
+                        title="{{ t('Cancel-Reason.description') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.description }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Is Active Column -->
+                    <kendo-grid-column
+                        field="is_active"
+                        title="{{ t('is-active') }}"
+                        [width]="100"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <div
+                                class="flex justify-center items-center h-full w-full"
+                            >
+                                <mat-icon
+                                    *ngIf="dataItem.is_active"
+                                    [svgIcon]="'heroicons_solid:check'"
+                                    class="text-green-500 w-9 h-9"
+                                ></mat-icon>
+                                <mat-icon
+                                    *ngIf="!dataItem.is_active"
+                                    [svgIcon]="'heroicons_solid:x'"
+                                    class="text-red-500 w-9 h-9"
+                                ></mat-icon>
+                            </div>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Created At Column -->
+                    <kendo-grid-column
+                        field="created_at"
+                        title="{{ t('created-at') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.created_at
+                                    | date : "dd/MM/yyyy HH:mm:ss"
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Updated At Column -->
+                    <kendo-grid-column
+                        field="updated_at"
+                        title="{{ t('updated-at') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.updated_at
+                                    | date : "dd/MM/yyyy HH:mm:ss"
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <!-- Edit Button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8"
+                                [matTooltip]="t('Cancel-Reason.edit', {})"
+                                style="background-color: #5a5a5a"
+                                (click)="editCancelReason(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:pencil'"
+                                >
+                                </mat-icon>
+                            </button>
+
+                            <!-- Change status button-->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8 ml-2"
+                                [matTooltip]="
+                                    t('Cancel-Reason.change-status', {})
+                                "
+                                style="background-color: #5a5a5a"
+                                (click)="changeActiveStatus(dataItem)"
+                                [disabled]="isLoadingActiveStates[dataItem.id]"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="
+                                        dataItem.is_active
+                                            ? 'heroicons_solid:eye-off'
+                                            : 'heroicons_solid:eye'
+                                    "
+                                >
+                                </mat-icon>
+                            </button>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

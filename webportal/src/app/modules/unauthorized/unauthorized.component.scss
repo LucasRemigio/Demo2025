@@ -1,0 +1,48 @@
+/* ======================
+    Access denied page
+======================= */
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
+
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    margin-bottom: 5vh;
+    font-size: 70px;
+    font-weight: bold;
+    margin: 0;
+    color: #005e9c;
+}
+
+p {
+    font-size: 16px;
+    font-weight: 550;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 20px 0 30px;
+    color: black;
+}
+
+.container {
+    align-content: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgb(0 0 0 / 25%), 0 10px 10px rgb(0 0 0 / 22%);
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+.four-zero-four-bg {
+    background-image: url("https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif");
+    height: 400px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.contant-box-404 {
+    margin-top: -50px;
+}

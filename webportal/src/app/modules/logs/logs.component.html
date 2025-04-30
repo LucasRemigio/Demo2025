@@ -1,0 +1,242 @@
+<ng-container *transloco="let t">
+    <div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-0 border-b ml-20 mr-20"
+        >
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">{{t('Logs.logs')}}</div>
+            <!-- Actions -->
+            <div
+                class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4"
+                *ngIf="isAdmin"
+            >
+                <!-- Search -->
+                <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-64">
+                    <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Search by Operation Context'" id="emailFilter">
+                </mat-form-field>-->
+                <!-- <mat-form-field
+                    class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-64"
+                >
+                    <input
+                        matInput
+                        [formControl]="searchInputControl1"
+                        [autocomplete]="'off'"
+                        [placeholder]="'Search by User Operation'"
+                        id="ContextFilter"
+                    />
+                </mat-form-field> -->
+                <!--  <div>
+                    <mat-label class="text-lg font-medium text-black min-w-30"
+                        >Status filter</mat-label
+                    >
+                    <mat-select
+                        (selectionChange)="statusFilterChange($event)"
+                        [value]="currentStatusFilter"
+                    >
+                        <mat-option
+                            *ngFor="let status of statusFilter"
+                            [value]="status"
+                        >
+                            {{ status }}
+                        </mat-option>
+                    </mat-select>
+                </div>-->
+                <!-- Search receipt button -->
+                <!-- <button
+                    class="ml-4 mr-5"
+                    mat-flat-button
+                    style="background-color: #003a5d; color: white"
+                    (click)="searchLogs()"
+                >
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:search'"
+                        style="color: white"
+                    ></mat-icon>
+                    <span class="ml-2 mr-1" style="color: white">Search</span>
+                </button> -->
+                <!-- Add receipt button -->
+            </div>
+        </div>
+
+        <!-- <style>
+            .k-pager-number {
+                border-color: lightgreen !important;
+                color: #fff !important;
+                background-color: lightgreen !important;
+            }
+        </style> -->
+
+        <div class="flex items-center ml-30 mr-30 mt-10" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Main -->
+        <div class="flex flex-auto overflow-hidden">
+            <!-- Logs list -->
+            <div
+                class="flex flex-col flex-auto sm:mb-18 ml-20 mr-20 mt-10 overflow-hidden sm:overflow-y-auto border"
+            >
+                <ng-container *ngIf="gridData.length > 0; else noLogs">
+                    <kendo-grid
+                        [kendoGridBinding]="gridData"
+                        style="min-width: 100%"
+                        [sortable]="true"
+                        [pageSize]="state.take"
+                        [skip]="state.skip"
+                        [sort]="state.sort"
+                        [filter]="state.filter"
+                        filterable="menu"
+                        [pageable]="true"
+                        [resizable]="true"
+                        [style]="{ 'background-color': '#f1f5f9' }"
+                    >
+                        <!-- Columns definition -->
+
+                        <kendo-grid-column
+                            field="operation"
+                            title="{{t('Logs.operation')}}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="user_operation"
+                            title="{{t('user')}}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="dateTime"
+                            title="{{t('Logs.context')}}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="operationContext"
+                            title="{{t('datetime')}}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-column
+                            field="stateOperation"
+                            title="{{t('state')}}"
+                            [headerStyle]="{
+                                'background-color': '#d9efff',
+                                'font-weight': 'bold'
+                            }"
+                            [style]="{ padding: '5px' }"
+                        >
+                        </kendo-grid-column>
+
+                        <kendo-grid-messages
+                            pagerNextPage="{{t('GridMessage.NextPage')}}"
+                            pagerPreviousPage="{{t('GridMessage.PreviousPage'  )}}"
+                            pagerLastPage="{{t('GridMessage.LastPage'  )}}"
+                            pagerFirstPage="{{t('GridMessage.FirstPage'  )}}"
+                            pagerOf="{{t('GridMessage.de'  )}}"
+                            pagerItems="{{t('GridMessage.Transactions'  )}}"
+                            pagerItemsPerPage="{{
+                               t('GridMessage.PageTransactions' 
+                            )}}"
+                            filterFilterButton="{{t('GridMessage.Filter'  )}}"
+                            filterClearButton="{{t('GridMessage.Clean'  )}}"
+                            filterBeforeOrEqualOperator="{{
+                               t('GridMessage.BeforeOrEqual' 
+                            )}}"
+                            filterBeforeOperator="{{t('GridMessage.Before'  )}}"
+                            filterAfterOrEqualOperator="{{
+                               t('GridMessage.AfterOrEqual' 
+                            )}}"
+                            filterAfterOperator="{{t('GridMessage.After'  )}}"
+                            filterDateToday="{{t('GridMessage.Today'  )}}"
+                            filterAndLogic="{{t('GridMessage.And'  )}}"
+                            filterOrLogic="{{t('GridMessage.Or'  )}}"
+                            filterContainsOperator="{{t('GridMessage.Contains'  )}}"
+                            filterEndsWithOperator="{{t('GridMessage.EndsWith'  )}}"
+                            filterEqOperator="{{t('GridMessage.Equals'  )}}"
+                            filterNotEqOperator="{{t('GridMessage.Different'  )}}"
+                            filterNotContainsOperator="{{
+                               t('GridMessage.NotContains' 
+                            )}}"
+                            filterStartsWithOperator="{{
+                               t('GridMessage.StartsWith' 
+                            )}}"
+                            filterIsNullOperator="{{t('GridMessage.IsNull'  )}}"
+                            filterIsNotNullOperator="{{
+                               t('GridMessage.IsNotNull' 
+                            )}}"
+                            filterIsEmptyOperator="{{t('GridMessage.IsEmpty'  )}}"
+                            filterIsNotEmptyOperator="{{
+                               t('GridMessage.IsNotEmpty' 
+                            )}}"
+                            noRecords="{{t('GridMessage.NoRecords'  )}}">
+                        </kendo-grid-messages>
+
+                        <ng-template
+                            kendoPagerTemplate
+                            let-totalPages="totalPages"
+                            let-currentPage="currentPage"
+                        >
+                            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+                            <kendo-pager-page-sizes
+                                [pageSizes]="pagesizes"
+                            ></kendo-pager-page-sizes>
+                            <kendo-pager-numeric-buttons
+                                [buttonCount]="5"
+                            ></kendo-pager-numeric-buttons>
+                            <kendo-pager-next-buttons></kendo-pager-next-buttons>
+                            <kendo-pager-info></kendo-pager-info>
+                        </ng-template>
+                    </kendo-grid>
+                </ng-container>
+
+                <ng-template #noLogs>
+                    <div
+                        class="p-8 sm:p-16 border-t text-2xl tracking-tight text-center"
+                    >
+                        {{t('no-records')}}
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-container>

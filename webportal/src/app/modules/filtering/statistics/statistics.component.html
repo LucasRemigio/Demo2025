@@ -1,0 +1,303 @@
+<ng-container *transloco="let t">
+    <div
+        class="flex flex-col flex-auto min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pt-4 pb-2 mx-8 border-b sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("Order.dashboard") }}
+            </div>
+
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+            >
+                <mat-form-field class="flex-auto md:w-40">
+                    <mat-label class="font-normal text-md">{{
+                        t("Dashboard.filter-by-category")
+                    }}</mat-label>
+                    <mat-select
+                        [(value)]="selectedCategoryId"
+                        (selectionChange)="onCategoryChange($event.value)"
+                    >
+                        <mat-option [value]="0">{{
+                            t("Dashboard.tudo")
+                        }}</mat-option>
+                        <mat-option
+                            *ngFor="let category of categories"
+                            [value]="category.id"
+                        >
+                            {{ t("Category." + category.slug) }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field
+                    [ngClass]="formFieldHelpers"
+                    class="flex-auto md:w-40"
+                >
+                    <mat-label class="font-normal text-md">{{
+                        t("Dashboard.filter-by-period")
+                    }}</mat-label>
+                    <mat-select
+                        class="text-gray-900"
+                        [value]="'0'"
+                        (selectionChange)="onSelectionChange($event)"
+                    >
+                        <mat-option
+                            *ngFor="let option of dateOptions"
+                            [value]="option.value"
+                        >
+                            {{ t(option.label) }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <form [formGroup]="dateRangeForm">
+                    <mat-form-field class="flex-shrink-0 md:w-64">
+                        <mat-label class="font-normal text-md">{{
+                            t("Dashboard.filter-by-date-range")
+                        }}</mat-label>
+                        <mat-date-range-input [rangePicker]="myRangePicker">
+                            <input
+                                [(ngModel)]="start_date"
+                                formControlName="start"
+                                #matStartDateInput
+                                matStartDate
+                                (dateChange)="onDateRangeChangeStart($event)"
+                            />
+                            <input
+                                [(ngModel)]="end_date"
+                                formControlName="end"
+                                #matEndDateInput
+                                matEndDate
+                                (dateChange)="onDateRangeChangeEnd($event)"
+                            />
+                        </mat-date-range-input>
+
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="myRangePicker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker
+                            #myRangePicker
+                        ></mat-date-range-picker>
+                    </mat-form-field>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+            <mat-progress-bar
+                class="orange-loader"
+                [mode]="'indeterminate'"
+            ></mat-progress-bar>
+        </div>
+
+        <div *ngIf="isNoData">
+            <div class="flex flex-col items-center justify-center h-96">
+                <div class="text-4xl font-bold text-gray-500">
+                    {{ t("Home-Dashboard.No-data") }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main -->
+        <div
+            *ngIf="!isInitialLoading && !isNoData"
+            class="overflow-y-auto"
+            cdkScrollable
+        >
+            <!-- BOARDS -->
+            <div
+                class="grid min-w-0 grid-cols-1 gap-6 mx-8 my-4 sm:grid-cols-2 md:grid-cols-3"
+            >
+                <!-- Totals -->
+                <div
+                    class="flex flex-col items-center flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl"
+                >
+                    <div class="flex items-start justify-between">
+                        <div
+                            class="text-lg font-medium leading-6 tracking-tight truncate"
+                        >
+                            {{ t("Filtering.total") }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-2">
+                        <div
+                            class="font-bold leading-none tracking-tight text-blue-500 text-7xl sm:text-8xl"
+                        >
+                            {{ dashboard.total }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automatics -->
+                <div
+                    class="flex flex-col items-center flex-auto p-6 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div class="flex items-start justify-between">
+                        <div
+                            class="text-lg font-medium leading-6 tracking-tight truncate"
+                        >
+                            {{ t("Filtering.automatic") }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-2">
+                        <div
+                            class="font-bold leading-none tracking-tight text-yellow-500 text-7xl sm:text-8xl"
+                        >
+                            {{ dashboard.automatic }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avg Confidence -->
+                <div
+                    class="flex flex-col items-center flex-auto p-6 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div class="flex items-start justify-between">
+                        <div
+                            class="text-lg font-medium leading-6 tracking-tight truncate"
+                        >
+                            {{ t("Filtering.avg-confidence") }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-2">
+                        <div
+                            class="font-bold leading-none tracking-tight text-blue-800 text-7xl sm:text-8xl"
+                        >
+                            {{ dashboard.avgConfidence | number : "1.0-1" }} %
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Num of replies -->
+                <div
+                    class="flex flex-col items-center flex-auto p-6 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div class="flex items-start justify-between">
+                        <div
+                            class="text-lg font-medium leading-6 tracking-tight truncate"
+                        >
+                            {{ t("Filtering.reply-count-us") }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-2">
+                        <div
+                            class="font-bold leading-none tracking-tight text-orange-600 text-7xl sm:text-8xl"
+                        >
+                            {{ dashboard.total_replies_masterferro }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Num of replies -->
+                <div
+                    class="flex flex-col items-center flex-auto p-6 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div class="flex items-start justify-between">
+                        <div
+                            class="text-lg font-medium leading-6 tracking-tight truncate"
+                        >
+                            {{ t("Filtering.reply-count-client") }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-2">
+                        <div
+                            class="font-bold leading-none tracking-tight text-green-700 text-7xl sm:text-8xl"
+                        >
+                            {{ dashboard.total_replies_client }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="grid min-w-0 grid-cols-1 gap-6 mx-10 my-6 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2"
+            >
+                <!-- Pie Chart for Automatics, Manual, and To Be Validated -->
+                <div *ngIf="pieChartData" class="charts-container--content">
+                    <kendo-chart [transitions]="true">
+                        <kendo-chart-series>
+                            <kendo-chart-series-item
+                                [autoFit]="true"
+                                type="pie"
+                                [data]="pieChartData"
+                                categoryField="kind"
+                                field="share"
+                                [color]="color"
+                            >
+                                <kendo-chart-series-item-labels
+                                    [align]="true"
+                                    position="outsideEnd"
+                                    color="#000"
+                                >
+                                </kendo-chart-series-item-labels>
+                            </kendo-chart-series-item>
+                        </kendo-chart-series>
+                        <kendo-chart-legend
+                            [visible]="true"
+                        ></kendo-chart-legend>
+                    </kendo-chart>
+                </div>
+                <!-- Pie Chart for Automatics, Manual, and To Be Validated -->
+                <div class="charts-container--content">
+                    <kendo-chart [transitions]="true">
+                        <kendo-chart-series>
+                            <kendo-chart-series-item
+                                [autoFit]="true"
+                                type="pie"
+                                [data]="resolvedData"
+                                categoryField="kind"
+                                field="share"
+                                [color]="color"
+                            >
+                                <kendo-chart-series-item-labels
+                                    [align]="true"
+                                    position="outsideEnd"
+                                    color="#000"
+                                >
+                                </kendo-chart-series-item-labels>
+                            </kendo-chart-series-item>
+                        </kendo-chart-series>
+                        <kendo-chart-legend
+                            [visible]="true"
+                        ></kendo-chart-legend>
+                    </kendo-chart>
+                </div>
+
+                <!-- Chart for To Be Validated, Errors, Low Confidence -->
+                <div>
+                    <kendo-chart
+                        [transitions]="false"
+                        [legend]="{ position: 'top', visible: true }"
+                    >
+                        <kendo-chart-title
+                            text="{{ t('Filtering.historic-validations') }}"
+                        ></kendo-chart-title>
+
+                        <kendo-chart-series>
+                            <kendo-chart-series-item
+                                type="bar"
+                                [data]="histogramData"
+                                categoryField="category"
+                                field="value"
+                                [color]="color"
+                            >
+                            </kendo-chart-series-item>
+                        </kendo-chart-series>
+
+                        <kendo-chart-legend
+                            [visible]="true"
+                        ></kendo-chart-legend>
+                    </kendo-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

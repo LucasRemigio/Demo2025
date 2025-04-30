@@ -1,0 +1,198 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 orange-bg text-white"
+        >
+            <div class="text-lg font-medium">
+                {{ t("edit-product-discount") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex items-center ml-30 mr-30 mt-10" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div
+            class="flex items-center justify-center h-full w-full my-auto"
+            *ngIf="isLoading"
+        >
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form -->
+        <div
+            class="flex flex-col text-black text-lg flex-auto p-6 sm:p-8 overflow-y-auto"
+            *ngIf="!isLoading"
+        >
+            <div class="flex flex-col">
+                <!-- Product family -->
+                <div class="flex flex-col mb-6">
+                    <label
+                        for="product-family"
+                        class="mb-2 text-md font-semibold text-gray-700"
+                    >
+                        {{ t("product-family") }}
+                    </label>
+
+                    <p class="text-gray-800">
+                        {{ productDiscount.product_family.name }}
+                    </p>
+                </div>
+
+                <!-- Segment name -->
+                <div class="flex flex-col mb-6">
+                    <label
+                        for="segment-name"
+                        class="mb-2 text-md font-semibold text-gray-700"
+                    >
+                        {{ t("client-segment") }}
+                    </label>
+
+                    <p class="text-gray-800">
+                        {{ productDiscount.segment.name }}
+                    </p>
+                </div>
+            </div>
+
+            <form [formGroup]="editProductDiscount" (ngSubmit)="saveChanges()">
+                <!-- Minimum margin number input-->
+                <div class="flex flex-col mb-6">
+                    <label
+                        for="minimum-margin"
+                        class="mb-2 text-md font-semibold text-gray-700"
+                    >
+                        {{ t("min-margin") }}
+                    </label>
+                    <input
+                        matInput
+                        min="0"
+                        max="100"
+                        type="number"
+                        id="minimum-margin"
+                        formControlName="mb_min"
+                        class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount
+                                .get('mb_min')
+                                .hasError('required')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("min-margin") }} {{ t("x-is-required") }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount.get('mb_min').hasError('min')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("min-margin") }}
+                        {{ t("x-must-be-greater-than") }} {{ minFormValue }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount.get('mb_min').hasError('max')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("min-margin") }}
+                        {{ t("x-must-be-lower-than") }} {{ maxFormValue }}
+                    </mat-error>
+                </div>
+
+                <!-- Maximum discount number input-->
+                <div class="flex flex-col mb-6">
+                    <label
+                        for="maximum-discount"
+                        class="mb-2 text-md font-semibold text-gray-700"
+                    >
+                        {{ t("max-discount") }}
+                    </label>
+                    <input
+                        matInput
+                        min="0"
+                        max="100"
+                        type="number"
+                        id="maximum-discount"
+                        formControlName="desc_max"
+                        class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount
+                                .get('desc_max')
+                                .hasError('required')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("max-discount") }} {{ t("x-is-required") }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount.get('desc_max').hasError('min')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("max-discount") }}
+                        {{ t("x-must-be-greater-than") }} {{ minFormValue }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            editProductDiscount.get('desc_max').hasError('max')
+                        "
+                        class="text-red-500 text-sm"
+                    >
+                        {{ t("max-discount") }}
+                        {{ t("x-must-be-lower-than") }} {{ maxFormValue }}
+                    </mat-error>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 bg-gray-500 text-white rounded-md mr-2 hover:bg-gray-400 transition-colors duration-200"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-500 transition-colors duration-200"
+                        [disabled]="editProductDiscount?.invalid"
+                        type="submit"
+                    >
+                        {{ t("Order.save-changes") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

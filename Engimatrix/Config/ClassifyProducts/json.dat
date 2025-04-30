@@ -1,0 +1,31 @@
+Faz um parse para retornar uma estrutura JSON com este formato:
+
+"{
+    "confianca": "",
+    "produtos": [
+        {
+            "produtoSolicitado": "",
+            "traducaoNomeProduto": "",
+            "medidasProduto": "",
+            "caracteristicasProduto": {
+                "tipoDeProduto": "",
+                "tipoMaterial": "",
+                "formaProduto": "",
+                "finalizacaoProduto": "",
+                "superficieProduto": "",
+                "dimensoes": {
+                    "comprimento": "",
+                    "largura": "",
+                    "altura": "",
+                    "espessura": "",
+                    "diametro": "", 
+                }
+            },
+            "quantidade": "",
+            "unidadeQuantidade": "",
+            "justificacao": "",
+            "confianca": ""
+        }
+    ]
+}"
+

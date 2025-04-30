@@ -1,0 +1,370 @@
+<ng-container *transloco="let t">
+    <form
+        class="flex flex-col flex-auto pb-10 overflow-y-auto text-lg"
+        [formGroup]="composeForm"
+    >
+        <div class="flex justify-start space-x-2">
+            <button
+                mat-flat-button
+                class="flex items-center p-1 pr-2 mb-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-orange-600"
+                (click)="toggleRecipientField()"
+            >
+                <mat-icon
+                    *ngIf="showRecipientField; else showIcon"
+                    class="ml-2"
+                    svgIcon="heroicons_solid:eye-off"
+                ></mat-icon>
+                <mat-icon
+                    *ngIf="!showRecipientField"
+                    class="ml-2"
+                    svgIcon="heroicons_solid:eye"
+                ></mat-icon>
+                <p class="mx-1 text-lg">
+                    {{ showRecipientField ? t("hide") : t("show") }}
+                    {{ t("Recipient") }}
+                </p>
+            </button>
+
+            <button
+                mat-flat-button
+                class="flex items-center p-1 pr-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-orange-600"
+                (click)="toggleCcBccFields()"
+            >
+                <mat-icon
+                    *ngIf="showCcBccFields"
+                    class="ml-2"
+                    svgIcon="heroicons_solid:eye-off"
+                ></mat-icon>
+                <mat-icon
+                    *ngIf="!showCcBccFields"
+                    class="ml-2"
+                    svgIcon="heroicons_solid:eye"
+                ></mat-icon>
+                <p class="mx-1 text-lg">
+                    {{ showCcBccFields ? t("hide") : t("show") }} Cc/Bcc
+                </p>
+            </button>
+        </div>
+
+        <!-- Show recipient field -->
+        <div *ngIf="showRecipientField" class="flex flex-col w-full mt-2">
+            <mat-label class="text-lg font-semibold">
+                <b>{{ t("Recipient") }}:</b>
+            </mat-label>
+            <mat-form-field appearance="fill" class="w-full">
+                <input
+                    matInput
+                    formControlName="recipient"
+                    placeholder="{{ t('recipient-insert') }}"
+                    type="text"
+                    (input)="onInput($event.target.value)"
+                    [matAutocomplete]="auto"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option
+                        *ngFor="let email of filteredRecipients"
+                        [value]="email"
+                    >
+                        {{ email }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <mat-error
+                    *ngIf="composeForm.get('recipient').hasError('required')"
+                >
+                    {{ t("recipient-mandatory") }}
+                </mat-error>
+                <mat-error
+                    *ngIf="
+                        composeForm.get('recipient').hasError('invalidEmails')
+                    "
+                >
+                    {{ t("recipient-invalid") }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- cc form input-->
+        <div *ngIf="showCcBccFields" class="flex flex-col mt-2">
+            <div class="flex flex-col w-full">
+                <mat-label class="text-lg font-semibold">
+                    <b>Cc:</b>
+                </mat-label>
+                <mat-form-field appearance="fill" class="w-full">
+                    <input
+                        matInput
+                        formControlName="cc"
+                        placeholder="Cc"
+                        type="text"
+                        (input)="onInput($event.target.value)"
+                        [matAutocomplete]="auto"
+                    />
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option
+                            *ngFor="let email of filteredRecipients"
+                            [value]="email"
+                        >
+                            {{ email }}
+                        </mat-option>
+                    </mat-autocomplete>
+
+                    <mat-error
+                        *ngIf="composeForm.get('cc').hasError('invalidEmails')"
+                    >
+                        {{ t("recipient-invalid") }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="flex flex-col w-full">
+                <mat-label class="text-lg font-semibold">
+                    <b>Bcc:</b>
+                </mat-label>
+                <mat-form-field appearance="fill" class="w-full">
+                    <input
+                        matInput
+                        formControlName="bcc"
+                        placeholder="Bcc"
+                        type="text"
+                        (input)="onInput($event.target.value)"
+                        [matAutocomplete]="auto"
+                    />
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option
+                            *ngFor="let email of filteredRecipients"
+                            [value]="email"
+                        >
+                            {{ email }}
+                        </mat-option>
+                    </mat-autocomplete>
+
+                    <mat-error
+                        *ngIf="composeForm.get('bcc').hasError('invalidEmails')"
+                    >
+                        {{ t("recipient-invalid") }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="flex justify-between mt-2">
+            <!-- Response Box -->
+            <mat-label class="mt-2 text-lg font-semibold"
+                ><b>{{ t("email-response") }}:</b></mat-label
+            >
+
+            <!-- Generate response with AI -->
+            <div class="flex items-center">
+                <!-- Button or Spinner depending on the loading state -->
+                <ng-container
+                    *ngIf="!isLoadingAIResponse; else loadingTemplate"
+                >
+                    <!-- Button to request the AI response -->
+                    <button
+                        mat-flat-button
+                        class="flex items-center p-1 pr-2 text-white transition duration-300 bg-blue-500 rounded-2xl hover:bg-blue-700 hover:animate-pulse"
+                        [ngClass]="{
+                            'opacity-50 cursor-not-allowed': isLoadingAIResponse
+                        }"
+                        [matTooltip]="t('Email.generate-response-ai')"
+                        (click)="generateResponseWithAI(filteredToken)"
+                    >
+                        <mat-icon
+                            class="ml-2 text-white icon-size-6"
+                            [svgIcon]="'heroicons_solid:lightning-bolt'"
+                        >
+                        </mat-icon>
+                        <p class="mx-2 text-lg">
+                            {{ t("Email.generate-response-ai") }}
+                        </p>
+                    </button>
+                </ng-container>
+
+                <!-- Spinner shown during AI response generation -->
+                <ng-template #loadingTemplate>
+                    <mat-spinner
+                        diameter="50"
+                        class="text-blue-500"
+                    ></mat-spinner>
+                </ng-template>
+            </div>
+        </div>
+
+        <br />
+
+        <!-- Body -->
+        <quill-editor
+            matInput
+            [formControlName]="'response'"
+            [modules]="quillModules"
+            (onEditorCreated)="onEditorCreated($event)"
+        ></quill-editor>
+        <mat-error *ngIf="composeForm.get('response').hasError('required')">
+            {{ t("email-response-mandatory") }}
+        </mat-error>
+
+        <div class="flex flex-col mt-4">
+            <!-- Attachment Section Header -->
+            <div class="flex items-center justify-between mb-3">
+                <mat-label class="text-lg font-semibold">
+                    <b>{{ t("attachments") }}:</b>
+                </mat-label>
+
+
+                <!-- Attachment button - Now with inline-flex and width-auto -->
+                <button
+                    mat-flat-button
+                    class="inline-flex items-center px-4 py-2 text-white transition duration-300 bg-blue-500 upload-btn rounded-2xl hover:bg-blue-700 hover:shadow-md"
+
+                    (click)="fileUpload.click()"
+                >
+                    <mat-icon
+                        class="mr-2"
+                        svgIcon="heroicons_outline:paper-clip"
+                    ></mat-icon>
+                    <span class="text-base font-medium">
+
+                        {{ t("Email.attach") }}
+                    </span>
+                </button>
+            </div>
+
+            <!-- Hidden file input -->
+            <div class="hidden">
+                <input
+                    type="file"
+                    (change)="onFileSelected($event)"
+                    multiple
+                    #fileUpload
+                />
+            </div>
+
+            <!-- Display the attachments -->
+            <div class="w-full mt-2">
+                <table
+                    class="w-full overflow-hidden border-collapse rounded-lg shadow-sm"
+                    *ngIf="selectedFiles.length > 0; else noFiles"
+                >
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 text-left">
+                                {{ t("attachment") }}
+                            </th>
+                            <th class="w-1/4 p-3 text-center">
+                                {{ t("attachment-size") }}
+                            </th>
+                            <th class="w-24 p-3 text-right">
+                                {{ t("actions") }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let file of selectedFiles; let i = index"
+                            [ngClass]="{ 'bg-gray-50': i % 2 === 0 }"
+                            class="transition-colors border-t border-gray-200 hover:bg-gray-100"
+                        >
+                            <td class="max-w-xs p-3 text-gray-800 truncate">
+                                {{ file.name }}
+                            </td>
+                            <td class="p-3 text-center text-gray-600">
+                                {{ getFileSizeInMB(file.size) }}
+                            </td>
+                            <td class="p-3 text-right">
+                                <button
+                                    mat-icon-button
+                                    color="warn"
+                                    matTooltip="{{ t('remove-attachment') }}"
+                                    (click)="removeFile(i)"
+                                    class="focus:outline-none"
+                                >
+                                    <mat-icon
+                                        [svgIcon]="'heroicons_solid:trash'"
+                                    ></mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <ng-template #noFiles>
+                    <div class="p-2 italic text-gray-500">
+                        {{ t("no-attachments") }}
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- Display Validation Errors -->
+            <div
+                *ngIf="invalidFiles.length > 0"
+                class="relative px-4 py-3 mt-4 text-red-700 bg-red-100 border border-red-400 rounded-md shadow-sm"
+            >
+                <div class="flex items-center justify-between">
+                    <p class="flex items-center font-bold">
+                        {{ t("invalid-attachments") }}
+                    </p>
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        matTooltip="{{ t('dismiss') }}"
+                        (click)="clearInvalidFiles()"
+                        class="focus:outline-none"
+                    >
+                        <mat-icon [svgIcon]="'heroicons_solid:x'"></mat-icon>
+                    </button>
+                </div>
+                <ul class="mt-2 text-lg list-disc list-inside">
+                    <li *ngFor="let invalidFile of invalidFiles" class="mb-1">
+                        <span class="font-medium">{{ invalidFile.name }}</span>
+                        -
+                        <span class="text-red-600">{{
+                            getFileSizeInMB(invalidFile.size)
+                        }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Email status flash message-->
+        <div class="flex items-center mt-10 ml-30 mr-30" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+        <div class="flex items-center mt-10 ml-30 mr-30" *ngIf="isSendingEmail">
+            <mat-icon
+                class="text-gray-500"
+                [svgIcon]="'heroicons_outline:paper-airplane'"
+            ></mat-icon>
+            <span class="ml-2">{{ t("Email.sending-reply") }}</span>
+        </div>
+
+        <!-- Submit button-->
+        <div class="flex items-center justify-end">
+            <button
+                mat-button
+                class="p-1 pr-2 mt-2 text-white rounded-lg shadow-lg orange-bg"
+                (click)="verifyResponseForm()"
+                [disabled]="composeForm.invalid"
+            >
+                <mat-icon
+                    class="ml-2"
+                    svgIcon="heroicons_solid:paper-airplane"
+                ></mat-icon>
+                <p class="mx-2 text-lg font-semibold">
+                    {{ t("Notifications.send") }}
+                </p>
+            </button>
+        </div>
+    </form>
+</ng-container>

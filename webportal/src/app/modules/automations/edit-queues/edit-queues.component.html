@@ -1,0 +1,73 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ t("Scripts.queue-edit") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+        <div class="flex items-center ml-30 mr-30 mt-2" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+        <form
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <mat-form-field>
+                <mat-label>{{ t("name") }}</mat-label>
+                <input matInput [formControlName]="'name'" />
+                <mat-error *ngIf="composeForm.get('name').hasError()">{{
+                    t("require-field")
+                }}</mat-error>
+            </mat-form-field>      
+
+            <mat-form-field>
+                <mat-label>{{ t("description") }}</mat-label>
+                <input matInput [formControlName]="'description'" />
+                <mat-error *ngIf="composeForm.get('description').hasError()">{{
+                    t("require-field")
+                }}</mat-error>
+            </mat-form-field>      
+
+            <mat-checkbox (change)="composeForm.get('autoRetry').setValue($event.checked)" 
+                          [checked]="composeForm.get('autoRetry').value" class="mb-2">
+                          {{ t('Scripts.queue-max-retry') }}
+            </mat-checkbox>
+
+            <mat-form-field *ngIf="composeForm.get('autoRetry').value">
+                <mat-label>{{ t('Scripts.queue-max-retry-number') }}</mat-label>
+                <input matInput type="number" [formControlName]="'numberRetry'" />
+                <mat-error *ngIf="composeForm.get('numberRetry').invalid && composeForm.get('numberRetry').touched">
+                  {{ t("require-field") }}
+                </mat-error>
+              </mat-form-field>
+
+            <button
+                class="p-6 bg-gray-300 mt-10"
+                mat-flat-button
+                (click)="saveAndClose()"
+            >
+                {{ t("confirm") }}
+            </button>
+        </form>
+    </div>
+</ng-container>

@@ -1,0 +1,10 @@
+// White background for all mat-form-field inputs
+::ng-deep .mat-form-field {
+    .mat-form-field-flex {
+        background-color: white;
+    }
+
+    .mat-input-element {
+        color: #333; // Dark text for better contrast on white background
+    }
+}

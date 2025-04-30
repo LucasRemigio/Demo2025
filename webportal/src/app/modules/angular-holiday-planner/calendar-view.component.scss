@@ -1,0 +1,67 @@
+.day {
+    height: 40px;
+    padding: 0;
+    font-weight: 500;
+}
+
+.day-content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        background-color: rgba(185, 206, 218, 0.603);
+    }
+}
+
+.month {
+    max-width: 290px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-right: 50px;
+    flex-basis: 33.3%;
+}
+
+.year {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cell,
+.cell-header {}
+
+.cell {
+    color: #676565;
+    cursor: pointer;
+}
+
+th {
+    height: 1.5rem;
+    font-weight: 400;
+    color: #000000;
+}
+
+$cell: #cacaca;
+$offset: #fdfdfd;
+$non-working: #cacaca;
+.month-title {
+    font-size: 16px;
+    height: 32px;
+    background-color: #f1f1f1;
+}
+
+.month-header {
+    height: 1.5rem;
+    user-select: none;
+    background-color: #afafaf;
+}
+
+.month-offset {
+    background-color: $offset;
+}
+
+:host {
+    background-color: $cell;
+}

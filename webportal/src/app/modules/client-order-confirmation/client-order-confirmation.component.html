@@ -1,0 +1,312 @@
+<ng-container *transloco="let t">
+    <!-- Loader -->
+    <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+        <mat-progress-bar
+            class="orange-loader"
+            [mode]="'indeterminate'"
+        ></mat-progress-bar>
+    </div>
+
+    <div *ngIf="!isLoading && !data">
+        <div
+            class="flex items-center justify-center min-h-screen mx-auto bg-gray-100"
+        >
+            <div
+                class="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg"
+            >
+                <div class="flex justify-center mb-4">
+                    <mat-icon
+                        class="w-10 h-10 text-gray-700"
+                        [svgIcon]="'heroicons_outline:emoji-sad'"
+                    ></mat-icon>
+                </div>
+                <p class="text-lg font-semibold text-gray-700">
+                    {{ t("Filtering.email-not-found") }}
+                </p>
+                <p class="mt-2 text-gray-500">
+                    {{ t("Filtering.please-verify-url") }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div
+        *ngIf="!isLoading && data && !isEmailAwaitingValidation"
+        class="flex items-center justify-center w-screen h-screen"
+    >
+        <app-no-orders-page></app-no-orders-page>
+    </div>
+
+    <div
+        class="absolute inset-0 flex flex-col min-w-0 overflow-hidden"
+        *ngIf="!isLoading && data && isEmailAwaitingValidation"
+    >
+        <mat-drawer-container class="flex-auto h-full">
+            <!-- Sidebar (toggles with button) -->
+            <mat-drawer
+                #sidenav
+                [mode]="isMobile ? 'over' : 'side'"
+                [(opened)]="isSidebarOpen"
+                class="bg-white border-r w-80"
+            >
+                <div class="px-2 py-2 overflow-y-auto">
+                    <div class="flex items-center justify-center p-4">
+                        <img
+                            src="assets/images/logo/masterferro_logo.png"
+                            alt="Masterferro Logo"
+                            class="max-w-[300px] w-full h-auto mx-auto"
+                        />
+                    </div>
+
+                    <hr class="mx-4 my-6 border-t border-orange-600" />
+
+                    <app-steps-list
+                        [steps]="steps"
+                        [currentStep]="currentStep"
+                        (stepChange)="goToStep($event)"
+                    >
+                    </app-steps-list>
+
+                    <hr class="mx-4 my-6 border-t border-orange-600" />
+
+                    <div
+                        class="flex items-center justify-center"
+                        *ngIf="isLoadingClient"
+                    >
+                        <mat-spinner diameter="32" class="mr-4"></mat-spinner>
+                        <p>{{ t("is-loading-client") }}</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-center mx-4"
+                        *ngIf="!isLoadingClient"
+                    >
+                        <p>{{ client.primavera_client.nome }}</p>
+                    </div>
+                </div>
+            </mat-drawer>
+
+            <!-- Drawer content -->
+            <mat-drawer-content class="flex flex-col overflow-hidden">
+                <!-- Header -->
+                <div
+                    class="flex items-center py-2 pl-4 pr-6 border-b flex-0 sm:py-4 md:pl-6 md:pr-8 lg:border-b-0 bg-card dark:bg-transparent"
+                >
+                    <!-- Toggle Button to Open/Close the Sidebar -->
+                    <button
+                        mat-icon-button
+                        class="shadow-lg orange-btn"
+                        (click)="toggleSidebar()"
+                    >
+                        <mat-icon
+                            [svgIcon]="
+                                isSidebarOpen
+                                    ? 'heroicons_outline:x'
+                                    : 'heroicons_outline:view-list'
+                            "
+                        ></mat-icon>
+                    </button>
+
+                    <app-flash-message
+                        class="absolute left-1/2 transform -translate-x-1/2 z-[9999]"
+                    ></app-flash-message>
+                </div>
+
+                <mat-progress-bar
+                    class="hidden orange-progress lg:block flex-0 h-0.5 w-full"
+                    [value]="(100 * (currentStep + 1)) / totalSteps"
+                ></mat-progress-bar>
+
+                <!-- Main -->
+                <div
+                    class="flex-auto w-full my-auto overflow-y-auto px-auto"
+                    cdkScrollable
+                >
+                    <!-- Steps -->
+                    <mat-tab-group
+                        class="fuse-mat-no-header"
+                        [animationDuration]="'200'"
+                    >
+                        <ng-container
+                            *ngFor="let step of steps; trackBy: trackByFn"
+                        >
+                            <mat-tab
+                                class="flex flex-col items-center justify-center w-full h-screen p-6"
+                            >
+                                <ng-template matTabContent>
+                                    <div
+                                        class="flex flex-col items-center justify-center w-full p-6"
+                                    >
+                                        <!-- Order to be Confirmed -->
+                                        <h2
+                                            class="mb-4 text-2xl font-semibold text-center"
+                                        >
+                                            {{ headerTitle }}
+                                        </h2>
+
+                                        <p class="mb-6 text-lg text-gray-700">
+                                            {{ t("Filtering.review-products") }}
+                                            {{
+                                                data.order.created_at
+                                                    | date
+                                                        : "HH:mm, dd/MM/yyyy"
+                                            }}.
+                                            {{
+                                                t(
+                                                    "Filtering.please-review-products"
+                                                )
+                                            }}
+                                        </p>
+
+                                        <!-- Products / Address Section -->
+                                        <div class="w-full max-w-4xl space-y-8">
+                                            <ng-container
+                                                *ngIf="currentStep === 0"
+                                            >
+                                                <app-address-details
+                                                    [orderToken]="order.token"
+                                                    [address]="address"
+                                                    [isDisabled]="
+                                                        isAddressValid
+                                                    "
+                                                    [isClient]="true"
+                                                    [clientCar]="clientCar"
+                                                    (updatedAddress)="
+                                                        updateAddress($event)
+                                                    "
+                                                ></app-address-details>
+                                            </ng-container>
+
+                                            <ng-container
+                                                *ngIf="currentStep === 1"
+                                            >
+                                                <!-- Products -->
+                                                <div
+                                                    class="mb-4 text-2xl font-bold tracking-tight"
+                                                >
+                                                    {{ t("Order.products") }}
+                                                    <div
+                                                        class="my-4 border-t"
+                                                    ></div>
+                                                </div>
+                                                <app-email-product-table
+                                                    [products]="
+                                                        orderProducts.length > 0
+                                                            ? orderProducts
+                                                            : []
+                                                    "
+                                                    [orderToken]="order.token"
+                                                    [orderTotal]="
+                                                        order.order_total
+                                                    "
+                                                    [isClient]="true"
+                                                >
+                                                </app-email-product-table>
+
+                                                <!-- Flash Message & Confirm Button -->
+                                                <div
+                                                    class="flex flex-col items-center justify-center gap-4"
+                                                >
+                                                    <button
+                                                        mat-raised-button
+                                                        class="text-white orange-bg"
+                                                        (click)="
+                                                            confirmProducts()
+                                                        "
+                                                        [disabled]="isSaving"
+                                                    >
+                                                        {{
+                                                            t("confirm-request")
+                                                        }}
+                                                        <mat-icon
+                                                            style="
+                                                                margin-left: 10px;
+                                                            "
+                                                            [svgIcon]="
+                                                                'heroicons_solid:clipboard-check'
+                                                            "
+                                                        ></mat-icon>
+                                                    </button>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </mat-tab>
+                        </ng-container>
+                    </mat-tab-group>
+
+                    <!-- Navigation - Desktop -->
+                    <div
+                        class="sticky z-10 hidden pb-4 lg:flex"
+                        style="
+                            position: fixed;
+                            bottom: 0;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            padding: 20px;
+                            text-align: center;
+                            width: fit-content;
+                        "
+                    >
+                        <div
+                            class="flex items-center justify-center p-2 mx-auto rounded-full shadow-lg gray-bg"
+                        >
+                            <div
+                                class="flex items-center justify-center mx-2.5 font-medium leading-5"
+                            >
+                                <span>{{ currentStep + 1 }}</span>
+                                <span class="mx-0.5 text-hint">/</span>
+                                <span>{{ totalSteps }}</span>
+                            </div>
+                            <button
+                                class="text-white flex-0 gray-bg"
+                                mat-flat-button
+                                (click)="goToNextStep()"
+                                [disabled]="currentStep === totalSteps - 1"
+                            >
+                                <span class="ml-1">{{ t("next") }}</span>
+                                <mat-icon
+                                    class="ml-2"
+                                    [svgIcon]="
+                                        'heroicons_outline:arrow-narrow-right'
+                                    "
+                                ></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress & Navigation - Mobile -->
+                <div class="flex items-center p-4 border-t lg:hidden gray-bg">
+                    <button mat-icon-button (click)="toggleSidebar()">
+                        <mat-icon
+                            [ngStyle]="{ color: '#DF4D11' }"
+                            [svgIcon]="'heroicons_outline:view-list'"
+                        ></mat-icon>
+                    </button>
+                    <div
+                        class="flex items-center justify-center ml-1 font-medium leading-5 lg:ml-2"
+                    >
+                        <span>{{ currentStep + 1 }}</span>
+                        <span class="mx-0.5 text-hint">/</span>
+                        <span>{{ totalSteps }}</span>
+                    </div>
+                    <mat-progress-bar
+                        class="flex-auto ml-6 rounded-full"
+                        [value]="(100 * (currentStep + 1)) / totalSteps"
+                    ></mat-progress-bar>
+                    <button
+                        class="ml-0.5"
+                        mat-icon-button
+                        (click)="goToNextStep()"
+                    >
+                        <mat-icon
+                            [ngStyle]="{ color: '#DF4D11' }"
+                            [svgIcon]="'heroicons_outline:arrow-narrow-right'"
+                        ></mat-icon>
+                    </button>
+                </div>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</ng-container>

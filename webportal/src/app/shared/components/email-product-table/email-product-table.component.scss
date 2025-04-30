@@ -1,0 +1,7 @@
+::ng-deep .mat-autocomplete-panel .mat-option:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+::ng-deep .mat-autocomplete-panel .mat-option:nth-child(even) {
+    background-color: #ffffff;
+}

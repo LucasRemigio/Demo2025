@@ -1,0 +1,13 @@
+<div class="flex flex-row flex-wrap" *transloco="let t">
+    <div *ngFor="let option of options; let i = index" class="mr-4">
+        <label>
+            <input
+                type="checkbox"
+                [checked]="option.checked"
+                (change)="updateOption(i, $event.target.checked)"
+                [disabled]="option.disabled"
+            />
+            {{ t("Account." + option.department.name) }}
+        </label>
+    </div>
+</div>

@@ -1,0 +1,437 @@
+<ng-container *transloco="let t">
+    <!-- Loading indicators remain the same -->
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+        <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+
+    <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+        <mat-progress-bar
+            class="orange-loader"
+            [mode]="'indeterminate'"
+        ></mat-progress-bar>
+    </div>
+
+    <!-- Main content wrapper when not loading -->
+    <div
+        class="absolute inset-0 flex flex-col h-full min-w-0 overflow-hidden"
+        *ngIf="!isLoading"
+    >
+        <!-- Container with email drawer that's common for both views -->
+        <mat-drawer-container class="flex-auto h-full">
+            <!-- Email drawer - now available in all views -->
+            <mat-drawer
+                #drawer
+                class="w-120 dark:bg-gray-900"
+                [mode]="'side'"
+                [position]="'end'"
+                [opened]="isEmailDrawerOpened"
+                *ngIf="filtered"
+            >
+                <app-show-email-popup
+                    [email]="filtered.email"
+                    [attachments]="attachments"
+                ></app-show-email-popup>
+            </mat-drawer>
+
+            <!-- Main content section -->
+            <mat-drawer-content class="flex flex-col overflow-hidden">
+                <!-- Credit approval view -->
+                <div class="flex-1 h-full" *ngIf="isOrderPendingCreditApproval">
+                    <app-credit-order-validation
+                        class="flex-1 h-full"
+                        [order]="order"
+                        [isLoadingClient]="isLoadingClient"
+                    ></app-credit-order-validation>
+                </div>
+
+                <!-- Regular validation view -->
+                <ng-container *ngIf="!isOrderPendingCreditApproval">
+                    <!-- This is the rest of your original drawer container content -->
+                    <mat-drawer-container class="flex-auto h-full">
+                        <!-- Drawer -->
+                        <mat-drawer
+                            class="w-90 dark:bg-gray-900"
+                            [autoFocus]="false"
+                            [mode]="drawerMode"
+                            [opened]="drawerOpened"
+                            #matDrawer
+                        >
+                            <div class="flex flex-col items-start p-8 border-b">
+                                <!-- Back to validate -->
+                                <button
+                                    class="inline-flex items-center leading-6 cursor-pointer text-primary hover:underline"
+                                    (click)="goBack()"
+                                >
+                                    <span class="inline-flex items-center">
+                                        <mat-icon
+                                            class="icon-size-5"
+                                            [ngStyle]="{ color: '#383838' }"
+                                            [svgIcon]="
+                                                'heroicons_solid:arrow-sm-left'
+                                            "
+                                        ></mat-icon>
+                                        <span
+                                            class="ml-1.5 font-medium leading-5"
+                                            [ngStyle]="{ color: '#383838' }"
+                                            >{{
+                                                t("Filtering.back-to-validate")
+                                            }}</span
+                                        >
+                                    </span>
+                                </button>
+                                <ng-container *ngIf="filtered">
+                                    <!-- email category -->
+                                    <ng-container *ngIf="filtered.category">
+                                        <div
+                                            class="px-3 py-0.5 text-sm font-semibold rounded-full"
+                                            [ngClass]="
+                                                getCategoryClass(
+                                                    filtered.category
+                                                )
+                                            "
+                                            style="margin-top: 16px"
+                                        >
+                                            {{ filtered.category }}
+                                        </div>
+                                    </ng-container>
+                                    <!-- email title & description -->
+                                    <div class="mt-3 text-2xl font-semibold">
+                                        {{ filtered.category }}
+                                    </div>
+                                    <div class="text-secondary">
+                                        {{ filtered.email.from }}
+                                    </div>
+                                    <div class="text-secondary">
+                                        {{ filtered.email.subject }}
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                            <!-- Steps -->
+                            <app-steps-list
+                                [steps]="steps"
+                                [currentStep]="currentStep"
+                                (stepChange)="goToStep($event)"
+                            ></app-steps-list>
+
+                            <!-- cancel button -->
+                            <div
+                                class="flex items-center justify-center w-full p-4 border-t"
+                            >
+                                <button
+                                    mat-raised-button
+                                    class="justify-center mt-4 text-center text-white align-middle gray-bg"
+                                    [disabled]="isLoading"
+                                    (click)="cancelOrder()"
+                                >
+                                    {{ t("Cancel-Reason.cancel-request") }}
+                                    <mat-icon
+                                        style="margin-left: 10px"
+                                        [svgIcon]="'heroicons_solid:x'"
+                                    ></mat-icon>
+                                </button>
+                            </div>
+                        </mat-drawer>
+
+                        <!-- Main drawer content -->
+                        <mat-drawer-content
+                            class="flex flex-col overflow-x-hidden"
+                        >
+                            <!-- Header -->
+                            <div
+                                class="flex items-center py-2 pl-4 pr-6 border-b lg:hidden flex-0 sm:py-4 md:pl-6 md:pr-8 lg:border-b-0 bg-card dark:bg-transparent"
+                            >
+                                <!-- Title & Actions -->
+                                <button mat-icon-button [routerLink]="['..']">
+                                    <mat-icon
+                                        [svgIcon]="
+                                            'heroicons_outline:arrow-sm-left'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                                <h2
+                                    class="ml-2.5 font-medium tracking-tight truncate text-md sm:text-xl"
+                                    *ngIf="filtered"
+                                >
+                                    {{ filtered.email.subject }}
+                                </h2>
+                            </div>
+                            <mat-progress-bar
+                                class="hidden w-full h-0.5 orange-progress lg:block flex-0"
+                                [value]="(100 * (currentStep + 1)) / totalSteps"
+                            ></mat-progress-bar>
+
+                            <!-- Main -->
+                            <div
+                                class="flex-auto overflow-y-auto"
+                                cdkScrollable
+                            >
+                                <!-- Steps -->
+                                <mat-tab-group
+                                    class="fuse-mat-no-header"
+                                    [animationDuration]="'200'"
+                                >
+                                    <ng-container
+                                        *ngFor="
+                                            let step of steps;
+                                            trackBy: trackByFn
+                                        "
+                                    >
+                                        <mat-tab>
+                                            <ng-template matTabContent>
+                                                <div
+                                                    class="p-6 mx-auto max-w-7xl sm:my-2 lg:mt-4 sm:p-10 sm:py-12"
+                                                >
+                                                    <ng-container
+                                                        [ngSwitch]="
+                                                            steps[currentStep]
+                                                                .type
+                                                        "
+                                                    >
+                                                        <app-email-details
+                                                            *ngSwitchCase="
+                                                                'email'
+                                                            "
+                                                            [email]="
+                                                                filtered.email
+                                                            "
+                                                        >
+                                                        </app-email-details>
+
+                                                        <app-attachment-details
+                                                            *ngSwitchCase="
+                                                                'attachments'
+                                                            "
+                                                            [attachments]="
+                                                                attachments
+                                                            "
+                                                        >
+                                                        </app-attachment-details>
+
+                                                        <app-client-details
+                                                            *ngSwitchCase="
+                                                                'client'
+                                                            "
+                                                            [client]="
+                                                                order.client
+                                                            "
+                                                            [orderToken]="
+                                                                order.token
+                                                            "
+                                                            [orderNif]="
+                                                                orderNif
+                                                            "
+                                                            [ratingChangeRequests]="
+                                                                order.rating_change_requests
+                                                            "
+                                                            [isLoadingClient]="
+                                                                isLoadingClient
+                                                            "
+                                                            [isDisabled]="
+                                                                isToDisableForms
+                                                            "
+                                                            (clientChange)="
+                                                                updateClient(
+                                                                    $event
+                                                                )
+                                                            "
+                                                        >
+                                                        </app-client-details>
+
+                                                        <app-address-details
+                                                            *ngSwitchCase="
+                                                                'address'
+                                                            "
+                                                            [orderToken]="
+                                                                order.token
+                                                            "
+                                                            [address]="
+                                                                validCurrentAddress
+                                                            "
+                                                            [clientCar]="
+                                                                clientCar
+                                                            "
+                                                            [isDisabled]="
+                                                                isToDisableForms
+                                                            "
+                                                            (updatedAddress)="
+                                                                updateAddress(
+                                                                    $event
+                                                                )
+                                                            "
+                                                        >
+                                                        </app-address-details>
+
+                                                        <app-order-validation
+                                                            *ngSwitchCase="
+                                                                'products'
+                                                            "
+                                                            [order]="order"
+                                                            [orderProducts]="
+                                                                validCurrentProducts
+                                                            "
+                                                            [currentObservations]="
+                                                                validCurrentObservations
+                                                            "
+                                                            [isDisabled]="
+                                                                isToDisableForms
+                                                            "
+                                                            [isPendingClientApproval]="
+                                                                isPendingClientApproval
+                                                            "
+                                                            (updateCurrentObservations)="
+                                                                updateObservations(
+                                                                    $event
+                                                                )
+                                                            "
+                                                            (invoiceGenerated)="
+                                                                invoiceGenerated(
+                                                                    $event
+                                                                )
+                                                            "
+                                                        >
+                                                        </app-order-validation>
+
+                                                        <app-preview-order-documents
+                                                            *ngSwitchCase="
+                                                                'documents'
+                                                            "
+                                                            [observations]="
+                                                                validCurrentObservations
+                                                            "
+                                                            [order]="order"
+                                                            [filteredEmail]="
+                                                                filtered
+                                                            "
+                                                        >
+                                                        </app-preview-order-documents>
+                                                    </ng-container>
+                                                </div>
+                                            </ng-template>
+                                        </mat-tab>
+                                    </ng-container>
+                                </mat-tab-group>
+
+                                <!-- Navigation - Desktop -->
+                                <div
+                                    class="sticky z-10 hidden pb-4 lg:flex"
+                                    style="
+                                        position: fixed;
+                                        bottom: 0;
+                                        left: 50%;
+                                        transform: translateX(-50%);
+                                        padding: 20px;
+                                        text-align: center;
+                                        width: fit-content;
+                                    "
+                                >
+                                    <div
+                                        class="flex items-center justify-center p-2 mx-auto rounded-full shadow-lg gray-bg"
+                                    >
+                                        <button
+                                            class="text-white flex-0 gray-bg"
+                                            mat-flat-button
+                                            (click)="goToPreviousStep()"
+                                            [disabled]="currentStep === 0"
+                                        >
+                                            <mat-icon
+                                                class="mr-2"
+                                                [svgIcon]="
+                                                    'heroicons_outline:arrow-narrow-left'
+                                                "
+                                            ></mat-icon>
+                                            <span class="mr-1">{{
+                                                t("prev")
+                                            }}</span>
+                                        </button>
+                                        <div
+                                            class="flex justify-center items-center mx-2.5 font-medium leading-5"
+                                        >
+                                            <span>{{ currentStep + 1 }}</span>
+                                            <span class="mx-0.5 text-hint"
+                                                >/</span
+                                            >
+                                            <span>{{ totalSteps }}</span>
+                                        </div>
+                                        <button
+                                            class="text-white flex-0 gray-bg"
+                                            mat-flat-button
+                                            (click)="goToNextStep()"
+                                            [disabled]="
+                                                currentStep === totalSteps - 1
+                                            "
+                                        >
+                                            <span class="ml-1">{{
+                                                t("next")
+                                            }}</span>
+                                            <mat-icon
+                                                class="ml-2"
+                                                [svgIcon]="
+                                                    'heroicons_outline:arrow-narrow-right'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress & Navigation - Mobile -->
+                            <div
+                                class="flex items-center p-4 border-t lg:hidden gray-bg"
+                            >
+                                <button
+                                    mat-icon-button
+                                    (click)="matDrawer.toggle()"
+                                >
+                                    <mat-icon
+                                        [ngStyle]="{ color: '#DF4D11' }"
+                                        [svgIcon]="
+                                            'heroicons_outline:view-list'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                                <div
+                                    class="flex items-center justify-center ml-1 font-medium leading-5 lg:ml-2"
+                                >
+                                    <span>{{ currentStep + 1 }}</span>
+                                    <span class="mx-0.5 text-hint">/</span>
+                                    <span>{{ totalSteps }}</span>
+                                </div>
+                                <mat-progress-bar
+                                    class="flex-auto ml-6 rounded-full"
+                                    [value]="
+                                        (100 * (currentStep + 1)) / totalSteps
+                                    "
+                                ></mat-progress-bar>
+                                <button
+                                    class="ml-4"
+                                    mat-icon-button
+                                    (click)="goToPreviousStep()"
+                                >
+                                    <mat-icon
+                                        [ngStyle]="{ color: '#DF4D11' }"
+                                        [svgIcon]="
+                                            'heroicons_outline:arrow-narrow-left'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                                <button
+                                    class="ml-0.5"
+                                    mat-icon-button
+                                    (click)="goToNextStep()"
+                                >
+                                    <mat-icon
+                                        [ngStyle]="{ color: '#DF4D11' }"
+                                        [svgIcon]="
+                                            'heroicons_outline:arrow-narrow-right'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                            </div>
+                        </mat-drawer-content>
+                    </mat-drawer-container>
+                </ng-container>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</ng-container>

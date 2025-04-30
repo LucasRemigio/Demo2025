@@ -1,0 +1,83 @@
+<div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+    <!-- Header -->
+    <div
+        class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-orange-600 text-white"
+    >
+        <div class="text-lg font-medium">
+            {{ translate("change-signature") }}
+        </div>
+        <button mat-icon-button (click)="close()" [tabIndex]="-1">
+            <mat-icon
+                class="text-current"
+                [svgIcon]="'heroicons_outline:x'"
+            ></mat-icon>
+        </button>
+    </div>
+
+    <div
+        class="flex items-center justify-center mb-6 pt-5"
+        *ngIf="flashMessage"
+    >
+        <ng-container *ngIf="flashMessage === 'success'">
+            <mat-icon
+                class="text-green-500"
+                [svgIcon]="'heroicons_outline:check'"
+            ></mat-icon>
+            <span class="ml-2" [innerText]="flashMessageText"></span>
+        </ng-container>
+        <ng-container *ngIf="flashMessage === 'error'">
+            <mat-icon
+                class="text-red-500"
+                [svgIcon]="'heroicons_outline:x'"
+            ></mat-icon>
+            <span class="ml-2" [innerText]="flashMessageText"></span>
+        </ng-container>
+    </div>
+
+    <form
+        class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+        [formGroup]="composeForm"
+    >
+        <!-- Signature -->
+        <div class="form-group">
+            <ng-container>
+                <quill-editor
+                    [formControlName]="'signature'"
+                    [modules]="quillModules"
+                ></quill-editor>
+            </ng-container>
+            <mat-error
+                *ngIf="composeForm.get('signature').hasError('required')"
+            >
+                {{ translate("signature-field-mandatory") }}
+            </mat-error>
+        </div>
+
+        <div class="flex flex-row space-x-4 mt-10 justify-between">
+            <button
+                class="p-4 bg-gray-600 text-white rounded-lg shadow-lg hover:bg-gray-700 transition-all duration-300"
+                mat-flat-button
+                (click)="generateTemplate()"
+            >
+                <mat-icon
+                    class="mr-2"
+                    [svgIcon]="'heroicons_solid:pencil-alt'"
+                ></mat-icon>
+                {{ translate("generate-signature") }}
+            </button>
+
+            <button
+                class="px-10 py-4 bg-orange-600 text-white rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300"
+                mat-flat-button
+                (click)="submit()"
+                [disabled]="composeForm.get('signature').hasError('required')"
+            >
+                <mat-icon
+                    class="mr-2"
+                    [svgIcon]="'heroicons_solid:check-circle'"
+                ></mat-icon>
+                {{ translate("update") }}
+            </button>
+        </div>
+    </form>
+</div>

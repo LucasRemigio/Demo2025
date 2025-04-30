@@ -1,0 +1,145 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6 max-w-240 md:min-w-160">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">{{ t("create-account") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <form
+            class="flex flex-col flex-auto p-6 overflow-y-auto sm:p-8"
+            [formGroup]="composeForm"
+        >
+            <!-- Role -->
+            <mat-form-field>
+                <mat-label>
+                    {{ t("profile") }}
+                </mat-label>
+                <mat-select matInput [formControlName]="'role'">
+                    <mat-option
+                        *ngFor="let r of roles"
+                        [value]="r.id"
+                        style="color: #000000"
+                        >{{ r.description }}</mat-option
+                    >
+                </mat-select>
+            </mat-form-field>
+
+            <!-- Name -->
+            <mat-form-field>
+                <mat-label>{{ t("name") }}</mat-label>
+                <input matInput [formControlName]="'name'" />
+                <mat-error *ngIf="composeForm.get('name').hasError('required')">
+                    {{ t("name-not-valid") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Email -->
+            <mat-form-field>
+                <mat-label>{{ t("email-address") }}</mat-label>
+                <input matInput [formControlName]="'email'" />
+                <mat-error
+                    *ngIf="
+                        composeForm.get('email').hasError('required') ||
+                        composeForm.get('email').hasError('email')
+                    "
+                >
+                    {{ t("email-address-not-valid") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Password -->
+            <mat-form-field class="pb-1">
+                <mat-label>{{ t("password") }}</mat-label>
+                <input matInput [formControlName]="'password'" #passwordField />
+
+                <button
+                    mat-icon-button
+                    type="button"
+                    (click)="
+                        passwordField.type === 'password'
+                            ? (passwordField.type = 'text')
+                            : (passwordField.type = 'password')
+                    "
+                    matSuffix
+                >
+                    <mat-icon
+                        class="icon-size-5"
+                        *ngIf="passwordField.type === 'password'"
+                        [svgIcon]="'heroicons_solid:eye'"
+                    ></mat-icon>
+                    <mat-icon
+                        class="icon-size-5"
+                        *ngIf="passwordField.type === 'text'"
+                        [svgIcon]="'heroicons_solid:eye-off'"
+                    ></mat-icon>
+                </button>
+
+                <button
+                    mat-icon-button
+                    type="button"
+                    (click)="generateNewPass()"
+                    [matTooltip]="
+                        this.translocoService.translate(
+                            'generate-random-pw',
+                            {}
+                        )
+                    "
+                    matSuffix
+                >
+                    <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:refresh'"
+                    ></mat-icon>
+                </button>
+
+                <mat-error
+                    *ngIf="composeForm.get('password').hasError('required')"
+                >
+                    {{ t("password-required") }}
+                </mat-error>
+                <mat-error
+                    class="grow-0 max-w-prose"
+                    *ngIf="composeForm.get('password').hasError('pattern')"
+                >
+                    {{ passPatternError }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Password strength validation -->
+            <div class="pb-2">
+                <app-password-strength-bar
+                    [passwordToCheck]="composeForm.value.password"
+                    barLabel="{{ t('password-strenght') }}"
+                >
+                </app-password-strength-bar>
+            </div>
+
+            <div
+                class="flex items-center justify-between w-full px-1 pt-5 pb-9"
+            >
+                <app-role-manager [options]="roleCheckBox"></app-role-manager>
+            </div>
+
+            <button
+                class="p-6 text-white gray-bg"
+                mat-flat-button
+                (click)="saveAndClose()"
+                [disabled]="
+                    composeForm.get('name').hasError('required') ||
+                    composeForm.get('email').hasError('required') ||
+                    composeForm.get('password').hasError('required')
+                "
+            >
+                {{ t("create") }}
+            </button>
+        </form>
+    </div>
+</ng-container>

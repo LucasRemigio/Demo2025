@@ -1,0 +1,130 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6 max-w-240 md:min-w-160">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("Product.details") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Product Details -->
+        <div
+            class="flex flex-col flex-auto p-6 overflow-y-auto text-lg text-black sm:p-8"
+        >
+            <div class="mb-4 text-xl">
+                <span class="font-semibold">{{ t("Product.code") }}:</span>
+                {{ product.product_code }}
+            </div>
+            <div class="mb-4 text-xl">
+                <span class="font-semibold">{{ t("description") }}:</span>
+                {{ product.description_full }}
+            </div>
+
+            <!-- Shape & Measurements Two-Column Card -->
+            <div class="p-4 mb-6 bg-white rounded-lg shadow">
+                <h3 class="mb-4 text-lg font-bold">
+                    {{ t("Product.structural-details") }}
+                </h3>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Type -->
+                    <div class="font-semibold">{{ t("Product.type") }}</div>
+                    <div>{{ product.type.name }}</div>
+
+                    <!-- Material -->
+                    <div class="font-semibold">{{ t("Product.material") }}</div>
+                    <div>{{ product.material.name }}</div>
+
+                    <!-- Shape -->
+                    <div class="font-semibold">{{ t("Product.shape") }}</div>
+                    <div>{{ product.shape.name }}</div>
+
+                    <!-- Finishing -->
+                    <div class="font-semibold">
+                        {{ t("Product.finishing") }}
+                    </div>
+                    <div>
+                        <span [class.text-gray-500]="!product.finishing?.name">
+                            {{
+                                product.finishing?.name ||
+                                    t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
+
+                    <!-- Surface -->
+                    <div class="font-semibold">{{ t("Product.surface") }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.surface?.name">
+                            {{
+                                product.surface?.name ||
+                                    t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Measurements Two-Column Card -->
+            <div class="p-4 mb-6 bg-white rounded-lg shadow">
+                <h3 class="mb-4 text-lg font-bold">
+                    {{ t("Product.measurements") }}
+                </h3>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Length -->
+                    <div class="font-semibold">{{ t("Product.length") }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.length">
+                            {{ product.length || t("Product.not-specified") }}
+                        </span>
+                    </div>
+
+                    <!-- Width -->
+                    <div class="font-semibold">{{ t("Product.width") }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.width">
+                            {{ product.width || t("Product.not-specified") }}
+                        </span>
+                    </div>
+
+                    <!-- Height -->
+                    <div class="font-semibold">{{ t("Product.height") }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.height">
+                            {{ product.height || t("Product.not-specified") }}
+                        </span>
+                    </div>
+
+                    <!-- Thickness -->
+                    <div class="font-semibold">
+                        {{ t("Product.thickness") }}
+                    </div>
+                    <div>
+                        <span [class.text-gray-500]="!product.thickness">
+                            {{
+                                product.thickness || t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
+
+                    <!-- Diameter -->
+                    <div class="font-semibold">{{ t("Product.diameter") }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.diameter">
+                            {{ product.diameter || t("Product.not-specified") }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

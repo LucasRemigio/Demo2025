@@ -1,0 +1,148 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("product-discounts") }}
+            </div>
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <div class="flex flex-row mr-20">
+                    <!-- Filter by product family dropdown-->
+                    <mat-form-field class="flex-auto w-full mr-8 md:w-64">
+                        <mat-label>{{
+                            t("Dashboard.filter-by-family")
+                        }}</mat-label>
+                        <mat-select
+                            [(value)]="selectedProductFamilyId"
+                            (selectionChange)="refreshData()"
+                        >
+                            <mat-option [value]="''">
+                                {{ t("Dashboard.tudo") }}
+                            </mat-option>
+                            <mat-option
+                                *ngFor="let productFamily of productFamilies"
+                                [value]="productFamily.id"
+                                >{{ productFamily.name }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Filter by segment dropdown-->
+                    <mat-form-field class="flex-auto w-full md:w-64">
+                        <mat-label>{{
+                            t("Dashboard.filter-by-segment")
+                        }}</mat-label>
+                        <mat-select
+                            [(value)]="selectedSegmentId"
+                            (selectionChange)="refreshData()"
+                        >
+                            <mat-option [value]="0">
+                                {{ t("Dashboard.tudo") }}
+                            </mat-option>
+                            <mat-option
+                                *ngFor="let segment of segments"
+                                [value]="segment.id"
+                                >{{ segment.name }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 overflow-auto sm:mb-18 sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+                style="max-height: 90vh; overflow-y: auto"
+            >
+                <kendo-grid
+                    [kendoGridBinding]="discounts"
+                    [sortable]="true"
+                    [pageSize]="50"
+                    [pageable]="true"
+                    [resizable]="true"
+                    filterable="menu"
+                    class="h-full"
+                >
+                    <!-- product family name column -->
+                    <kendo-grid-column
+                        field="product_family.name"
+                        title="{{ t('product-family') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.product_family.name }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- segment name column -->
+                    <kendo-grid-column
+                        field="segment.name"
+                        title="{{ t('client-segment') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.segment.name }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- minimum margin column -->
+                    <kendo-grid-column
+                        field="mb_min"
+                        title="{{ t('min-margin') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.mb_min }}%
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- maximum discount column -->
+                    <kendo-grid-column
+                        field="desc_max"
+                        title="{{ t('max-discount') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.desc_max }}%
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <!-- Buttons -->
+                            <!-- Edit client segment button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8"
+                                [matTooltip]="t('edit-product-discount', {})"
+                                style="background-color: #5a5a5a"
+                                (click)="editProductDiscount(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:pencil'"
+                                >
+                                </mat-icon>
+                            </button>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,212 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6 max-w-240 md:min-w-160">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("propose-new-ratings") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex items-center mt-10 ml-30 mr-30" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div
+            class="flex items-center justify-center w-full h-full my-auto"
+            *ngIf="isLoading"
+        >
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form -->
+        <div
+            class="flex flex-col flex-auto p-6 overflow-y-auto text-lg text-black sm:p-8"
+            *ngIf="!isLoading"
+        >
+            <form [formGroup]="ratingFormGroup" (ngSubmit)="saveChanges()">
+                <div class="client-rating-card">
+                    <!-- Client ratings header-->
+                    <div class="flex justify-between mb-2">
+                        <h3 class="text-lg font-semibold">
+                            {{ t("client-ratings") }}
+                        </h3>
+                    </div>
+
+                    <!-- Ratings Form Array (Displayed as Cards) -->
+                    <div
+                        formArrayName="clientRatings"
+                        class="flex flex-wrap gap-4 mb-2"
+                    >
+                        <!-- First the client ratings-->
+                        <div
+                            *ngFor="
+                                let ratingGroup of ratingFormGroup.get(
+                                    'clientRatings'
+                                ).controls;
+                                let i = index
+                            "
+                            [formGroupName]="i"
+                            class="bg-white shadow px-4 pt-4 rounded flex-1 min-w-[250px] text-center"
+                        >
+                            <!-- Name (static translated label) -->
+                            <div class="h-12 overflow-hidden">
+                                <h3 class="text-lg font-semibold">
+                                    {{ ratingGroup.get("name")?.value }}
+                                </h3>
+                            </div>
+
+                            <!-- Current Rating -->
+                            <div>
+                                <hr class="my-2" />
+                                <p class="text-sm text-gray-600">
+                                    {{ t("current-rating") }}
+                                </p>
+                                <h4 class="text-lg font-semibold">
+                                    {{
+                                        currentRatingByType(
+                                            ratingGroup.get("ratingTypeId")
+                                                ?.value
+                                        )
+                                    }}
+                                </h4>
+                                <hr class="my-2" />
+                            </div>
+
+                            <!-- Editable Rating Field as Dropdown -->
+                            <mat-form-field
+                                appearance="fill"
+                                class="w-full mt-2"
+                            >
+                                <mat-label>{{ t("rating") }}</mat-label>
+                                <mat-select formControlName="newRating">
+                                    <mat-option
+                                        *ngFor="let discount of ratingDiscounts"
+                                        [value]="discount.rating"
+                                    >
+                                        {{ discount.rating }} ({{
+                                            discount.percentage
+                                        }}%)
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-rating-card mt-4">
+                    <!-- Order ratings header-->
+                    <div class="flex justify-between mb-2">
+                        <h3 class="text-lg font-semibold">
+                            {{ t("order-ratings") }}
+                        </h3>
+                    </div>
+
+                    <!-- Ratings Form Array (Displayed as Cards) -->
+                    <div
+                        formArrayName="ratings"
+                        class="flex flex-wrap gap-4 mb-2"
+                    >
+                        <!-- Second the order ratings-->
+                        <div
+                            *ngFor="
+                                let ratingGroup of ratingFormGroup.get(
+                                    'ratings'
+                                ).controls;
+                                let i = index
+                            "
+                            [formGroupName]="i"
+                            class="bg-white shadow px-4 pt-4 rounded flex-1 min-w-[250px] text-center"
+                        >
+                            <!-- Name (static translated label) -->
+                            <div class="h-12 overflow-hidden">
+                                <h3 class="text-lg font-semibold">
+                                    {{ ratingGroup.get("name")?.value }}
+                                </h3>
+                            </div>
+
+                            <!-- Current Rating -->
+                            <div>
+                                <hr class="my-2" />
+                                <p class="text-sm text-gray-600">
+                                    {{ t("current-rating") }}
+                                </p>
+                                <h4 class="text-lg font-semibold">
+                                    {{
+                                        currentRatingByType(
+                                            ratingGroup.get("ratingTypeId")
+                                                ?.value
+                                        )
+                                    }}
+                                </h4>
+                                <hr class="my-2" />
+                            </div>
+
+                            <!-- Editable Rating Field as Dropdown -->
+                            <mat-form-field
+                                appearance="fill"
+                                class="w-full mt-2"
+                            >
+                                <mat-label>{{ t("rating") }}</mat-label>
+                                <mat-select formControlName="newRating">
+                                    <mat-option
+                                        *ngFor="let discount of ratingDiscounts"
+                                        [value]="discount.rating"
+                                    >
+                                        {{ discount.rating }} ({{
+                                            discount.percentage
+                                        }}%)
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end mt-4">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 mr-2 text-white transition-colors duration-200 bg-gray-500 rounded-md hover:bg-gray-400"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+                        type="submit"
+                        [disabled]="!isFormValid"
+                    >
+                        {{ t("Order.propose-ratings") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

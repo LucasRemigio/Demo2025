@@ -1,0 +1,518 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="orange-bg flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8"
+        >
+            <div class="text-lg font-medium" *ngIf="subject">
+                {{ t("Filtering.replies") + subject }}
+            </div>
+
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex flex-col w-full min-w-[150%] sm:inset-0 bg-gray-100">
+            <div class="flex flex-col flex-auto h-full px-6 pb-12">
+                <!-- Header -->
+                <div
+                    class="flex flex-col flex-auto overflow-y-auto"
+                    style="
+                        white-space: pre-line;
+                        overflow-wrap: break-word;
+                        width: 100%;
+                        height: 70vh;
+                    "
+                >
+                    <!-- Print Email button -->
+                    <div class="flex items-center justify-center mt-1">
+                        <button
+                            mat-button
+                            [matMenuTriggerFor]="printMenu"
+                            class="flex p-1 pr-2 items-center bg-gray-600 hover:bg-gray-500 text-white rounded-2xl"
+                        >
+                            <p class="text-xl bold mx-2">
+                                {{ t("Email.print-all") }}
+                            </p>
+                            <mat-icon
+                                [svgIcon]="'heroicons_solid:printer'"
+                            ></mat-icon>
+                        </button>
+                    </div>
+
+                    <!-- Dropdown menu for printing options -->
+                    <mat-menu
+                        #printMenu="matMenu"
+                        class="bg-white rounded-lg shadow-lg px-4 py-2"
+                    >
+                        <button
+                            mat-menu-item
+                            (click)="printThread(true, false)"
+                            class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                        >
+                            <mat-icon
+                                class="text-orange-600"
+                                [svgIcon]="'heroicons_solid:document'"
+                            ></mat-icon>
+                            <span class="text-gray-700 text-lg">{{
+                                t("Email.print-body")
+                            }}</span>
+                        </button>
+                        <button
+                            mat-menu-item
+                            [disabled]="!hasAnyAttachments"
+                            (click)="printThread(false, true)"
+                            class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                        >
+                            <mat-icon
+                                class="text-orange-600"
+                                [svgIcon]="'heroicons_solid:paper-clip'"
+                            ></mat-icon>
+                            <span class="text-gray-700 text-lg">{{
+                                t("Email.print-attachments")
+                            }}</span>
+                        </button>
+                        <button
+                            mat-menu-item
+                            [disabled]="!hasAnyAttachments"
+                            (click)="printThread(true, true)"
+                            class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                        >
+                            <mat-icon
+                                class="text-orange-600"
+                                [svgIcon]="'heroicons_solid:printer'"
+                            ></mat-icon>
+                            <span class="text-gray-700 text-lg">{{
+                                t("Email.print-both")
+                            }}</span>
+                        </button>
+                    </mat-menu>
+                    <!-- Flash Warning -->
+                    <div
+                        class="flex items-center ml-30 mr-30 mt-10"
+                        *ngIf="flashMessage"
+                    >
+                        <ng-container *ngIf="flashMessage === 'success'">
+                            <mat-icon
+                                class="text-green-500"
+                                [svgIcon]="'heroicons_outline:check'"
+                            ></mat-icon>
+                            <span
+                                class="ml-2"
+                                [innerText]="flashMessageText"
+                            ></span>
+                        </ng-container>
+                        <ng-container *ngIf="flashMessage === 'error'">
+                            <mat-icon
+                                class="text-red-500"
+                                [svgIcon]="'heroicons_outline:x'"
+                            ></mat-icon>
+                            <span
+                                class="ml-2"
+                                [innerText]="flashMessageText"
+                            ></span>
+                        </ng-container>
+                    </div>
+
+                    <!-- Concurrency Warning -->
+                    <div
+                        *ngIf="replyConcurrencyInfo"
+                        class="flex flex-col justify-center items-center pb-8"
+                    >
+                        <div
+                            *ngIf="!replyConcurrencyInfo.canReply"
+                            class="mt-4 mx-10 w-full max-w-3xl p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg shadow-lg"
+                            role="alert"
+                        >
+                            <div class="flex flex-col items-center">
+                                <p class="text-lg font-semibold">
+                                    {{
+                                        replyConcurrencyInfo.replyInfo.user +
+                                            " (" +
+                                            replyConcurrencyInfo.replyInfo
+                                                .date +
+                                            ")"
+                                    }}
+                                </p>
+
+                                <p class="mt-2">
+                                    {{ t("email-already-open") }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reply list -->
+                    <div *ngFor="let reply of replies" class="mt-1 mr-10">
+                        <div
+                            class="p-1"
+                            [ngClass]="{
+                                'email-unread-card p-2 rounded-lg':
+                                    reply.is_read === 'False'
+                            }"
+                        >
+                            <div class="flex flex-col">
+                                <!-- Display when reply.replied_by is not null, which means it's a reply from us, the employee -->
+                                <div
+                                    class="text-lg font-semibold justify-between rounded-lg"
+                                    *ngIf="
+                                        reply.replied_by;
+                                        else showClientResponse
+                                    "
+                                >
+                                    <div>
+                                        <mat-icon
+                                            class="icon-employee"
+                                            svgIcon="heroicons_solid:chat-alt"
+                                        ></mat-icon>
+                                    </div>
+                                    <div class="my-4">
+                                        <mat-label>
+                                            <b>{{ t("email_replied_by") }}:</b>
+                                        </mat-label>
+                                        {{ reply.replied_by }}
+                                    </div>
+
+                                    <!-- Destinatary of the reply -->
+                                    <div class="my-4">
+                                        <mat-label>
+                                            <b>{{ t("Recipient") }}:</b>
+                                        </mat-label>
+                                        {{ reply.to }}
+                                    </div>
+
+                                    <!-- cc and bcc -->
+                                     
+                                </div>
+
+                                <!-- Display when reply.replied_by is null, which means the client replied -->
+                                <ng-template #showClientResponse>
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <!-- Badge for unread emails -->
+                                        <mat-icon
+                                            class="icon-client"
+                                            svgIcon="heroicons_solid:user-circle"
+                                        ></mat-icon>
+
+                                        <button
+                                            *ngIf="
+                                                !updatingReplyState[
+                                                    reply.reply_token
+                                                ] && reply.is_read === 'False'
+                                            "
+                                            class="unread-badge ml-4 cursor-pointer bg-orange hover:bg-orange-500 hover:shadow-lg hover:scale-105 transform transition duration-200 ease-in-out rounded-lg"
+                                            (click)="
+                                                setReplyToRead(
+                                                    reply.reply_token
+                                                )
+                                            "
+                                        >
+                                            <div
+                                                class="flex flex-row justify-center items-center"
+                                            >
+                                                <p class="mr-1">
+                                                    {{ t("Email.set-read") }}
+                                                </p>
+                                                <mat-icon
+                                                    svgIcon="heroicons_solid:check-circle"
+                                                ></mat-icon>
+                                            </div>
+                                        </button>
+
+                                        <!-- Spinner -->
+                                        <div
+                                            *ngIf="
+                                                updatingReplyState[
+                                                    reply.reply_token
+                                                ]
+                                            "
+                                            class="spinner ml-4 flex justify-center items-center"
+                                        >
+                                            <mat-spinner
+                                                [diameter]="24"
+                                            ></mat-spinner>
+                                            <!-- You can adjust the size -->
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="my-4 text-lg font-semibold flex justify-between rounded-lg"
+                                    >
+                                        <div>
+                                            <mat-label class="mt-4">
+                                                <b>{{ t("sender") }}:</b>
+                                            </mat-label>
+                                            {{ reply.from }}
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div>
+                                <div [id]="'emailInfoDiv_' + reply.reply_token">
+                                    <div class="text-lg font-semibold">
+                                        <mat-label
+                                            ><b
+                                                >{{ t("email-date") }}:</b
+                                            ></mat-label
+                                        >
+                                        {{
+                                            reply.date
+                                                | date : "dd/MM/yyyy HH:mm:ss"
+                                        }}
+                                    </div>
+
+                                    <div
+                                        class="mt-2 text-lg font-semibold"
+                                        [id]="
+                                            'emailBodyField_' +
+                                            reply.reply_token
+                                        "
+                                    >
+                                        <div
+                                            class="flex justify-between items-center"
+                                        >
+                                            <mat-label
+                                                ><b
+                                                    >{{
+                                                        t("email-response")
+                                                    }}:</b
+                                                ></mat-label
+                                            >
+                                            <br />
+
+                                            <!-- Print Email button -->
+                                            <div
+                                                class="flex flex-end pb-1"
+                                                id="printerButton"
+                                            >
+                                                <button
+                                                    mat-button
+                                                    [matMenuTriggerFor]="
+                                                        printMenu
+                                                    "
+                                                    class="flex p-1 pr-2 items-center bg-gray-600 hover:bg-gray-500 text-white rounded-2xl"
+                                                >
+                                                    <p
+                                                        class="text-xl bold mx-2"
+                                                    >
+                                                        {{ t("Email.print") }}
+                                                    </p>
+                                                    <mat-icon
+                                                        [svgIcon]="
+                                                            'heroicons_solid:printer'
+                                                        "
+                                                    ></mat-icon>
+                                                </button>
+                                            </div>
+
+                                            <!-- Dropdown menu for printing options -->
+                                            <mat-menu
+                                                #printMenu="matMenu"
+                                                class="bg-white rounded-lg shadow-lg px-4 py-2"
+                                            >
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="
+                                                        printEmail(
+                                                            reply.reply_token,
+                                                            true,
+                                                            false
+                                                        )
+                                                    "
+                                                    class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                                                >
+                                                    <mat-icon
+                                                        class="text-orange-600"
+                                                        [svgIcon]="
+                                                            'heroicons_solid:document'
+                                                        "
+                                                    ></mat-icon>
+                                                    <span
+                                                        class="text-gray-700 text-lg"
+                                                        >{{
+                                                            t(
+                                                                "Email.print-body"
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </button>
+                                                <button
+                                                    mat-menu-item
+                                                    [disabled]="
+                                                        !reply.attachments ||
+                                                        reply.attachments
+                                                            .length === 0
+                                                    "
+                                                    (click)="
+                                                        printEmail(
+                                                            reply.reply_token,
+                                                            false,
+                                                            true
+                                                        )
+                                                    "
+                                                    class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                                                >
+                                                    <mat-icon
+                                                        class="text-orange-600"
+                                                        [svgIcon]="
+                                                            'heroicons_solid:paper-clip'
+                                                        "
+                                                    ></mat-icon>
+                                                    <span
+                                                        class="text-gray-700 text-lg"
+                                                        >{{
+                                                            t(
+                                                                "Email.print-attachments"
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </button>
+                                                <button
+                                                    mat-menu-item
+                                                    [disabled]="
+                                                        !reply.attachments ||
+                                                        reply.attachments
+                                                            .length === 0
+                                                    "
+                                                    (click)="
+                                                        printEmail(
+                                                            reply.reply_token,
+                                                            true,
+                                                            true
+                                                        )
+                                                    "
+                                                    class="flex justify-start p-2 hover:bg-orange-100 rounded-md transition-all duration-200"
+                                                >
+                                                    <mat-icon
+                                                        class="text-orange-600"
+                                                        [svgIcon]="
+                                                            'heroicons_solid:printer'
+                                                        "
+                                                    ></mat-icon>
+                                                    <span
+                                                        class="text-gray-700 text-lg"
+                                                        >{{
+                                                            t(
+                                                                "Email.print-both"
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </button>
+                                            </mat-menu>
+                                        </div>
+                                        <!-- Display Email HTML content-->
+                                        <div
+                                            class="email-body-container bg-white p-2 w-full"
+                                            [innerHtml]="reply.sanitizedBody"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <!-- Attachments -->
+                                <div class="mt-2 text-lg font-semibold">
+                                    <mat-label
+                                        ><b
+                                            >{{ t("attachments") }}:</b
+                                        ></mat-label
+                                    >
+                                    <ng-container
+                                        *ngIf="
+                                            reply.attachments &&
+                                                reply.attachments.length > 0;
+                                            else noAttachments
+                                        "
+                                    >
+                                        <ng-container
+                                            *ngFor="
+                                                let attach of reply.attachments
+                                            "
+                                        >
+                                            <p
+                                                class="flex items-center space-x-2 pt-2"
+                                            >
+                                                <!-- Download Button -->
+                                                <a
+                                                    href="#"
+                                                    (click)="
+                                                        downloadFile(
+                                                            attach,
+                                                            $event
+                                                        )
+                                                    "
+                                                    class="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full px-2 py-1 mr-2 shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                                                >
+                                                    <mat-icon
+                                                        [svgIcon]="
+                                                            'heroicons_solid:cloud-download'
+                                                        "
+                                                    ></mat-icon>
+                                                </a>
+                                                {{ attach.name }}
+                                            </p>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-template #noAttachments>
+                                        <p>{{ t("Order.no-attachments") }}</p>
+                                    </ng-template>
+                                </div>
+
+                                <!-- Show reply form button -->
+                                <div class="pt-4" *ngIf="!reply.replied_by">
+                                    <button
+                                        class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full"
+                                        (click)="
+                                            toggleReplyForm(reply.reply_token)
+                                        "
+                                        [ngClass]="{
+                                            'mb-4': showReplyForm[
+                                                reply.reply_token
+                                            ]
+                                        }"
+                                    >
+                                        <div class="flex items-center">
+                                            <p class="text-lg mr-1">
+                                                {{ t("Email.response") }}
+                                            </p>
+                                            <mat-icon
+                                                svgIcon="heroicons_solid:chevron-down"
+                                            ></mat-icon>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div *ngIf="showReplyForm[reply.reply_token]">
+                                <app-email-reply-form
+                                    [emailId]="reply.id"
+                                    [isReplyToOriginal]="false"
+                                    [filteredToken]="reply.email_token"
+                                    [cc]="originalEmail.filteredEmail.email.cc"
+                                    [bcc]="
+                                        originalEmail.filteredEmail.email.bcc
+                                    "
+                                    [to]="
+                                        originalEmail.filteredEmail.email.from
+                                    "
+                                    (responseRefresh)="
+                                        handleResponseRefresh($event)
+                                    "
+                                ></app-email-reply-form>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-300 my-4" />
+                    </div>
+
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit template form / Panel -->
+</ng-container>

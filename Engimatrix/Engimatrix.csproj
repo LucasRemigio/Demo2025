@@ -1,0 +1,229 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e97b284d-e454-4ad4-8305-92bcf285a818</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Emails\NewFolder\**" />
+    <Compile Remove="Logs\20240702\**" />
+    <Compile Remove="Logs\20240703\**" />
+    <Compile Remove="Logs\20240704\**" />
+    <Compile Remove="Logs\20240705\**" />
+    <Compile Remove="Logs\20240708\**" />
+    <Compile Remove="Logs\20240709\**" />
+    <Content Remove="Emails\NewFolder\**" />
+    <Content Remove="Logs\20240702\**" />
+    <Content Remove="Logs\20240703\**" />
+    <Content Remove="Logs\20240704\**" />
+    <Content Remove="Logs\20240705\**" />
+    <Content Remove="Logs\20240708\**" />
+    <Content Remove="Logs\20240709\**" />
+    <EmbeddedResource Remove="Emails\NewFolder\**" />
+    <EmbeddedResource Remove="Logs\20240702\**" />
+    <EmbeddedResource Remove="Logs\20240703\**" />
+    <EmbeddedResource Remove="Logs\20240704\**" />
+    <EmbeddedResource Remove="Logs\20240705\**" />
+    <EmbeddedResource Remove="Logs\20240708\**" />
+    <EmbeddedResource Remove="Logs\20240709\**" />
+    <None Remove="Emails\NewFolder\**" />
+    <None Remove="Logs\20240702\**" />
+    <None Remove="Logs\20240703\**" />
+    <None Remove="Logs\20240704\**" />
+    <None Remove="Logs\20240705\**" />
+    <None Remove="Logs\20240708\**" />
+    <None Remove="Logs\20240709\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\AssetsController.cs" />
+    <Compile Remove="Controllers\FilteringController - Copy.cs" />
+    <Compile Remove="Controllers\QueuesController.cs" />
+    <Compile Remove="Controllers\RunScriptsController.cs" />
+    <Compile Remove="Controllers\ScriptController.cs" />
+    <Compile Remove="ModelObjs\FilteredValidateEmail.cs" />
+    <Compile Remove="ModelObjs\HolidayItem.cs" />
+    <Compile Remove="ModelObjs\QueuesItem.cs" />
+    <Compile Remove="ModelObjs\ScriptsItem.cs" />
+    <Compile Remove="ModelObjs\TransactionsItem.cs" />
+    <Compile Remove="Models\AssetsModel.cs" />
+    <Compile Remove="Models\QueuesModel.cs" />
+    <Compile Remove="Models\ScriptsModel.cs" />
+    <Compile Remove="Processes\HRB.cs" />
+    <Compile Remove="Views\AssetsRequest.cs" />
+    <Compile Remove="Views\AssetsResponse.cs" />
+    <Compile Remove="Views\eMAIL.cs" />
+    <Compile Remove="Views\GetScriptsResponse.cs" />
+    <Compile Remove="Views\GetUsersResponse - Copy.cs" />
+    <Compile Remove="Views\HolidayResponse.cs" />
+    <Compile Remove="Views\InvoicesRequest.cs" />
+    <Compile Remove="Views\InvoicesResponse.cs" />
+    <Compile Remove="Views\NotificationsRequest.cs" />
+    <Compile Remove="Views\OperatorRequest.cs" />
+    <Compile Remove="Views\OperatorResponse.cs" />
+    <Compile Remove="Views\QueuesRequest.cs" />
+    <Compile Remove="Views\QueuesResponse.cs" />
+    <Compile Remove="Views\RemoveScriptResponse.cs" />
+    <Compile Remove="Views\ScriptResponse.cs" />
+    <Compile Remove="Views\ScriptsRequest.cs" />
+    <Compile Remove="Views\StartScriptResponse.cs" />
+    <Compile Remove="Views\TransactionsRequest.cs" />
+    <Compile Remove="Views\TransactionsResponse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Data\2024.03.07_AHD-PMO_Apresentação.pdf" />
+    <None Remove="Data\24-0792MG_MasterFerro_24001.pdf" />
+    <None Remove="Data\ARQ+ID.zip" />
+    <None Remove="Data\Consulta Fornecedor nº 385.PDF" />
+    <None Remove="Data\cpanel-logo-tiny.png" />
+    <None Remove="Data\ECF 20240.624.pdf" />
+    <None Remove="Data\ECF_2024_619.pdf" />
+    <None Remove="Data\ECF_2024_624.pdf" />
+    <None Remove="Data\email-robo%40masterferro.pt.mobileconfig" />
+    <None Remove="Data\Encomenda Fornecedor nº 1697.PDF" />
+    <None Remove="Data\full_cache" />
+    <None Remove="Data\Malhasol.xlsx" />
+    <None Remove="Data\Pier Sul- Cerr.xlsx" />
+    <None Remove="Data\Remod Pier Central- Cerr.xlsx" />
+    <None Remove="Data\WhatsApp Image 2024-05-29 at 14.24.12.jpeg" />
+    <None Remove="gs\gs10.01.1\bin\gsdll32.dll" />
+    <None Remove="gs\gs10.01.1\bin\gsdll32.lib" />
+    <None Remove="gs\gs10.01.1\bin\gswin32.exe" />
+    <None Remove="gs\gs10.01.1\bin\gswin32c.exe" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.12" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+    <PackageReference Include="MailKit" Version="4.4.0" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+    <PackageReference Include="MessagePack" Version="2.5.140" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Graph" Version="5.39.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.57.0" />
+    <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="PuppeteerSharp" Version="20.1.3" />
+    <PackageReference Include="Quartz" Version="3.8.0" />
+    <PackageReference Include="smartsheet-csharp-sdk" Version="2.126.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="gs\gs10.01.1\bin\gsdll32.dll" />
+    <Page Include="gs\gs10.01.1\bin\gsdll32.lib" />
+    <Page Include="gs\gs10.01.1\bin\gswin32.exe" />
+    <Page Include="gs\gs10.01.1\bin\gswin32c.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Certs\cacert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\JsonConfirmationEmailInputAI.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\JsonCompareInvoicesOutputAI.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\barra.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\chapa.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\painel.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\rede.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\tubo.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\varao.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Products\viga.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\score.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\logo\masterferro_logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\reset_password-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\reset_password-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\reset_password_confirmation-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\reset_password_confirmation-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_auth2f_code-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_auth2f_code-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_credentials-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_credentials-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_form_request-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_form_request-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_notifications-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\send_notifications-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\signup-en.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Emails\templates\signup-pt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="Logs\" />
+    <Folder Include="Processes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controllers\FilteringController.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Emails\templates\send_auth2f_code.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Emails\templates\send_credentials.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Emails\templates\send_notifications.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Emails\templates\signup.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

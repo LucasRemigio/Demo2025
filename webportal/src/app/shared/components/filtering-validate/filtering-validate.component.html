@@ -1,0 +1,226 @@
+<ng-container *transloco="let t">
+    <div
+        class="flex flex-col flex-auto min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <!-- Header -->
+        <div class="flex relative flex-col px-6 pt-2 pb-1 mr-20 ml-8 md:px-0">
+            <!-- Loader -->
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+
+            <!-- Flex container that holds the left (title/buttons) and right (filters) sections -->
+            <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div class="flex flex-col">
+                    <!-- Title -->
+                    <div class="text-4xl font-extrabold tracking-tight">
+                        <p *ngIf="!category?.slug">
+                            {{ t("Filtering.to-validate") }}
+                        </p>
+                        <p *ngIf="category?.slug">
+                            {{
+                                t("Category." + category.slug) +
+                                    " " +
+                                    t("Order.for-validate")
+                            }}
+                        </p>
+                    </div>
+
+                    <!-- Buttons Row -->
+                    <div class="flex items-center mb-2">
+                        <div class="space-x-2">
+                            <!-- Active View Options (conditionally shown) -->
+                            <ng-container
+                                *ngIf="
+                                    category.id === categoriesList.COTACOES.id
+                                "
+                            >
+                                <ng-container
+                                    *ngFor="let option of activeViewOptions"
+                                >
+                                    <button
+                                        mat-button
+                                        (click)="setActiveView(option.view)"
+                                        [disabled]="activeView === option.view"
+                                        [ngClass]="
+                                            option.view === activeView
+                                                ? 'gray-btn text-white'
+                                                : 'bg-gray-200 text-black'
+                                        "
+                                        class="px-4 py-2 shadow-md hover:shadow-lg transition duration-300 {{
+                                            option.extraClasses
+                                        }}"
+                                    >
+                                        <p
+                                            [ngClass]="
+                                                option.view === activeView
+                                                    ? 'text-white'
+                                                    : 'text-black'
+                                            "
+                                        >
+                                            {{ t(option.translationKey) }}
+                                        </p>
+                                    </button>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions/Filters -->
+                <div class="mt-4 sm:mt-0">
+                    <!-- Single flex container for all filters -->
+                    <div
+                        class="flex flex-col items-center space-x-4 sm:flex-row"
+                    >
+                        <!-- Filter by period -->
+                        <mat-form-field
+                            class="md:w-40"
+                            appearance="fill"
+                            style="margin: 0"
+                        >
+                            <mat-label class="font-normal text-md">{{
+                                t("Dashboard.filter-by-period")
+                            }}</mat-label>
+                            <mat-select
+                                value="0"
+                                (selectionChange)="
+                                    onSelectionChange($event.value)
+                                "
+                            >
+                                <mat-option value="0">{{
+                                    t("Dashboard.today")
+                                }}</mat-option>
+                                <mat-option value="1">{{
+                                    t("Dashboard.today-yesterday")
+                                }}</mat-option>
+                                <mat-option value="2">{{
+                                    t("Dashboard.yesterday")
+                                }}</mat-option>
+                                <mat-option value="3">{{
+                                    t("Dashboard.last3days")
+                                }}</mat-option>
+                                <mat-option value="7">{{
+                                    t("Dashboard.last7days")
+                                }}</mat-option>
+                                <mat-option value="-1">{{
+                                    t("Dashboard.tudo")
+                                }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <!-- Filter by date range -->
+                        <form
+                            [formGroup]="dateRangeForm"
+                            class="flex items-center"
+                        >
+                            <mat-form-field
+                                class="md:w-64"
+                                appearance="fill"
+                                style="margin: 0"
+                            >
+                                <mat-label class="font-normal text-md">{{
+                                    t("Dashboard.filter-by-date-range")
+                                }}</mat-label>
+                                <mat-date-range-input
+                                    [rangePicker]="myRangePicker"
+                                >
+                                    <input
+                                        matStartDate
+                                        formControlName="start"
+                                        (dateChange)="
+                                            onDateRangeChangeStart($event)
+                                        "
+                                    />
+                                    <input
+                                        matEndDate
+                                        formControlName="end"
+                                        (dateChange)="
+                                            onDateRangeChangeEnd($event)
+                                        "
+                                    />
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle
+                                    matSuffix
+                                    [for]="myRangePicker"
+                                ></mat-datepicker-toggle>
+                                <mat-date-range-picker
+                                    #myRangePicker
+                                ></mat-date-range-picker>
+                            </mat-form-field>
+                        </form>
+
+                        <!-- Search filter -->
+                        <mat-form-field
+                            class="self-center w-64"
+                            appearance="fill"
+                            floatLabel="always"
+                            style="margin: 0"
+                        >
+                            <mat-label class="font-normal text-md">{{
+                                t("Filtering.validate-search-by-filters")
+                            }}</mat-label>
+                            <mat-icon
+                                matPrefix
+                                [svgIcon]="'heroicons_solid:search'"
+                            ></mat-icon>
+                            <input
+                                matInput
+                                #query
+                                (input)="filterByQuery(query.value)"
+                                placeholder="{{ t('Filtering.search') }}"
+                            />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main -->
+        <div class="flex overflow-y-auto flex-auto p-1 sm:p-5" cdkScrollable>
+            <div class="flex flex-col flex-auto px-4 mx-auto w-full">
+                <!-- email -->
+                <ng-container *ngIf="filteredEmails.length; else noLibrary">
+                    <ng-container *ngIf="viewType === 'card'">
+                        <app-validate-cards
+                            [filteredEmails]="filteredEmails"
+                            [getReasonClass]="getReasonClass.bind(this)"
+                            [getStatusDescription]="
+                                getStatusDescription.bind(this)
+                            "
+                        >
+                            ></app-validate-cards
+                        >
+                    </ng-container>
+                    <ng-container *ngIf="viewType === 'table'">
+                        <app-validate-table
+                            [filteredEmails]="filteredEmails"
+                            [getReasonClass]="getReasonClass.bind(this)"
+                            [getStatusDescription]="
+                                getStatusDescription.bind(this)
+                            "
+                        ></app-validate-table>
+                    </ng-container>
+                </ng-container>
+                <!-- No email -->
+                <ng-template #noLibrary>
+                    <div
+                        class="flex flex-col flex-auto justify-center items-center bg-gray-100 dark:bg-transparent"
+                    >
+                        <mat-icon
+                            class="icon-size-20"
+                            [svgIcon]="'iconsmind:file_search'"
+                        ></mat-icon>
+                        <div
+                            class="mt-6 text-2xl font-semibold tracking-tight text-secondary"
+                        >
+                            {{ t("Order.no-orders-to-validate") }}
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,149 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-w-240 md:min-w-160 max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ t("Order.data") }}</div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <form
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+            [formGroup]="composeForm"
+        >
+            <!-- ID encomenda  -->
+            <!-- <mat-form-field>
+            <mat-label>ID encomenda</mat-label>
+            <input
+                matInput
+                [formControlName]="
+                    'id'
+                "
+                [readonly]="true"
+            />
+        </mat-form-field> -->
+
+            <br />
+            <!-- PRODUCTS -->
+            <div class="text-secondary border-b">{{ t("Order.product") }}</div>
+            <ng-container
+                *ngFor="
+                    let product of composeForm.get('products')['controls'];
+                    let i = index;
+                    let first = first;
+                    let last = last;
+                    trackBy: trackByFn
+                "
+            >
+                <div class="flex flex-row items-center pt-4">
+                    <!-- DESCRIÇÃO -->
+                    <mat-form-field class="flex-auto w-60">
+                        <mat-label
+                            class="text-base font-medium text-black w-40"
+                            *ngIf="first"
+                        >
+                            {{ t("description") }}
+                        </mat-label>
+                        <input
+                            matInput
+                            [formControl]="product.get('description')"
+                            [readonly]="true"
+                        />
+                    </mat-form-field>
+
+                    <!-- QUANTIDADE -->
+                    <mat-form-field class="flex-auto w-60 ml-2">
+                        <mat-label
+                            class="text-base font-medium text-black w-40"
+                            *ngIf="first"
+                        >
+                            {{ t("Order.quantity") }}
+                        </mat-label>
+                        <input
+                            matInput
+                            [formControl]="product.get('quantity')"
+                            [readonly]="true"
+                        />
+                    </mat-form-field>
+                </div>
+            </ng-container>
+
+            <br />
+            <!-- ADDRESS -->
+            <div class="text-secondary border-b">
+                {{ t("Order.addresses") }}
+            </div>
+            <ng-container
+                *ngFor="
+                    let address of composeForm.get('addresses')['controls'];
+                    let i = index;
+                    let first = first;
+                    let last = last;
+                    trackBy: trackByFn
+                "
+            >
+                <div class="flex flex-row items-center pt-4">
+                    <!-- DESCRIÇÃO -->
+                    <mat-form-field class="flex-auto w-60">
+                        <input
+                            matInput
+                            [formControl]="address.get('description')"
+                            [readonly]="true"
+                        />
+                    </mat-form-field>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="data.order.cancel_reason">
+                <div class="text-secondary border-b">
+                    {{ t("Cancel-Reason.reason-for-cancellation") }}
+                </div>
+                <div class="flex flex-row items-center pt-2">
+                    <!-- MOTIVO DE CANCELAMENTO -->
+                    <mat-label class="text-base font-medium text-black w-100">
+                        {{ t("Cancel-Reason.reason-for-cancellation") }}
+                    </mat-label>
+                </div>
+                <div class="flex flex-row items-center pt-2">
+                    <mat-form-field class="flex-auto w-60">
+                        <input
+                            matInput
+                            [value]="data.order.cancel_reason"
+                            [readonly]="true"
+                        />
+                    </mat-form-field>
+                </div>
+
+                <div class="flex flex-row items-center pt-1">
+                    <mat-label class="text-base font-medium text-black w-100">
+                        {{ t("Cancel-Reason.cancel_user") }}
+                    </mat-label>
+                </div>
+                <div class="flex flex-row items-center pt-2">
+                    <!-- MOTIVO DE CANCELAMENTO -->
+                    <mat-form-field class="flex-auto w-60">
+                        <input
+                            matInput
+                            [value]="data.order.cancel_user"
+                            [readonly]="true"
+                        />
+                    </mat-form-field>
+                </div>
+            </ng-container>
+
+            <!-- <button
+                    class="p-6 bg-gray-300 mt-10"
+                    mat-flat-button
+                    (click)="saveAndClose()"
+                >
+                    {{ t("edit") }}
+                </button> -->
+        </form>
+    </div>
+</ng-container>

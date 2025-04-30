@@ -1,0 +1,516 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 py-4 ml-8 mr-20 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <!-- Loader -->
+            <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+                <mat-progress-bar
+                    class="orange-loader"
+                    [mode]="'indeterminate'"
+                ></mat-progress-bar>
+            </div>
+
+            <!-- Title -->
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{
+                    t("Order.audit") +
+                        (category.id !== 0
+                            ? " - " + t("Category." + category.slug)
+                            : "")
+                }}
+            </div>
+
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <!-- Filter Checkbox -->
+                <div>
+                    <mat-form-field class="flex-auto md:w-40">
+                        <mat-label class="font-normal text-md">{{
+                            t("Dashboard.filter-by-resolved")
+                        }}</mat-label>
+                        <mat-select
+                            [(value)]="showNonResolvedOnly"
+                            (selectionChange)="filterNonResolvedEmails()"
+                            style="color: #000000"
+                        >
+                            <mat-option [value]="false" style="color: #000000">
+                                {{ t("Dashboard.tudo") }}
+                            </mat-option>
+                            <mat-option [value]="true" style="color: #000000">
+                                {{ t("Dashboard.non-resolved-only") }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field
+                        [ngClass]="formFieldHelpers"
+                        class="flex-auto md:w-40"
+                        style="margin: 0; vertical-align: middle"
+                    >
+                        <mat-label class="font-normal text-md">{{
+                            t("Dashboard.filter-by-period")
+                        }}</mat-label>
+                        <mat-select
+                            [value]="'0'"
+                            (selectionChange)="onSelectionChange($event.value)"
+                            style="color: #000000"
+                        >
+                            <mat-option [value]="'0'" style="color: #000000">
+                                {{ t("Dashboard.today") }}
+                            </mat-option>
+                            <mat-option [value]="'1'" style="color: #000000">
+                                {{ t("Dashboard.today-yesterday") }}
+                            </mat-option>
+                            <mat-option [value]="'2'" style="color: #000000">
+                                {{ t("Dashboard.yesterday") }}
+                            </mat-option>
+                            <mat-option [value]="'3'" style="color: #000000">
+                                {{ t("Dashboard.last3days") }}
+                            </mat-option>
+                            <mat-option [value]="'7'" style="color: #000000">
+                                {{ t("Dashboard.last7days") }}
+                            </mat-option>
+                            <mat-option [value]="'-1'" style="color: #000000">
+                                {{ t("Dashboard.tudo") }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <form [formGroup]="dateRangeForm" class="flex items-center">
+                        <mat-form-field
+                            class="flex-shrink-0 md:w-64"
+                            style="margin: 0; vertical-align: middle"
+                        >
+                            <mat-label class="font-normal text-md">{{
+                                t("Dashboard.filter-by-date-range")
+                            }}</mat-label>
+                            <mat-date-range-input [rangePicker]="myRangePicker">
+                                <input
+                                    [(ngModel)]="startDate"
+                                    formControlName="start"
+                                    #matStartDateInput
+                                    matStartDate
+                                    (dateChange)="
+                                        onDateRangeChangeStart($event)
+                                    "
+                                />
+                                <input
+                                    [(ngModel)]="endDate"
+                                    formControlName="end"
+                                    #matEndDateInput
+                                    matEndDate
+                                    (dateChange)="onDateRangeChangeEnd($event)"
+                                />
+                            </mat-date-range-input>
+
+                            <mat-datepicker-toggle
+                                matSuffix
+                                [for]="myRangePicker"
+                            ></mat-datepicker-toggle>
+                            <mat-date-range-picker
+                                #myRangePicker
+                            ></mat-date-range-picker>
+                        </mat-form-field>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs list -->
+        <div
+            class="flex flex-col flex-auto mt-5 ml-20 mr-20 overflow-y-auto sm:mb-18"
+            [style.min-width.%]="isSmallScreen() ? 250 : null"
+        >
+            <ng-container *ngIf="orders && orders.length > 0; else nosources">
+                <kendo-grid
+                    class="mb-5"
+                    [kendoGridBinding]="orders"
+                    [sortable]="true"
+                    [pageSize]="state.take"
+                    [skip]="state.skip"
+                    [sort]="state.sort"
+                    [filter]="savedFilter"
+                    (filterChange)="onFilterChanged($event)"
+                    filterable="menu"
+                    [pageable]="true"
+                    (pageChange)="onPageChange($event)"
+                    [resizable]="true"
+                    style="width: 100%; height: 100vh; overflow: auto"
+                >
+                    <!-- Columns definition -->
+                    <kendo-grid-column
+                        field="created_by"
+                        [title]="t('created-by')"
+                        [headerStyle]="headerStyle"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span
+                                style="padding: 8px 12px; display: block"
+                                [style.backgroundColor]="
+                                    colorCode(dataItem.order_status)
+                                "
+                            >
+                                {{ dataItem.created_by }}
+                            </span>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column
+                        field="client.primavera_client.nome"
+                        title="{{ t('current-client') }}"
+                        [headerStyle]="headerStyle"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span
+                                style="padding: 8px 12px; display: block"
+                                [style.backgroundColor]="
+                                    colorCode(dataItem.order_status)
+                                "
+                            >
+                                <ng-container
+                                    *ngIf="dataItem.client; else noClient"
+                                >
+                                    {{
+                                        dataItem.client?.primavera_client?.nome
+                                    }}
+                                </ng-container>
+                                <ng-template #noClient>
+                                    {{ t("Order.no-associated-client") }}
+                                </ng-template>
+                            </span>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column
+                        [filterable]="false"
+                        field="created_at"
+                        title="{{ t('created-at') }}"
+                        [type]="'date'"
+                        [headerStyle]="headerStyle"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span
+                                style="padding: 8px 12px; display: block"
+                                [style.backgroundColor]="
+                                    colorCode(dataItem.order_status)
+                                "
+                            >
+                                {{
+                                    dataItem.created_at
+                                        | date : "dd/MM/yyyy HH:mm:ss"
+                                }}
+                            </span>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column
+                        field="status.description"
+                        title="{{ t('state') }}"
+                        [headerStyle]="headerStyle"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span
+                                style="padding: 8px 12px; display: block"
+                                [style.backgroundColor]="
+                                    colorCode(dataItem.order_status)
+                                "
+                            >
+                                {{ dataItem.status.description }}
+                            </span>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column
+                        *ngIf="isDraft"
+                        [sortable]="true"
+                        [filterable]="false"
+                        field="resolved_at"
+                        title="{{ t('Order.email-replied') }}"
+                        [headerStyle]="headerStyle"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span
+                                class="flex items-center justify-center h-full"
+                                [ngStyle]="{
+                                    'background-color': colorCode(
+                                        dataItem.order_status
+                                    )
+                                }"
+                            >
+                                <!-- this, instead of manually resolved, should indicate if the quotation is pending client approval-->
+                                <!-- Resolved status button as icon-->
+                                <mat-icon
+                                    mat-icon-button
+                                    class="w-10 h-10"
+                                    [class]="getPendingClientColor(dataItem)"
+                                    [matTooltip]="
+                                        getPendingOrderPendingClientMatTooltip(
+                                            dataItem
+                                        )
+                                    "
+                                    matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                    [svgIcon]="'heroicons_solid:check-circle'"
+                                >
+                                </mat-icon>
+
+                                <ng-container
+                                    *ngIf="
+                                        dataItem.filtered_email;
+                                        else noEmailIcon
+                                    "
+                                >
+                                    <mat-icon
+                                        *ngIf="
+                                            dataItem.filtered_email
+                                                .forwarded_by !== ''
+                                        "
+                                        class="w-8 h-8 text-orange-600"
+                                        [svgIcon]="
+                                            'heroicons_solid:arrow-up-right'
+                                        "
+                                        [matTooltip]="
+                                            t('Email.forwarded') +
+                                            ' ' +
+                                            dataItem.filtered_email
+                                                .forwarded_by +
+                                            ' - ' +
+                                            (dataItem.filtered_email
+                                                .forwarded_at
+                                                | date
+                                                    : 'dd/MM/yyyy HH:mm:ss') +
+                                            ' '
+                                        "
+                                        matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                    >
+                                    </mat-icon>
+                                    <mat-icon
+                                        *ngIf="
+                                            dataItem.filtered_email
+                                                .reply_count > 0 &&
+                                            dataItem.filtered_email
+                                                .replied_by !== ''
+                                        "
+                                        class="text-green-500 w-9 h-9"
+                                        [svgIcon]="
+                                            'heroicons_solid:paper-airplane'
+                                        "
+                                        [matTooltip]="
+                                            t('email_replied_by', {}) +
+                                            ' ' +
+                                            dataItem.filtered_email.replied_by +
+                                            ' - ' +
+                                            (dataItem.filtered_email.replied_at
+                                                | date : 'dd/MM/yyyy HH:mm:ss')
+                                        "
+                                        matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                    >
+                                    </mat-icon>
+                                </ng-container>
+                                <ng-template #noEmailIcon>
+                                    <!-- Nothing for now -->
+                                </ng-template>
+                            </span>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column
+                        [sortable]="true"
+                        [filterable]="false"
+                        field="unread_replies_count"
+                        title="{{ t('action') }}"
+                        [headerStyle]="headerStyle"
+                        [style]="{
+                            padding: '5px'
+                        }"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <ng-container
+                                *ngIf="
+                                    dataItem.filtered_email;
+                                    else noEmailButtons
+                                "
+                            >
+                                <button
+                                    *ngIf="
+                                        dataItem.filtered_email.reply_count > 0
+                                    "
+                                    [matBadgeHidden]="
+                                        dataItem.filtered_email
+                                            .unread_replies_count === 0
+                                    "
+                                    [matBadge]="
+                                        dataItem.filtered_email
+                                            .unread_replies_count
+                                    "
+                                    class="w-8 h-8 ml-2 min-h-8 custom-badge"
+                                    [matTooltip]="
+                                        t('Email.preview-replies', {})
+                                    "
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="
+                                        previewReplies(
+                                            dataItem.filtered_email.token
+                                        )
+                                    "
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:inbox-in'"
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <button
+                                    *ngIf="true"
+                                    class="w-8 h-8 ml-2 min-h-8"
+                                    [matTooltip]="t('Email.view-and-reply', {})"
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="
+                                        previewEmail(
+                                            dataItem.filtered_email.token
+                                        )
+                                    "
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:eye'"
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <button
+                                    class="w-8 h-8 ml-2 min-h-8"
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="fwdEmail(dataItem.filtered_email)"
+                                    [matTooltip]="t('Order.fwd', {})"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:mail'"
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <button
+                                    class="w-8 h-8 ml-2 min-h-8"
+                                    [matTooltip]="
+                                        t('Email.change-category', {})
+                                    "
+                                    mat-icon-button
+                                    style="background-color: #5a5a5a"
+                                    (click)="
+                                        previewEmail(
+                                            dataItem.filtered_email.token,
+                                            true
+                                        )
+                                    "
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:tag'"
+                                    >
+                                    </mat-icon>
+                                </button>
+                            </ng-container>
+                            <ng-template #noEmailButtons> </ng-template>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-messages
+                        pagerNextPage="{{ t('GridMessage.NextPage') }}"
+                        pagerPreviousPage="{{ t('GridMessage.PreviousPage') }}"
+                        pagerLastPage="{{ t('GridMessage.LastPage') }}"
+                        pagerFirstPage="{{ t('GridMessage.FirstPage') }}"
+                        pagerOf="{{ t('GridMessage.de') }}"
+                        pagerItems="{{ t('GridMessage.Transactions') }}"
+                        pagerItemsPerPage="{{
+                            t('GridMessage.PageTransactions')
+                        }}"
+                        filterFilterButton="{{ t('GridMessage.Filter') }}"
+                        filterClearButton="{{ t('GridMessage.Clean') }}"
+                        filterBeforeOrEqualOperator="{{
+                            t('GridMessage.BeforeOrEqual')
+                        }}"
+                        filterBeforeOperator="{{ t('GridMessage.Before') }}"
+                        filterAfterOrEqualOperator="{{
+                            t('GridMessage.AfterOrEqual')
+                        }}"
+                        filterAfterOperator="{{ t('GridMessage.After') }}"
+                        filterDateToday="{{ t('GridMessage.Today') }}"
+                        filterAndLogic="{{ t('GridMessage.And') }}"
+                        filterOrLogic="{{ t('GridMessage.Or') }}"
+                        filterContainsOperator="{{ t('GridMessage.Contains') }}"
+                        filterEndsWithOperator="{{ t('GridMessage.EndsWith') }}"
+                        filterEqOperator="{{ t('GridMessage.Equals') }}"
+                        filterNotEqOperator="{{ t('GridMessage.Different') }}"
+                        filterNotContainsOperator="{{
+                            t('GridMessage.NotContains')
+                        }}"
+                        filterStartsWithOperator="{{
+                            t('GridMessage.StartsWith')
+                        }}"
+                        filterIsNullOperator="{{ t('GridMessage.IsNull') }}"
+                        filterIsNotNullOperator="{{
+                            t('GridMessage.IsNotNull')
+                        }}"
+                        filterIsEmptyOperator="{{ t('GridMessage.IsEmpty') }}"
+                        filterIsNotEmptyOperator="{{
+                            t('GridMessage.IsNotEmpty')
+                        }}"
+                        noRecords="{{ t('GridMessage.NoRecords') }}"
+                    >
+                    </kendo-grid-messages>
+
+                    <ng-template
+                        kendoPagerTemplate
+                        let-totalPages="totalPages"
+                        let-currentPage="currentPage"
+                    >
+                        <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+                        <kendo-pager-page-sizes
+                            [pageSizes]="pagesizes"
+                        ></kendo-pager-page-sizes>
+                        <kendo-pager-numeric-buttons
+                            [buttonCount]="5"
+                        ></kendo-pager-numeric-buttons>
+                        <kendo-pager-next-buttons></kendo-pager-next-buttons>
+                        <kendo-pager-info></kendo-pager-info>
+                    </ng-template>
+                </kendo-grid>
+            </ng-container>
+
+            <!-- No sources -->
+            <ng-template #nosources>
+                <div
+                    class="flex flex-col items-center justify-center w-full h-full p-40 bg-gray-100 dark:bg-transparent"
+                >
+                    <div
+                        class="flex flex-col items-center justify-center flex-grow"
+                    >
+                        <mat-icon
+                            class="icon-size-20"
+                            [svgIcon]="'iconsmind:file_search'"
+                        ></mat-icon>
+                        <div
+                            class="mt-6 text-2xl font-semibold tracking-tight text-secondary"
+                        >
+                            {{ t("Filtering.no-emails") }}
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</ng-container>

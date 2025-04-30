@@ -1,0 +1,74 @@
+<ng-container *transloco="let t">
+    <!-- Cards Container -->
+    <div class="flex flex-wrap justify-center gap-4 lg:mx-10">
+        <!-- For each rating, display a pair of cards: current rating and proposed rating (if available) -->
+        <div *ngFor="let rating of ratings" class="flex flex-row gap-4">
+            <!-- Current Rating Card -->
+            <div
+                class="flex-1 p-4 text-center bg-white border border-orange-600 rounded shadow"
+                style="min-width: 250px; max-width: 300px"
+                [matTooltip]="getWhoVerifiedRating(rating.rating_type.id)"
+                matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+            >
+                <h3 class="text-lg font-semibold">
+                    {{ t("Ratings." + rating.rating_type.slug) }}
+                </h3>
+                <p>
+                    {{ t("Product.weight") }}:
+                    <strong>{{ rating.rating_type.weight }}</strong>
+                </p>
+                <p class="mt-2 text-4xl font-bold orange-text">
+                    <strong>{{ rating.rating_discount.rating }}</strong>
+                </p>
+                <p>
+                    {{ t("discount") }}:
+                    <strong>{{ rating.rating_discount.percentage }}%</strong>
+                </p>
+            </div>
+
+            <!-- Proposed Rating Card -->
+            <!-- The ng-container will only render if there is a pending request -->
+            <ng-container
+                *ngIf="getLastPendingRequest(rating.rating_type.id) as proposed"
+            >
+                <!-- Arrow Element -->
+                <div class="flex items-center justify-center">
+                    <!-- You can adjust the style or size of the icon as needed -->
+                    <mat-icon
+                        class="text-gray-900"
+                        style="font-size: 48px"
+                        [svgIcon]="'heroicons_solid:arrow-right'"
+                    ></mat-icon>
+                </div>
+
+                <div
+                    class="flex-1 p-4 text-center bg-white border border-blue-600 rounded shadow"
+                    style="min-width: 250px; max-width: 300px"
+                    [matTooltip]="getWhoRequestedRating(proposed)"
+                    matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                >
+                    <h3 class="text-lg font-semibold">
+                        {{ t("new-proposed-rating") }}
+                    </h3>
+                    <p>
+                        {{ t("Product.weight") }}:
+                        <strong>{{ proposed.rating_type.weight }}</strong>
+                    </p>
+                    <p class="mt-2 text-4xl font-bold text-blue-600 blue-text">
+                        <strong>{{
+                            proposed.new_rating_discount.rating
+                        }}</strong>
+                    </p>
+                    <p>
+                        {{ t("discount") }}:
+                        <strong
+                            >{{
+                                proposed.new_rating_discount.percentage
+                            }}%</strong
+                        >
+                    </p>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>

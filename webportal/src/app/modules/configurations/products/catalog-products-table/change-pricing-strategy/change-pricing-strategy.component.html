@@ -1,0 +1,146 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6 max-w-240 md:min-w-160">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("change-pricing-strategy") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex items-center mt-10 ml-30 mr-30" *ngIf="flashMessage">
+            <ng-container *ngIf="flashMessage === 'success'">
+                <mat-icon
+                    class="text-green-500"
+                    [svgIcon]="'heroicons_outline:check'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+            <ng-container *ngIf="flashMessage === 'error'">
+                <mat-icon
+                    class="text-red-500"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+                <span class="ml-2" [innerText]="flashMessageText"></span>
+            </ng-container>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div
+            class="flex items-center justify-center w-full h-full my-auto"
+            *ngIf="isLoading"
+        >
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form -->
+        <div
+            class="flex flex-col flex-auto p-6 overflow-y-auto text-lg text-black sm:p-8"
+            *ngIf="!isLoading"
+        >
+            <form [formGroup]="pricingForm" (ngSubmit)="saveChanges()">
+                <div class="flex flex-col mb-6">
+                    <div
+                        class="w-full p-4 mb-4 bg-gray-100 rounded-lg shadow-sm"
+                        *ngIf="catalogProduct"
+                    >
+                        <div class="mb-1 text-sm font-semibold text-gray-500">
+                            {{ t("catalog-product") }}
+                        </div>
+                        <div class="text-lg font-bold text-gray-800">
+                            {{ catalogProduct.product_code }} -
+                            {{ catalogProduct.description }}
+                        </div>
+                    </div>
+
+                    <mat-form-field class="w-full" *ngIf="!catalogProduct">
+                        <mat-label
+                            class="mb-2 font-semibold text-gray-700 text-md"
+                            >{{ t("product-family") }}</mat-label
+                        >
+
+                        <mat-select
+                            formControlName="family"
+                            required
+                            placeholder="{{ t('product-family') }}"
+                        >
+                            <!-- Default option -->
+                            <mat-option [value]="0">{{
+                                t("Order.all")
+                            }}</mat-option>
+
+                            <mat-option
+                                *ngFor="let family of families"
+                                [value]="family.id"
+                            >
+                                {{ family.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full">
+                        <mat-label
+                            class="mb-2 font-semibold text-gray-700 text-md"
+                            >{{ t("pricing-strategy") }}</mat-label
+                        >
+                        <mat-select
+                            formControlName="pricingStrategy"
+                            required
+                            placeholder="{{ t('pricing-strategy') }}"
+                        >
+                            <mat-option
+                                *ngFor="let strategy of pricingStrategies"
+                                [value]="strategy.id"
+                            >
+                                {{ t("PricingStrategies." + strategy.slug) }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="
+                                pricingForm
+                                    .get('pricingStrategy')
+                                    .hasError('required')
+                            "
+                        >
+                            {{ t("Order.segment-required") }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <p
+                        class="mb-4 text-md"
+                        [innerHTML]="currentPricingDescription"
+                    ></p>
+                </div>
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 mr-2 text-white transition-colors duration-200 bg-gray-500 rounded-md hover:bg-gray-400"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+                        [disabled]="pricingForm?.invalid"
+                        type="submit"
+                    >
+                        {{ t("Order.save-changes") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

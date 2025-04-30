@@ -1,0 +1,206 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col overflow-auto">
+        <!-- Header -->
+        <div
+            class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
+        >
+            <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+            </div>
+            <div class="text-4xl font-extrabold tracking-tight">
+                {{ t("client-segments") }}
+            </div>
+
+            <!-- Actions -->
+            <div
+                class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
+                style="align-items: center"
+            >
+                <div class="flex flex-row justify-center mr-20">
+                    <!-- Alert of pending clients count -->
+                    <div
+                        class="flex items-center p-4 mt-5 mr-8 bg-white border border-gray-200 rounded-lg shadow-lg"
+                        *ngIf="pendingClientsCount > 0"
+                        style="height: 50px; align-items: center"
+                    >
+                        <mat-icon
+                            class="text-yellow-500"
+                            [svgIcon]="'heroicons_outline:exclamation'"
+                        ></mat-icon>
+                        <span class="ml-2">
+                            {{
+                                pendingClientsCount + " " + t("pending-clients")
+                            }}
+                        </span>
+                    </div>
+
+                    <!-- Filter by pending update clients -->
+                    <mat-form-field class="flex-auto w-full mr-8 md:w-64">
+                        <mat-label>{{
+                            t("Dashboard.filter-by-pending-update")
+                        }}</mat-label>
+                        <mat-select
+                            [(value)]="showOnlyPendingClients"
+                            (selectionChange)="refreshData()"
+                        >
+                            <mat-option [value]="false">{{
+                                t("show-all")
+                            }}</mat-option>
+                            <mat-option [value]="true">{{
+                                t("show-pending-updates")
+                            }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Button to sync clients with Primavera -->
+                    <button
+                        mat-raised-button
+                        class="mt-6 text-white orange-btn"
+                        (click)="syncClients()"
+                        [disabled]="isSyncingPrimavera"
+                    >
+                        <ng-container *ngIf="isSyncingPrimavera; else showText">
+                            <!-- Loading spinner when syncing -->
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </ng-container>
+                        <ng-template #showText>
+                            <p
+                                class="mr-2 font-semibold text-center text-white text-md"
+                            >
+                                {{ t("sync-clients-primavera") }}
+                            </p>
+
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:refresh'"
+                            >
+                            </mat-icon>
+                        </ng-template>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto overflow-auto">
+            <div
+                class="flex flex-col flex-auto mt-5 ml-20 mr-20 sm:mb-18 sm:overflow-y-auto"
+                [style.min-width.%]="isSmallScreen() ? 250 : null"
+                style="max-height: 90vh; overflow-y: auto"
+            >
+                <kendo-grid
+                    id="clients-grid"
+                    [kendoGridBinding]="filteredClients"
+                    [sortable]="true"
+                    [pageSize]="50"
+                    [pageable]="true"
+                    [resizable]="true"
+                    filterable="menu"
+                    class="h-full"
+                    [rowClass]="getRowClass"
+                >
+                    <!-- Client id column -->
+                    <kendo-grid-column
+                        field="code"
+                        title="{{ t('client-code') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.code }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client Name column -->
+                    <kendo-grid-column
+                        field="primavera_client.nome"
+                        title="{{ t('client-name') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.primavera_client?.nome || "N/A" }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client email address column -->
+                    <kendo-grid-column
+                        field="primavera_client.email"
+                        title="{{ t('email') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{ dataItem.primavera_client?.email || "N/A" }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client email address column -->
+                    <kendo-grid-column
+                        field="primavera_client.email"
+                        title="{{ t('client-email') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.primavera_client?.emailQualidade ||
+                                    "N/A"
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client email address column -->
+                    <kendo-grid-column
+                        field="primavera_client.email"
+                        title="{{ t('quality-email') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{
+                                dataItem.primavera_client?.emailCliente || "N/A"
+                            }}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Client segment column -->
+                    <kendo-grid-column
+                        field="segment.name"
+                        title="{{ t('client-segment') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <div
+                                [matTooltip]="getSegmentTooltip(dataItem)"
+                                class="flex w-full h-full"
+                                matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                style="width: 100%; height: 100%"
+                            >
+                                {{ dataItem.segment.name }}
+                            </div>
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <!-- Actions Column -->
+                    <kendo-grid-column
+                        title="{{ t('actions') }}"
+                        [headerStyle]="getHeaderStyle()"
+                    >
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <!-- Buttons -->
+                            <!-- Edit client segment button -->
+                            <button
+                                mat-icon-button
+                                class="w-8 h-8 min-h-8"
+                                [matTooltip]="t('change-client-segment', {})"
+                                style="background-color: #5a5a5a"
+                                (click)="changeClientSegment(dataItem)"
+                            >
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="'heroicons_solid:pencil'"
+                                >
+                                </mat-icon>
+                            </button>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</ng-container>

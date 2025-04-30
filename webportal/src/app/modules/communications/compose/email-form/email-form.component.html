@@ -1,0 +1,140 @@
+<ng-container *transloco="let t">
+    <form [formGroup]="emailForm">
+        <div>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>
+                    {{ t("Email.choose-mailbox") }}
+                </mat-label>
+                <mat-select formControlName="mailbox" >
+                    <mat-option
+                        *ngFor="let mailbox of mailboxes"
+                        [value]="mailbox"
+                    >
+                        {{ mailbox }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- To input -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ t("Recipient") }}</mat-label>
+                <input
+                    matInput
+                    type="text"
+                    formControlName="to"
+                    placeholder="{{ t('recipient-insert') }}"
+                    (input)="onInput($event.target.value)"
+                    [matAutocomplete]="auto"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option
+                        *ngFor="let email of filteredRecipients"
+                        [value]="email"
+                    >
+                        {{ email }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <div class="copy-fields-toggles" matSuffix>
+                    <span
+                        class="text-sm font-medium cursor-pointer select-none hover:underline"
+                        (click)="showCopyField('cc')"
+                    >
+                        Cc
+                    </span>
+                    <span
+                        class="ml-2 text-sm font-medium cursor-pointer select-none hover:underline"
+                        (click)="showCopyField('bcc')"
+                    >
+                        Bcc
+                    </span>
+                </div>
+                <mat-error *ngIf="emailForm.get('to').hasError('required')">
+                    {{ t("recipient-mandatory") }}
+                </mat-error>
+                <mat-error
+                    *ngIf="emailForm.get('to').hasError('invalidEmails')"
+                >
+                    {{ t("recipient-invalid") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Cc -->
+            <mat-form-field
+                appearance="outline"
+                class="w-full"
+                *ngIf="copyFields.cc"
+            >
+                <mat-label>Cc</mat-label>
+                <input
+                    matInput
+                    [formControlName]="'cc'"
+                    type="text"
+                    [(ngModel)]="cc"
+                    (input)="onInput($event.target.value)"
+                    [matAutocomplete]="auto"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option
+                        *ngFor="let email of filteredRecipients"
+                        [value]="email"
+                    >
+                        {{ email }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <mat-error
+                    *ngIf="emailForm.get('cc').hasError('invalidEmails')"
+                >
+                    {{ t("recipient-invalid") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Bcc -->
+            <mat-form-field
+                appearance="outline"
+                class="w-full"
+                *ngIf="copyFields.bcc"
+            >
+                <mat-label>Bcc</mat-label>
+                <input
+                    matInput
+                    [formControlName]="'bcc'"
+                    type="text"
+                    [(ngModel)]="bcc"
+                    (input)="onInput($event.target.value)"
+                    [matAutocomplete]="auto"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option
+                        *ngFor="let email of filteredRecipients"
+                        [value]="email"
+                    >
+                        {{ email }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <mat-error
+                    *ngIf="emailForm.get('bcc').hasError('invalidEmails')"
+                >
+                    {{ t("recipient-invalid") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Subject input -->
+            <mat-form-field appearance="outline" class="w-full mb-4">
+                <mat-label>{{ t("Notifications.subject") }}</mat-label>
+                <input
+                    matInput
+                    formControlName="subject"
+                    placeholder="{{ t('Notifications.subject-insert') }}"
+                />
+                <mat-error
+                    *ngIf="emailForm.get('subject').hasError('required')"
+                >
+                    {{ t("Notifications.subject-mandatory") }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+</ng-container>

@@ -1,0 +1,15 @@
+{
+    "/api/*": {
+        "target": "https://localhost:5000",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": false
+    },
+    "/ws/*": {
+        "target": "https://localhost:5000",
+        "ws": true,
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": false
+    }
+}

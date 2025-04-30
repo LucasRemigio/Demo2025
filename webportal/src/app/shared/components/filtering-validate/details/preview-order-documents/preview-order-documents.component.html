@@ -1,0 +1,186 @@
+<ng-container *transloco="let t">
+    <div class="h-full mb-6">
+        <!-- Header -->
+        <div class="mb-4 text-2xl font-bold tracking-tight">
+            <div *ngIf="filteredEmail; else newEmailTitle">
+                {{ t("reply-to-client") }}
+            </div>
+            <ng-template #newEmailTitle>
+                {{ t("email-new-short") }}
+            </ng-template>
+            <div class="my-4 border-t"></div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <ng-container *ngIf="isLoading">
+            <div class="flex justify-center">
+                <mat-spinner diameter="32"></mat-spinner>
+            </div>
+        </ng-container>
+
+        <!-- Main Content When Documents Exist -->
+        <ng-container *ngIf="!isLoading && documents.length > 0">
+            <div *ngIf="!filteredEmail" class="flex flex-col mt-4">
+                <app-email-form
+                    [destinatary]="getDestinatary()"
+                ></app-email-form>
+            </div>
+
+            <!-- Download Buttons -->
+            <ng-container *ngFor="let document of documents">
+                <div class="flex items-center pb-2 space-x-2">
+                    <a
+                        href="#"
+                        (click)="downloadFile(document, $event)"
+                        class="inline-flex items-center px-2 py-1 font-semibold text-white transition duration-300 ease-in-out transform bg-blue-500 rounded-full shadow-md hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_solid:cloud-download'"
+                        ></mat-icon>
+                    </a>
+                    <!-- Print Button -->
+                    <a
+                        href="#"
+                        (click)="printFile(document, $event)"
+                        class="inline-flex items-center px-2 py-1 font-semibold text-white transition duration-300 ease-in-out transform bg-green-500 rounded-full shadow-md hover:bg-green-600 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_solid:printer'"
+                        ></mat-icon>
+                    </a>
+                    <p>
+                        {{ document.name }}
+                    </p>
+                </div>
+            </ng-container>
+
+            <!-- Two-Column Layout -->
+            <div class="grid grid-cols-10 gap-4 mt-4">
+                <!-- PDF Preview Column -->
+                <div class="col-span-6">
+                    <mat-label class="mt-4 mb-2 text-xl">
+                        <b>{{ t("Order.pdf_preview") }}</b>
+                    </mat-label>
+                    <ng-container *ngFor="let doc of documents">
+                        <!-- PDF Viewer Container -->
+                        <div
+                            class="pdf-container"
+                            id="pdf-container"
+                            [ngClass]="{
+                                fullscreen: isFullscreen
+                            }"
+                            style="flex: 0 0 60%; max-width: 150%; height: 105%"
+                        >
+                            <!-- Botões de controle -->
+                            <div
+                                class="-mb-10 text-center flex justify-center gap-[10px]"
+                            >
+                                <!-- Zoom In -->
+                                <button
+                                    mat-icon-button
+                                    (click)="zoomIn()"
+                                    class="w-10 h-10 bg-black rounded-full"
+                                >
+                                    <mat-icon
+                                        style="font-size: 24px; color: black"
+                                        [svgIcon]="'heroicons_solid:plus'"
+                                    ></mat-icon>
+                                </button>
+
+                                <!-- Zoom Out -->
+                                <button
+                                    mat-icon-button
+                                    (click)="zoomOut()"
+                                    class="w-10 h-10 bg-black rounded-full"
+                                >
+                                    <mat-icon
+                                        style="font-size: 24px; color: black"
+                                        [svgIcon]="'heroicons_solid:minus'"
+                                    ></mat-icon>
+                                </button>
+
+                                <!-- Fullscreen -->
+                                <button
+                                    mat-icon-button
+                                    (click)="toggleFullscreenPDF()"
+                                    class="w-10 h-10 bg-black rounded-full"
+                                >
+                                    <mat-icon
+                                        style="font-size: 24px; color: white"
+                                        [svgIcon]="
+                                            'heroicons_solid:arrows-expand'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                            </div>
+
+                            <!-- PDF Viewer -->
+                            <pdf-viewer
+                                [src]="
+                                    'data:application/pdf;base64,' +
+                                    doc.invoice_html
+                                "
+                                scroll="false"
+                                [zoom]="zoom"
+                                [render-text]="true"
+                                [show-all]="true"
+                                class="h-full overflow-auto"
+                            ></pdf-viewer>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Response Textarea Column -->
+                <form
+                    class="flex flex-col col-span-4 gap-4"
+                    (submit)="sendEmail()"
+                    [formGroup]="emailForm"
+                >
+                    <!-- Email Body (Quill Editor) -->
+                    <div class="h-[800px]">
+                        <mat-label class="mb-2 text-xl">
+                            <b>{{ t("email-body") }}</b>
+                        </mat-label>
+                        <quill-editor
+                            matInput
+                            formControlName="body"
+                            [modules]="quillModules"
+                            (onEditorCreated)="onEditorCreated($event)"
+                            placeholder="Enter email body"
+                            class="h-full"
+                        ></quill-editor>
+                        <mat-error
+                            *ngIf="emailForm.get('body').hasError('required')"
+                        >
+                            {{ t("email-body-mandatory") }}
+                        </mat-error>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Send Button -->
+            <div class="flex justify-end">
+                <button
+                    mat-raised-button
+                    class="justify-center w-40 mt-4 text-center text-white align-middle orange-btn"
+                    type="button"
+                    (click)="sendEmail()"
+                    [disabled]="isSendingEmail"
+                >
+                    {{ t("Notifications.send") }}
+                    <mat-icon
+                        class="ml-2"
+                        [svgIcon]="'heroicons_solid:paper-airplane'"
+                    ></mat-icon>
+                </button>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- No Attachments Message -->
+    <ng-container *ngIf="!isLoading && documents.length === 0">
+        <div class="p-8 text-2xl tracking-tight text-center sm:p-16">
+            {{ t("no-attachments") }}
+        </div>
+    </ng-container>
+</ng-container>

@@ -1,0 +1,194 @@
+/* ----------------------------------------------------------------------------------------------------- */
+
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+@import "../../node_modules/flag-icon-css/css/flag-icons.css";
+
+.text-4xl {
+    color: #1c1c1a;
+}
+
+$custom-orange: #df4d11;
+
+$custom-gray: #383838;
+
+.k-selected.k-pager-nav.k-link,
+.k-selected.k-pager-refresh {
+    color: white;
+    background-color: #00395d1b;
+}
+
+.k-picker-md.k-rounded-md.k-picker-solid.k-dropdownlist {
+    background-color: #b2deff1b;
+}
+
+.k-picker-md.k-rounded-md.k-picker-solid.k-dropdownlist.k-picker {
+    background-color: #b2deff1b;
+}
+
+.k-pager-numbers .k-link {
+    color: #383838;
+}
+
+.k-pager-numbers .k-link:hover,
+.k-pager-numbers .k-link.k-hover {
+    color: #005e9c;
+    background-color: #b2deffad;
+}
+
+.k-pager-numbers .k-link.k-selected {
+    color: white;
+    background-color: $custom-orange;
+}
+
+.k-button-solid-primary {
+    background-color: #b2deff;
+    border-color: #1c537e;
+}
+
+.k-list .k-item.k-state-selected {
+    background-color: #4b08e7;
+}
+
+.k-list .k-item.k-state-selected:hover {
+    background-color: #b2deff;
+}
+
+.k-i-filter {
+    color: $custom-orange; /* Custom color for the filter icon */
+}
+
+.orange-bg {
+    background-color: $custom-orange !important;
+    color: white;
+}
+
+.gray-bg {
+    background-color: $custom-gray !important;
+    color: white;
+}
+
+.orange-btn {
+    background-color: $custom-orange !important;
+    color: white;
+}
+
+.gray-btn {
+    background-color: $custom-gray !important;
+    color: white;
+}
+
+.orange-text {
+    --tw-text-opacity: 1;
+    color: rgba($custom-orange, var(--tw-text-opacity));
+}
+
+/*
+* Custom style for mat-progress-bar-fill
+*/
+// Indeterminate Loader
+.orange-loader .mat-progress-bar-fill {
+    background-color: $custom-orange;
+}
+
+body.light .mat-progress-bar-fill::after,
+body .light .mat-progress-bar-fill::after {
+    background-color: $custom-orange;
+}
+
+/*
+* Custom style for mat-spinner the circular one
+*/
+body.light .mat-progress-spinner circle,
+body.light .mat-spinner circle,
+body .light .mat-progress-spinner circle,
+body .light .mat-spinner circle {
+    stroke: $custom-orange;
+}
+
+/*
+* Custom style for mat-checkbox
+*/
+body.light .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+body.light .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+body .light .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+body .light .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: $custom-orange;
+}
+
+/*
+* Custom style for mat-form-field
+*/
+// Mat Form field when focused
+.mat-form-field.mat-form-field-appearance-fill.mat-focused:not(
+        .mat-form-field-invalid
+    )
+    .mat-form-field-wrapper
+    .mat-form-field-flex {
+    border-color: $custom-orange !important;
+}
+
+body.light .mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
+body .light .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+    color: $custom-orange;
+}
+
+/*
+* Custom style for mat-day-picker
+*/
+// The selected days of the calendar. The 2 balls around the days that are selected
+body.light .mat-calendar-body-selected,
+body .light .mat-calendar-body-selected {
+    background-color: $custom-orange;
+    box-shadow: inset 0 0 0 1px #333333;
+    color: white;
+}
+
+// The ring around the day of today, both when selected and not
+body.light .mat-calendar-body-today.mat-calendar-body-selected,
+body .light .mat-calendar-body-today.mat-calendar-body-selected,
+body.light .mat-calendar-body-today,
+body .light .mat-calendar-body-today {
+    box-shadow: inset 0 0 0 2px #333333;
+}
+
+// The days that are in the range of the selected days
+body.light .mat-calendar-body-in-range::before,
+body .light .mat-calendar-body-in-range::before {
+    background: $custom-orange;
+}
+
+// The content of the selected days
+body.light .mat-calendar-body-in-range .mat-calendar-body-cell-content {
+    color: white;
+}
+
+// body.light .mat-calendar-body-preview-end,
+// body .light .mat-calendar-body-preview-end {
+//     color: #df4d11;
+// }
+
+body.light .mat-calendar-body-in-preview,
+body .light .mat-calendar-body-in-preview {
+    color: $custom-orange;
+}
+
+/*
+* Custom style for kendo-grid-table
+*/
+// The border around the kendo grid table
+.k-grid {
+    background-color: $custom-orange;
+}
+
+// The color of the text in the kendo grid table
+td {
+    --tw-text-opacity: 1;
+    color: rgba(15, 23, 42, var(--tw-text-opacity)) /* #0f172a */;
+}
+
+.no-padding-dialog .mat-dialog-container {
+    padding: 0 !important;
+    box-sizing: border-box;
+}

@@ -1,0 +1,198 @@
+<ng-container *transloco="let t">
+    <!-- Loader -->
+    <div class="fixed left-0 right-0 z-50 top-18" *ngIf="isLoading">
+        <mat-progress-bar
+            class="orange-loader"
+            [mode]="'indeterminate'"
+        ></mat-progress-bar>
+    </div>
+
+    <!-- Logs list -->
+    <div
+        class="flex flex-col flex-auto mt-5 w-full overflow-y-auto sm:mb-18"
+        [style.min-width.%]="isSmallScreen() ? 250 : null"
+        *ngIf="filteredFilteredEmails.length > 0"
+    >
+        <kendo-grid
+            class="mb-5"
+            [kendoGridBinding]="filteredFilteredEmails"
+            [sortable]="true"
+            [pageSize]="state.take"
+            [skip]="state.skip"
+            [sort]="state.sort"
+            [filter]="savedFilter"
+            (filterChange)="onFilterChanged($event)"
+            filterable="menu"
+            [pageable]="true"
+            (pageChange)="onPageChange($event)"
+            [resizable]="true"
+            style="width: 100%; height: 100vh; overflow: auto"
+        >
+            <!-- Columns definition -->
+            <kendo-grid-column
+                [filterable]="false"
+                field="date"
+                title="{{ t('email-date') }}"
+                [type]="'date'"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span
+                        style="padding: 8px 12px; display: block"
+                        [style.backgroundColor]="
+                            colorCode(dataItem.order_status)
+                        "
+                    >
+                        {{ dataItem.email.date | date : "dd/MM/yyyy HH:mm:ss" }}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-column
+                field="email.from"
+                title="{{ t('Order.sender-email') }}"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span
+                        style="padding: 8px 12px; display: block"
+                        [style.backgroundColor]="
+                            colorCode(dataItem.order_status)
+                        "
+                    >
+                        {{ dataItem.email.from }}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-column
+                field="email.subject"
+                title="{{ t('EmailAutomation.subject') }}"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span
+                        style="padding: 8px 12px; display: block"
+                        [style.backgroundColor]="
+                            colorCode(dataItem.order_status)
+                        "
+                    >
+                        {{ dataItem.email.subject }}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-column
+                field="status"
+                title="{{ t('state') }}"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span
+                        style="display: block"
+                        [ngClass]="getReasonClass(dataItem.status)"
+                        class="rounded-md px-2 py-1.5 text-center"
+                        [style.backgroundColor]="
+                            colorCode(dataItem.order_status)
+                        "
+                    >
+                        {{ getStatusDescription(dataItem.status) }}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-column
+                field="email.to"
+                title="{{ t('Order.email-source') }}"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span
+                        style="padding: 8px 12px; display: block"
+                        [style.backgroundColor]="
+                            colorCode(dataItem.order_status)
+                        "
+                    >
+                        {{ dataItem.email.to }}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-column
+                [sortable]="true"
+                [filterable]="false"
+                field="unread_replies_count"
+                title="{{ t('action') }}"
+                [headerStyle]="getHeaderStyle()"
+            >
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <!-- Buttons -->
+                    <button
+                        mat-icon-button
+                        class="w-8 h-8 ml-2 min-h-8 orange-bg"
+                        [routerLink]="[dataItem.email.id]"
+                        [disabled]="
+                            isEmailPendingAdminApproval(dataItem.status)
+                        "
+                        [matTooltip]="t('Email.view-and-reply', {})"
+                    >
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:check'"
+                        >
+                        </mat-icon>
+                    </button>
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-messages
+                pagerNextPage="{{ t('GridMessage.NextPage') }}"
+                pagerPreviousPage="{{ t('GridMessage.PreviousPage') }}"
+                pagerLastPage="{{ t('GridMessage.LastPage') }}"
+                pagerFirstPage="{{ t('GridMessage.FirstPage') }}"
+                pagerOf="{{ t('GridMessage.de') }}"
+                pagerItems="{{ t('GridMessage.Transactions') }}"
+                pagerItemsPerPage="{{ t('GridMessage.PageTransactions') }}"
+                filterFilterButton="{{ t('GridMessage.Filter') }}"
+                filterClearButton="{{ t('GridMessage.Clean') }}"
+                filterBeforeOrEqualOperator="{{
+                    t('GridMessage.BeforeOrEqual')
+                }}"
+                filterBeforeOperator="{{ t('GridMessage.Before') }}"
+                filterAfterOrEqualOperator="{{ t('GridMessage.AfterOrEqual') }}"
+                filterAfterOperator="{{ t('GridMessage.After') }}"
+                filterDateToday="{{ t('GridMessage.Today') }}"
+                filterAndLogic="{{ t('GridMessage.And') }}"
+                filterOrLogic="{{ t('GridMessage.Or') }}"
+                filterContainsOperator="{{ t('GridMessage.Contains') }}"
+                filterEndsWithOperator="{{ t('GridMessage.EndsWith') }}"
+                filterEqOperator="{{ t('GridMessage.Equals') }}"
+                filterNotEqOperator="{{ t('GridMessage.Different') }}"
+                filterNotContainsOperator="{{ t('GridMessage.NotContains') }}"
+                filterStartsWithOperator="{{ t('GridMessage.StartsWith') }}"
+                filterIsNullOperator="{{ t('GridMessage.IsNull') }}"
+                filterIsNotNullOperator="{{ t('GridMessage.IsNotNull') }}"
+                filterIsEmptyOperator="{{ t('GridMessage.IsEmpty') }}"
+                filterIsNotEmptyOperator="{{ t('GridMessage.IsNotEmpty') }}"
+                noRecords="{{ t('GridMessage.NoRecords') }}"
+            >
+            </kendo-grid-messages>
+
+            <ng-template
+                kendoPagerTemplate
+                let-totalPages="totalPages"
+                let-currentPage="currentPage"
+            >
+                <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+                <kendo-pager-page-sizes
+                    [pageSizes]="pagesizes"
+                ></kendo-pager-page-sizes>
+                <kendo-pager-numeric-buttons
+                    [buttonCount]="5"
+                ></kendo-pager-numeric-buttons>
+                <kendo-pager-next-buttons></kendo-pager-next-buttons>
+                <kendo-pager-info></kendo-pager-info>
+            </ng-template>
+        </kendo-grid>
+    </div>
+</ng-container>

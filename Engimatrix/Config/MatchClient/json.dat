@@ -1,0 +1,17 @@
+Faz um parse para retornar uma estrutura JSON com este formato:
+
+"{
+    "Cliente": "",
+    "Nome": "",
+    "Contribuinte": "",
+    "Morada": "",
+    "Morada1": "",
+    "Localidade": "",
+    "CodPostal": "",
+    "CodPostalLocalidade": "",
+    "Pais": "",
+    "Distrito": "",
+    "Telemovel": "",
+    "Email": "",
+    "Confianca": "",
+}"

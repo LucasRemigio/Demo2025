@@ -1,0 +1,79 @@
+<ng-container *transloco="let t">
+    <div class="h-full mb-6">
+        <div class="mb-4 text-2xl font-bold tracking-tight" *ngIf="showTitle">
+            {{ t("preview-attachments") }}
+            <div class="my-4 border-t"></div>
+        </div>
+        <!-- Download all possible files -->
+        <ng-container *ngIf="hasAttachments">
+            <div class="px-4">
+                <ng-container *ngFor="let attach of attachments">
+                    <p class="flex items-center pb-2 space-x-2">
+                        <!-- Download Button -->
+                        <a
+                            href="#"
+                            (click)="downloadFile(attach, $event)"
+                            class="inline-flex items-center px-2 py-1 mr-2 font-semibold text-white transition duration-300 ease-in-out transform bg-blue-500 rounded-full shadow-md hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg"
+                        >
+                            <mat-icon
+                                [svgIcon]="'heroicons_solid:cloud-download'"
+                            ></mat-icon>
+                        </a>
+                        {{ attach.name }}
+                    </p>
+                </ng-container>
+            </div>
+
+            <div *ngIf="isAnyAttachmentPdf" class="mx-4 my-4">
+                <mat-label class="text-xl">
+                    <b>{{ t("Order.pdf_preview") }}</b>
+                </mat-label>
+
+                <ng-container *ngFor="let attach of pdfAttachments">
+                    <!-- Show natively the pdfs in its raw-->
+
+                    <!-- Wrapping the pdf-viewer in a div with proper width, height, and overflow settings -->
+                    <div
+                        style="
+                            width: 100%;
+                            height: 70vh;
+                            overflow: hidden;
+                            max-width: 100%;
+                        "
+                        class="mb-10 mr-5"
+                        id="emailAttachDiv"
+                    >
+                        <div class="text-secondary" class="mx-4 mb-2">
+                            <mat-label>
+                                <p>{{ attach.name }}</p>
+                            </mat-label>
+                        </div>
+                        <pdf-viewer
+                            src="data:application/pdf;base64,{{ attach.file }}"
+                            [show-all]="true"
+                            [original-size]="false"
+                            [render-text]="true"
+                            [zoom]="0.9"
+                            [zoom-scale]="'page-width'"
+                            style="width: 100%; height: 100%; max-width: 100%"
+                        ></pdf-viewer>
+                    </div>
+                </ng-container>
+            </div>
+
+            <div
+                *ngIf="!isAnyAttachmentPdf"
+                class="mx-4 my-4"
+                style="width: 90%; height: 60vh"
+            >
+                <b class="text-lg">{{ t("no-pdf") }}</b>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="!hasAttachments">
+            <div class="p-8 text-2xl tracking-tight text-center sm:p-16">
+                {{ t("no-attachments") }}
+            </div>
+        </ng-container>
+    </div>
+</ng-container>

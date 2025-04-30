@@ -1,0 +1,106 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col h-full -m-6 overflow-hidden">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("edit-setting") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Form -->
+        <div class="flex-1 px-6 py-4 overflow-y-auto">
+            <form [formGroup]="settingForm" (ngSubmit)="save()">
+                <!-- Setting Key (Read-only) -->
+                <mat-form-field class="w-full mb-4">
+                    <mat-label>{{ t("setting-name") }}</mat-label>
+                    <input matInput formControlName="setting_key" readonly />
+                </mat-form-field>
+
+                <!-- Setting Value (Editable) -->
+                <mat-form-field class="w-full mb-4">
+                    <mat-label>{{ t("setting-value") }}</mat-label>
+                    <input
+                        matInput
+                        type="number"
+                        min="{{ minimumValue }}"
+                        max="{{ maximumValue }}"
+                        formControlName="setting_value"
+                        placeholder="{{ t('enter-setting-value') }}"
+                    />
+                    <mat-error
+                        *ngIf="
+                            settingForm
+                                .get('setting_value')
+                                .hasError('required')
+                        "
+                    >
+                        {{ t("setting-value-required") }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            settingForm.get('setting_value').hasError('pattern')
+                        "
+                    >
+                        {{ t("setting-value") + " " + t("x-must-be-numeric") }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="settingForm.get('setting_value').hasError('min')"
+                    >
+                        {{
+                            t("setting-value") +
+                                " " +
+                                t("x-must-be-greater-than") +
+                                " " +
+                                minimumValue
+                        }}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="settingForm.get('setting_value').hasError('max')"
+                    >
+                        {{
+                            t("setting-value") +
+                                " " +
+                                t("x-must-be-lower-than") +
+                                " " +
+                                maximumValue
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 mr-2 text-white transition-colors duration-200 bg-gray-500 rounded-md hover:bg-gray-400"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+                        [disabled]="settingForm.invalid || settingForm.pristine"
+                        type="submit"
+                    >
+                        {{ t("Order.save-changes") }}
+                    </button>
+                </div>
+            </form>
+
+            <!-- Add bottom padding to ensure last items are visible -->
+            <div class="h-4"></div>
+        </div>
+    </div>
+</ng-container>

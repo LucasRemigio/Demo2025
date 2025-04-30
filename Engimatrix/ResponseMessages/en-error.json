@@ -1,0 +1,328 @@
+{
+  "messages": [
+    {
+      "code": -1,
+      "message": "Input arguments are invalid"
+    },
+    {
+      "code": -2,
+      "message": "Internal error"
+    },
+    {
+      "code": -3,
+      "message": "User already exists"
+    },
+    {
+      "code": -4,
+      "message": "Email used for another registration"
+    },
+    {
+      "code": -5,
+      "message": "Unable to regist user"
+    },
+    {
+      "code": -6,
+      "message": "Unable to login user"
+    },
+    {
+      "code": -7,
+      "message": "Invalid Login"
+    },
+    {
+      "code": -8,
+      "message": "Unable to renew access token"
+    },
+    {
+      "code": -9,
+      "message": "Unable to remove user"
+    },
+    {
+      "code": -10,
+      "message": "User doesn't exist"
+    },
+    {
+      "code": -11,
+      "message": "User admin can't be removed'"
+    },
+    {
+      "code": -12,
+      "message": "Unable to update user"
+    },
+    {
+      "code": -13,
+      "message": "Unable to update user admin"
+    },
+    {
+      "code": -14,
+      "message": "Unable to registry employee"
+    },
+    {
+      "code": -15,
+      "message": "Employee email already exists"
+    },
+    {
+      "code": -16,
+      "message": "Unable to remove employee"
+    },
+    {
+      "code": -17,
+      "message": "Employee with given email doesn't exist'"
+    },
+    {
+      "code": -18,
+      "message": "Unable to update employee"
+    },
+    {
+      "code": -19,
+      "message": "Employee profile doesn't exist'"
+    },
+    {
+      "code": -20,
+      "message": "Unable to update employee profile"
+    },
+    {
+      "code": -21,
+      "message": "Unable to upload firm file"
+    },
+    {
+      "code": -22,
+      "message": "Responsible firm doesn't exist"
+    },
+    {
+      "code": -23,
+      "message": "Unable to upload Rhn file"
+    },
+    {
+      "code": -24,
+      "message": "Unable to upload CV file"
+    },
+    {
+      "code": -25,
+      "message": "Map entry doesn't exist"
+    },
+    {
+      "code": -26,
+      "message": "Map entry already exists"
+    },
+    {
+      "code": -27,
+      "message": "User password is expired, reset link sent, please check your email box"
+    },
+    {
+      "code": -28,
+      "message": "Reset link is invalid or might be expired"
+    },
+    {
+      "code": -29,
+      "message": "New password should be different from recent history"
+    },
+    {
+      "code": -30,
+      "message": "Error while updating receipt"
+    },
+    {
+      "code": -31,
+      "message": "There was an error while deleting the receipt"
+    },
+    {
+      "code": -32,
+      "message": "The receipt does not exist"
+    },
+    {
+      "code": -33,
+      "message": "Unable to regist the receipt, check if file is the right one"
+    },
+    {
+      "code": -34,
+      "message": "Receipt already exists"
+    },
+    {
+      "code": -35,
+      "message": "Unable to sign receipt"
+    },
+    {
+      "code": -36,
+      "message": "Error while signing receipt, firm file missing. Please go to your profile to submit a valid firm file."
+    },
+    {
+      "code": -37,
+      "message": "Error while downloading receipts, there are no receipts for the month and year chosen."
+    },
+    {
+      "code": -38,
+      "message": "Error while updating password."
+    },
+    {
+      "code": -39,
+      "message": "New password equals to the old one."
+    },
+    {
+      "code": -40,
+      "message": "Current password is not correct."
+    },
+    {
+      "code": -41,
+      "message": "Unable to create absense/holiday before contract begining date."
+    },
+    {
+      "code": -42,
+      "message": "Unable to create CSV file for the provided dates."
+    },
+    {
+      "code": -43,
+      "message": "Unable to remove Script"
+    },
+    {
+      "code": -44,
+      "message": "Unable to edit Script"
+    },
+    {
+      "code": -45,
+      "message": "Unable to start Script"
+    },
+    {
+      "code": -46,
+      "message": "Unable to access the list of Scripts"
+    },
+    {
+      "code": -47,
+      "message": "Unable to update Script status"
+    },
+    {
+      "code": -48,
+      "message": "Unable to access the list of Queues"
+    },
+    {
+      "code": -49,
+      "message": "Error adding Queue"
+    },
+    {
+      "code": -50,
+      "message": "Error removing Queue"
+    },
+    {
+      "code": -51,
+      "message": "Error editing Queue"
+    },
+    {
+      "code": -52,
+      "message": "Unable to add Transaction"
+    },
+    {
+      "code": -53,
+      "message": "Error removing Transaction"
+    },
+    {
+      "code": -54,
+      "message": "Error editing transaction"
+    },
+    {
+      "code": -55,
+      "message": "Unable to get list of Jobs"
+    },
+    {
+      "code": -56,
+      "message": "Error getting list of Assets"
+    },
+    {
+      "code": -57,
+      "message": "Error adding Asset"
+    },
+    {
+      "code": -58,
+      "message": "Error editing Asset"
+    },
+    {
+      "code": -59,
+      "message": "Error removing Asset"
+    },
+    {
+      "code": -60,
+      "message": "Error email token given not found in concurrency registry"
+    },
+    {
+      "code": -61,
+      "message": "Another user is the owner of this concurrency registry"
+    },
+    {
+      "code": -62,
+      "message": "Email with given token not found"
+    },
+    {
+      "code": -63,
+      "message": "Table name provided is not valid"
+    },
+    {
+      "code": -64,
+      "message": "Rating provided is not valid"
+    },
+    {
+      "code": -65,
+      "message": "Error sending email to destinatary"
+    },
+    {
+      "code": -66,
+      "message": "Error saving email"
+    },
+    {
+      "code": -67,
+      "message": "Error saving attachment"
+    },
+    {
+      "code": -68,
+      "message": "Already loading recourse"
+    },
+    {
+      "code": -69,
+      "message": "Resource not found"
+    },
+    {
+      "code": -70,
+      "message": "Error querying the database"
+    },
+    {
+      "code": -71,
+      "message": "Resource is empty"
+    },
+    {
+      "code": -72,
+      "message": "The Primavera API returned an error"
+    },
+    {
+      "code": -73,
+      "message": "Email currently processing"
+    },
+    {
+      "code": -74,
+      "message": "Invalid stock for product"
+    },
+    {
+      "code": -75,
+      "message": "Item already exists"
+    },
+    {
+      "code": -76,
+      "message": "Only allowed for admins"
+    },
+    {
+      "code": -77,
+      "message": "Error adding trigger"
+    },
+    {
+      "code": -78,
+      "message": "Error editing trigger"
+    },
+    {
+      "code": -79,
+      "message": "Error removing trigger"
+    },
+    {
+      "code": -80,
+      "message": "Error executing trigger"
+    },
+    {
+      "code": -81,
+      "message": "Not authorized"
+    }
+  ]
+}

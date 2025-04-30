@@ -1,0 +1,19 @@
+<!-- Flash Message -->
+<div
+    *ngFor="let message of flashMessages; let i = index"
+    class="transition-opacity duration-500 ease-in-out"
+    [ngClass]="{
+        'opacity-0': message.isFadingOut,
+        'opacity-100': !message.isFadingOut
+    }"
+    aria-live="polite"
+>
+    <fuse-alert
+        [type]="message.type"
+        [appearance]="'outline'"
+        [dismissible]="flashMessages.length > 1"
+        [dismissed]="false"
+    >
+        <span fuseAlertTitle>{{ message.text }}</span>
+    </fuse-alert>
+</div>

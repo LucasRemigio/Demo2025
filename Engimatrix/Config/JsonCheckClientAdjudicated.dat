@@ -1,0 +1,11 @@
+Faz um parse à informaçao do email para retornar uma estrutura JSON com este formato:
+
+"{
+  "pediu_retificacao": "",
+  "cliente_adjudicou": "",
+  "confianca": "",
+  "justificacao": "",
+}"
+
+Segue agora o email em questão:
+

@@ -1,0 +1,71 @@
+<div class="px-8 py-2" >
+    <ol>
+        <ng-container
+            *ngFor="let step of steps; let last = last; trackBy: trackByFn"
+        >
+            <li
+                class="relative py-6 group"
+                [class.current-step]="step.order === currentStep"
+            >
+                <ng-container *ngIf="!last">
+                    <div
+                        class="absolute top-6 left-4 w-0.5 h-full -ml-px"
+                        [ngClass]="{
+                            'orange-bg': step.order < currentStep,
+                            'bg-gray-300 dark:bg-gray-600':
+                                step.order >= currentStep
+                        }"
+                    ></div>
+                </ng-container>
+                <div
+                    class="relative flex items-start cursor-pointer"
+                    (click)="goToStep(step.order)"
+                >
+                    <div
+                        class="flex items-center justify-center w-8 h-8 rounded-full flex-0 ring-2 ring-inset ring-transparent bg-card dark:bg-blue-500"
+                        [ngClass]="{
+                            'orange-bg dark:orange-bg text-white group-hover:bg-orange-300':
+                                step.order < currentStep,
+                            'ring-orange text-orange ring-orange-600':
+                                step.order === currentStep,
+                            'ring-gray-300 dark:ring-blue-200 group-hover:ring-orange-300 ':
+                                step.order > currentStep
+                        }"
+                    >
+                        <!-- Completed step -->
+                        <ng-container *ngIf="step.order < currentStep">
+                            <mat-icon
+                                class="text-current icon-size-5"
+                                [svgIcon]="'heroicons_solid:check'"
+                            ></mat-icon>
+                        </ng-container>
+                        <!-- Current step -->
+                        <ng-container *ngIf="step.order === currentStep">
+                            <div
+                                class="font-semibold text-md text-primary dark:text-primary-500"
+                            >
+                                {{ step.order + 1 }}
+                            </div>
+                        </ng-container>
+                        <!-- Upcoming step -->
+                        <ng-container *ngIf="step.order > currentStep">
+                            <div
+                                class="font-semibold text-md text-hint group-hover:text-orange-300"
+                            >
+                                {{ step.order + 1 }}
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="ml-4">
+                        <div class="font-medium leading-4">
+                            {{ step.title }}
+                        </div>
+                        <div class="mt-1.5 text-md leading-4 text-secondary">
+                            {{ step.subtitle }}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ng-container>
+    </ol>
+</div>
