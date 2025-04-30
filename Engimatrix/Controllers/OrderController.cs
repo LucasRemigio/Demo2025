@@ -97,7 +97,6 @@ public class OrderController : ControllerBase
         }
     }
 
-
     [HttpPut]
     [Route("cancel/{orderToken}")]
     [RequestLimit]
@@ -164,7 +163,6 @@ public class OrderController : ControllerBase
             return new OrderPrimaveraDocumentResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
 
     [HttpPut]
     [Route("{orderToken}/pending-client-confirmation")]
@@ -348,36 +346,6 @@ public class OrderController : ControllerBase
             return new GenericResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
-    [HttpPost]
-    [Route("invoice/{orderToken}")]
-    [RequestLimit]
-    [ValidateReferrer]
-    [Authorize]
-    public async Task<ActionResult<GenericResponse>> GenerateOrderInvoice(string orderToken)
-    {
-        string language = this.Request.Headers["client-lang"];
-        if (string.IsNullOrEmpty(language))
-        {
-            language = ConfigManager.defaultLanguage;
-        }
-
-        string token = this.Request.Headers["Authorization"];
-        string executer_user = UserModel.GetUserByToken(token);
-
-        try
-        {
-            await OrderPrimaveraDocumentModel.CreateOrderDocuments(orderToken, executer_user);
-
-            return new OrderPrimaveraDocumentResponse(ResponseSuccessMessage.Success, language);
-        }
-        catch (Exception e)
-        {
-            Log.Error("Filtered endpoint - Error - " + e);
-            return new GenericResponse(ResponseErrorMessage.InternalError, language);
-        }
-    }
-
 
     [HttpGet]
     [Route("noAuth/{orderToken}")]
@@ -607,7 +575,6 @@ public class OrderController : ControllerBase
             return new GetOrderToValidateResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
 
     [HttpPatch]
     [Route("{orderToken}/status")]

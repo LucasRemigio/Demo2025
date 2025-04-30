@@ -134,7 +134,6 @@ public class ClientController : ControllerBase
         }
     }
 
-
     [HttpGet]
     [Route("{clientCode}/{orderToken}")]
     [RequestLimit]
@@ -167,48 +166,6 @@ public class ClientController : ControllerBase
             return new ClientItemResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
-    [HttpGet]
-    [Route("{clientCode}/rate-credit")]
-    [RequestLimit]
-    [ValidateReferrer]
-    [Authorize]
-    public async Task<ActionResult<ClientPendingOrdersAndInvoicesResponse>> GetClientWithRatingsByCodeDTOByOrderTokenRateCredit(string clientCode)
-    {
-        string language = this.Request.Headers["client-lang"];
-        if (string.IsNullOrEmpty(language))
-        {
-            language = ConfigManager.defaultLanguage;
-        }
-        string token = this.Request.Headers["Authorization"];
-        string executer_user = UserModel.GetUserByToken(token);
-
-        try
-        {
-            (List<PrimaveraOrderItem> orders, List<MFPrimaveraInvoiceItem> invoices) = await ClientModel.GetCreditClientStatisticsForRating(clientCode);
-            decimal ordersTotal = PrimaveraOrderModel.GetOrdersTotal([.. orders.Select(x => x.primavera_order_header)]);
-            MFPrimaveraInvoiceTotalItem? invoicesTotal = PrimaveraInvoiceModel.CalculateInvoicesTotal(invoices);
-            AveragePaymentTimeItem? averagePaymentTime = SyncPrimaveraRatingsModel.CalculateAveragePaymentTime(invoices);
-
-            return new ClientPendingOrdersAndInvoicesResponse(orders, invoices, ordersTotal, invoicesTotal, averagePaymentTime, ResponseSuccessMessage.Success, language);
-        }
-        catch (PrimaveraApiErrorException e)
-        {
-            Log.Error("GetClientWithRatingsByCodeDTOByOrderTokenRateCredit endpoint - Primavera Error - " + e);
-            return new ClientPendingOrdersAndInvoicesResponse(ResponseErrorMessage.PrimaveraApiError, language);
-        }
-        catch (InputNotValidException e)
-        {
-            Log.Error("GetClientWithRatingsByCodeDTOByOrderToken endpoint - Error - " + e);
-            return new ClientPendingOrdersAndInvoicesResponse(ResponseErrorMessage.InvalidArgs, language);
-        }
-        catch (Exception e)
-        {
-            Log.Error("GetClientWithRatingsByCodeDTOByOrderToken endpoint - Error - " + e);
-            return new ClientPendingOrdersAndInvoicesResponse(ResponseErrorMessage.InternalError, language);
-        }
-    }
-
 
     [HttpPatch]
     [Route("{clientCode}/segment")]
@@ -364,5 +321,4 @@ public class ClientController : ControllerBase
             return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
 }

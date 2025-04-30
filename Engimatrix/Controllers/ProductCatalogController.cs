@@ -81,7 +81,6 @@ public class ProductCatalogController : ControllerBase
                 List<ProductCatalogDTONoAuth> products = ProductCatalogModel.SearchProductCatalogsNoAuth(query, has_stock, executer_user);
                 return new ProductCatalogListResponseNoAuth(products, ResponseSuccessMessage.Success, language);
             }
-
         }
         catch (Exception e)
         {
@@ -151,7 +150,6 @@ public class ProductCatalogController : ControllerBase
             return new ProductCatalogItemResponse(ResponseErrorMessage.InternalError, language);
         }
     }
-
 
     [HttpPost]
     [Route("")]
@@ -316,7 +314,7 @@ public class ProductCatalogController : ControllerBase
 
         try
         {
-            // Update products pricing strategies 
+            // Update products pricing strategies
             ProductCatalogModel.PatchProductPricingStrategy(pricingReq, executer_user);
 
             return new GenericResponse(ResponseSuccessMessage.Success, language);
@@ -331,67 +329,5 @@ public class ProductCatalogController : ControllerBase
             Log.Error("ChangePricingOptions endpoint - Error - " + e);
             return new GenericResponse(ResponseErrorMessage.InternalError, language);
         }
-
     }
-
-    [HttpPost]
-    [Route("sync-primavera")]
-    [RequestLimit]
-    public async Task<ActionResult<SyncPrimaveraStatsResponse>> SyncPrimavera(string key)
-    {
-        string language = this.Request.Headers["client-lang"];
-        if (string.IsNullOrEmpty(language))
-        {
-            language = ConfigManager.defaultLanguage;
-        }
-        string token = this.Request.Headers["Authorization"];
-        string executer_user = "System";
-        if (!string.IsNullOrEmpty(token))
-        {
-            executer_user = UserModel.GetUserByToken(token);
-        }
-
-        try
-        {
-            if (string.IsNullOrEmpty(key) || !key.Equals(ConfigManager.engimatrixInternalApiKey, StringComparison.Ordinal))
-            {
-                return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InvalidArgs, language);
-            }
-
-            SyncPrimaveraStats stats = await ProductCatalogModel.SyncPrimavera(executer_user);
-            return new SyncPrimaveraStatsResponse(stats, ResponseSuccessMessage.Success, language);
-        }
-        catch (Exception e)
-        {
-            Log.Error("SyncPrimavera endpoint - Error - " + e);
-            return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InternalError, language);
-        }
-    }
-
-    [HttpPost]
-    [Route("sync-primavera/compare-stocks")]
-    [Authorize]
-    [RequestLimit]
-    public async Task<ActionResult<SyncPrimaveraStatsResponse>> CompareStocksWithWarehouse()
-    {
-        string language = this.Request.Headers["client-lang"];
-        if (string.IsNullOrEmpty(language))
-        {
-            language = ConfigManager.defaultLanguage;
-        }
-        string token = this.Request.Headers["Authorization"];
-        string executer_user = UserModel.GetUserByToken(token);
-
-        try
-        {
-            SyncPrimaveraStats stats = await ProductCatalogModel.CompareProductStockLists(executer_user);
-            return new SyncPrimaveraStatsResponse(stats, ResponseSuccessMessage.Success, language);
-        }
-        catch (Exception e)
-        {
-            Log.Error("SyncPrimavera endpoint - Error - " + e);
-            return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InternalError, language);
-        }
-    }
-
 }

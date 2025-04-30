@@ -28,6 +28,8 @@ public class MFPrimaveraClientItem
     public string? EmailQualidade { get; set; }
     public string? TipoTerceiro { get; set; }
     public string? Carro { get; set; }
+
+
 }
 
 public class MFPrimaveraClientItemNoAuth

@@ -82,43 +82,6 @@ public static class UnitConverter
         return productUnitWeight;
     }
 
-    public static async Task<double> GetPrimaveraProductConversionRate(
-        string unit,
-        ProductCatalogItem productCatalog
-    )
-    {
-        string destinationUnit = productCatalog.unit.ToUpper(CultureInfo.InvariantCulture);
-
-        string sqlWhere = $"Artigo=\'\'{productCatalog.product_code}\'\' " +
-            $"AND UnidadeOrigem=\'\'{unit}\'\' " +
-            $"AND UnidadeDestino=\'\'{destinationUnit}\'\'";
-
-        PrimaveraListResponseItem<PrimaveraUnitConversionItem> unitConversions = await Primavera.GetListAsync<PrimaveraUnitConversionItem>(
-            ConfigManager.PrimaveraUrls.ArtigosUnidades,
-            sqlWhere
-        );
-
-        if (unitConversions.IsError)
-        {
-            Log.Error($"Error fetching unit conversions for product {productCatalog.product_code}: {unitConversions.Message}");
-            return 0;
-        }
-
-        if (unitConversions.Data.Count == 0)
-        {
-            Log.Error($"No unit conversions found for product {productCatalog.product_code} from {unit} to {productCatalog.unit}");
-            return 0;
-        }
-
-        // DEBUG!
-        foreach (PrimaveraUnitConversionItem unitConversion in unitConversions.Data)
-        {
-            Log.Debug($"Unit conversion found for product {productCatalog.product_code} from {unitConversion.UnidadeOrigem} to {unitConversion.UnidadeDestino}: {unitConversion.FactorConversao}");
-        }
-
-        return unitConversions.Data[0].FactorConversao;
-    }
-
     public static ProductUnitItem GetValidUnit(string unit)
     {
         List<ProductUnitItem> possibleSizes = ProductUnitModel.GetProductUnits("System");
@@ -156,26 +119,6 @@ public static class UnitConverter
         Log.Debug($"Converted unit {originUnit} to {finalUnit}");
         ProductUnitItem finalProductUnit = possibleSizes.Where(s => s.abbreviation.Equals(finalUnit.ToString(), StringComparison.OrdinalIgnoreCase)).First();
         return finalProductUnit;
-    }
-
-    public static async Task<List<PrimaveraUnitConversionItem>> GetPrimaveraConversions()
-    {
-        PrimaveraListResponseItem<PrimaveraUnitConversionItem> unitConversions =
-            await Primavera.GetListAsync<PrimaveraUnitConversionItem>(
-                ConfigManager.PrimaveraUrls.ArtigosUnidades
-            );
-
-        if (unitConversions.IsError)
-        {
-            throw new PrimaveraApiErrorException(unitConversions.Message!);
-        }
-
-        if (unitConversions.Data.Count == 1)
-        {
-            throw new ResourceEmptyException("No unit conversions found");
-        }
-
-        return unitConversions.Data;
     }
 
     public static decimal GetProductConversionToMeters(string productCode, int originUnitId)
@@ -227,7 +170,6 @@ public static class UnitConverter
             // logic...
             return productCatalog.length / 1000 * (decimal)productConversion.rate;
         }
-
 
         return 0;
     }

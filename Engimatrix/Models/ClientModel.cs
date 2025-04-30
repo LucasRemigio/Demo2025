@@ -17,6 +17,7 @@ namespace engimatrix.Models;
 public static class ClientModel
 {
     private static bool IsSyncingPrimaveraClients;
+
     public static List<ClientItem> GetClients(string execute_user)
     {
         string query = $"SELECT id, code, token, segment_id, created_at, created_by, updated_at, updated_by FROM mf_client";
@@ -56,7 +57,7 @@ public static class ClientModel
         return clients;
     }
 
-    public async static Task<List<ClientDTO>> SearchClients(string? search_query, string execute_user)
+    public static async Task<List<ClientDTO>> SearchClients(string? search_query, string execute_user)
     {
         // The search query must split the words and then search for either the code or the name
         List<MFPrimaveraClientItem> primaveraClients = [.. (await PrimaveraClientModel.GetPrimaveraClients()).Values];
@@ -82,7 +83,7 @@ public static class ClientModel
         return await GetClientsByCode(primaveraCodes, execute_user);
     }
 
-    public async static Task<List<ClientDTO>> GetClientsByCode(List<string> clientCodes, string execute_user)
+    public static async Task<List<ClientDTO>> GetClientsByCode(List<string> clientCodes, string execute_user)
     {
         if (clientCodes.Count == 0)
         {
@@ -139,10 +140,10 @@ public static class ClientModel
     public static List<string> GetTop20ClientsWithMostOrders(string execute_user)
     {
         string query =
-            @$"SELECT client_code, COUNT(*) AS amount 
-            FROM `order` 
-            WHERE client_code IS NOT NULL AND client_code <> '' 
-            GROUP BY client_code 
+            @$"SELECT client_code, COUNT(*) AS amount
+            FROM `order`
+            WHERE client_code IS NOT NULL AND client_code <> ''
+            GROUP BY client_code
             ORDER BY amount DESC
             LIMIT 20";
 
@@ -289,7 +290,7 @@ public static class ClientModel
         return client;
     }
 
-    public async static Task<ClientDTO> GetClientWithRatingsByCodeDTO(string code, string execute_user)
+    public static async Task<ClientDTO> GetClientWithRatingsByCodeDTO(string code, string execute_user)
     {
         string query = $"SELECT c.id AS client_id, c.code AS client_code, s.id AS segment_id, s.name AS segment_name, " +
             "c.updated_at AS updated_at, c.updated_by AS updated_by, " +
@@ -338,7 +339,7 @@ public static class ClientModel
         return clientDTO;
     }
 
-    public async static Task<ClientNoAuthDTO?> GetClientNoAuthByTokenDto(string token, string execute_user)
+    public static async Task<ClientNoAuthDTO?> GetClientNoAuthByTokenDto(string token, string execute_user)
     {
         string query = $"SELECT c.code AS client_code, c.token AS client_token, s.id AS segment_id, s.name AS segment_name " +
             "FROM mf_client c " +
@@ -384,8 +385,7 @@ public static class ClientModel
         return client.Build();
     }
 
-
-    public async static Task<ClientDTO> GetClientWithRatingsByCodeDTOByOrderToken(string code, string orderToken, string execute_user)
+    public static async Task<ClientDTO> GetClientWithRatingsByCodeDTOByOrderToken(string code, string orderToken, string execute_user)
     {
         string query = $"SELECT c.id AS client_id, c.code AS client_code, s.id AS segment_id, s.name AS segment_name, " +
             "c.updated_at AS updated_at, c.updated_by AS updated_by, " +
@@ -434,18 +434,7 @@ public static class ClientModel
         return clientDTO;
     }
 
-    public async static Task<(List<PrimaveraOrderItem> orders, List<MFPrimaveraInvoiceItem> invoices)> GetCreditClientStatisticsForRating(string clientCode)
-    {
-        // get the pending orders
-        List<PrimaveraOrderItem> orders = await PrimaveraOrderModel.GetPendingClientOrdersPrimavera(clientCode);
-
-        // get the pending invoices
-        List<MFPrimaveraInvoiceItem> invoices = await PrimaveraInvoiceModel.GetPendingPrimaveraInvoicesByClientCode(clientCode);
-
-        return new(orders, invoices);
-    }
-
-    public async static Task<List<ClientDTO>> GetClientsWithRatingsDTO(string execute_user)
+    public static async Task<List<ClientDTO>> GetClientsWithRatingsDTO(string execute_user)
     {
         string query = $"SELECT c.id AS client_id, c.code AS client_code, " +
                 "s.id AS segment_id, s.name AS segment_name, " +
@@ -525,7 +514,7 @@ public static class ClientModel
         return clients;
     }
 
-    public async static Task<SyncPrimaveraStats> SyncPrimaveraClientsAndCreatePending(string executeUser)
+    public static async Task<SyncPrimaveraStats> SyncPrimaveraClientsAndCreatePending(string executeUser)
     {
         if (IsSyncingPrimaveraClients)
         {
@@ -570,7 +559,7 @@ public static class ClientModel
             int matchingSegment = GetMatchingSegmentFromPrimavera(primaveraClient.TipoTerceiro);
             if (matchingClient.segment_id == matchingSegment)
             {
-                // nothing to update 
+                // nothing to update
                 if (!string.IsNullOrEmpty(matchingClient.updated_by) && !string.IsNullOrEmpty(matchingClient.token))
                 {
                     continue;
@@ -630,7 +619,7 @@ public static class ClientModel
         };
     }
 
-    public async static Task AddPrimaveraClient(string clientCode, string executeUser)
+    public static async Task AddPrimaveraClient(string clientCode, string executeUser)
     {
         MFPrimaveraClientItem? primaveraClient = await PrimaveraClientModel.GetPrimaveraClient(clientCode) ?? throw new NotFoundException($"Primavera client {clientCode} not found");
         ClientItem? client = GetClientByCode(clientCode, "System");
@@ -667,9 +656,9 @@ public static class ClientModel
             { "@UpdatedBy", executeUser}
         };
 
-        string insertQuery = @$"INSERT INTO mf_client 
-            (code, segment_id, created_at, created_by, updated_at, updated_by) 
-            VALUES 
+        string insertQuery = @$"INSERT INTO mf_client
+            (code, segment_id, created_at, created_by, updated_at, updated_by)
+            VALUES
             (@ClientCode, @SegmentId, @CreatedAt, @CreatedBy, @UpdatedAt, @UpdatedBy)";
 
         SqlExecuterItem response = SqlExecuter.ExecuteFunction(insertQuery, dic, executeUser, false, "InsertNewClient");
@@ -766,7 +755,7 @@ public static class ClientModel
         }
     }
 
-    public async static void FixClientCodes(string executeUser)
+    public static async void FixClientCodes(string executeUser)
     {
         string query = $"SELECT c.id AS client_id, c.code AS client_code " +
             "FROM mf_client c " +
@@ -813,7 +802,6 @@ public static class ClientModel
             {
                 Log.Info($"Successfully updated client code for client ID: {clientId}");
             }
-
         }
     }
 }

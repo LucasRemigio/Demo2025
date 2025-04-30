@@ -249,7 +249,7 @@ public static class MasterFerro
         if (!string.IsNullOrEmpty(clientAdjudicated.cliente_adjudicou) && clientAdjudicated.cliente_adjudicou.Equals("sim", StringComparison.OrdinalIgnoreCase))
         {
             Log.Debug("Client adjudicated the quote");
-            // in this case, we must follow a different flow. 
+            // in this case, we must follow a different flow.
             // The order must be set to confirmed by client and then we must create the order on the primavera
             // we must also send an email to the client with the order details
             return true;
@@ -278,9 +278,6 @@ public static class MasterFerro
             Log.Debug("No order found for token " + filteredToken);
             throw new ResourceEmptyException("No order found for token " + filteredToken);
         }
-
-        // create the primavera order document
-        await OrderPrimaveraDocumentModel.CreateOrderDocumentsFromQuotation(orderItem.token, account);
 
         Log.Debug("Client adjudicated email processed successfully");
     }
@@ -540,7 +537,6 @@ public static class MasterFerro
             senderEmail = senderEmail.Replace('>', ')');
         }
 
-
         string cleanedHtmlBody = "";
         if (!string.IsNullOrEmpty(message))
         {
@@ -601,7 +597,6 @@ public static class MasterFerro
             // mark original email as resolved
             string filteredToken = FilteringModel.GetFilteredTokenByEmailId(email.id, executeUser);
             FilteringModel.ChangeEmailStatus(filteredToken, StatusConstants.StatusCode.RESOLVIDO_MANUALMENTE.ToString(), executeUser);
-
         }
         catch (Exception e)
         {
@@ -651,7 +646,6 @@ public static class MasterFerro
             await client.DisconnectAsync(true);
         }
     }
-
 
     private static void AddRecipients(string? addresses, InternetAddressList target)
     {

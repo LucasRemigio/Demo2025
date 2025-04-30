@@ -10,7 +10,6 @@ using ConfigurationManager = System.Configuration.ConfigurationManager;
 using Microsoft.AspNetCore.Http;
 using Engimatrix.ModelObjs;
 using engimatrix.ModelObjs;
-using engimatrix.ModelObjs.Primavera;
 using Engimatrix.Models;
 
 namespace engimatrix.Config
@@ -58,15 +57,6 @@ namespace engimatrix.Config
         public static string MasterferroPostalCodeLocality = "Braga";
         public static string MasterferroCountry = "PT";
 
-        public static string PrimaveraApiUrl = String.Empty;
-        public static string PrimaveraReadUsername = String.Empty;
-        public static string PrimaveraWriteUsername = String.Empty;
-        public static string PrimaveraPassword = String.Empty;
-        public static string PrimaveraCompany = String.Empty;
-        public static string PrimaveraInstance = String.Empty;
-        public static string PrimaveraGrantType = String.Empty;
-        public static string PrimaveraLine = String.Empty;
-        public static PrimaveraUrlsConfig PrimaveraUrls = new();
         public static int delayMinutesBetweenRepeatedEmailChecks = 10;
         public static int timespanForEmailRetrieval = 20 * 60;
 
@@ -155,44 +145,6 @@ namespace engimatrix.Config
             delayMinutesBetweenRepeatedEmailChecks = Int32.Parse(ConfigurationManager.AppSettings["delayMinutesBetweenRepeatedEmailChecks"]);
             timespanForEmailRetrieval = Int32.Parse(ConfigurationManager.AppSettings["timespanForEmailRetrieval"]) * 60;
 
-            PrimaveraApiUrl = ConfigurationManager.AppSettings["PrimaveraApiUrl"];
-            PrimaveraReadUsername = ConfigurationManager.AppSettings["PrimaveraReadUsername"];
-            PrimaveraWriteUsername = ConfigurationManager.AppSettings["PrimaveraWriteUsername"];
-            PrimaveraPassword = ConfigurationManager.AppSettings["PrimaveraPassword"];
-            PrimaveraCompany = ConfigurationManager.AppSettings["PrimaveraCompany"];
-            PrimaveraInstance = ConfigurationManager.AppSettings["PrimaveraInstance"];
-            PrimaveraGrantType = ConfigurationManager.AppSettings["PrimaveraGrantType"];
-            PrimaveraLine = ConfigurationManager.AppSettings["PrimaveraLine"];
-
-            PrimaveraUrls.Moedas = ConfigurationManager.AppSettings["PrimaveraLista_Moedas"];
-            PrimaveraUrls.Paises = ConfigurationManager.AppSettings["PrimaveraLista_Paises"];
-            PrimaveraUrls.Distritos = ConfigurationManager.AppSettings["PrimaveraLista_Distritos"];
-            PrimaveraUrls.TaxasIVA = ConfigurationManager.AppSettings["PrimaveraLista_TaxasIVA"];
-            PrimaveraUrls.ModoPagamento = ConfigurationManager.AppSettings["PrimaveraLista_ModoPagamento"];
-            PrimaveraUrls.CondPagamento = ConfigurationManager.AppSettings["PrimaveraLista_CondPagamento"];
-            PrimaveraUrls.Unidades = ConfigurationManager.AppSettings["PrimaveraLista_Unidades"];
-            PrimaveraUrls.UnidadesConversao = ConfigurationManager.AppSettings["PrimaveraLista_UnidadesConversao"];
-            PrimaveraUrls.Marcas = ConfigurationManager.AppSettings["PrimaveraLista_Marcas"];
-            PrimaveraUrls.Modelos = ConfigurationManager.AppSettings["PrimaveraLista_Modelos"];
-            PrimaveraUrls.Familias = ConfigurationManager.AppSettings["PrimaveraLista_Familias"];
-            PrimaveraUrls.SubFamilias = ConfigurationManager.AppSettings["PrimaveraLista_SubFamilias"];
-            PrimaveraUrls.Dimensoes = ConfigurationManager.AppSettings["PrimaveraLista_Dimensoes"];
-            PrimaveraUrls.LinhaDimensao = ConfigurationManager.AppSettings["PrimaveraLista_LinhaDimensao"];
-            PrimaveraUrls.Artigos = ConfigurationManager.AppSettings["PrimaveraLista_Artigos"];
-            PrimaveraUrls.ArtigosUnidades = ConfigurationManager.AppSettings["PrimaveraLista_ArtigosUnidades"];
-            PrimaveraUrls.Clientes = ConfigurationManager.AppSettings["PrimaveraLista_Clientes"];
-            PrimaveraUrls.Fornecedores = ConfigurationManager.AppSettings["PrimaveraLista_Fornecedores"];
-            PrimaveraUrls.MoradasAlternativas = ConfigurationManager.AppSettings["PrimaveraLista_MoradasAlternativas"];
-            PrimaveraUrls.StockDisponivelArtigo = ConfigurationManager.AppSettings["PrimaveraLista_StockDisponivelArtigo"];
-            PrimaveraUrls.StockDisponivelArtigoArmazem = ConfigurationManager.AppSettings["PrimaveraLista_StockDisponivelArtigoArmazem"];
-            PrimaveraUrls.PrecoVenda = ConfigurationManager.AppSettings["PrimaveraLista_PrecoVenda"];
-            PrimaveraUrls.PrecoCompra = ConfigurationManager.AppSettings["PrimaveraLista_PrecoCompra"];
-            PrimaveraUrls.Pendentes = ConfigurationManager.AppSettings["PrimaveraLista_Pendentes"];
-            PrimaveraUrls.EncomendasCabecalhos = ConfigurationManager.AppSettings["PrimaveraLista_EncomendasCabecalhos"];
-            PrimaveraUrls.EncomendasLinhas = ConfigurationManager.AppSettings["PrimaveraLista_EncomendasLinhas"];
-            PrimaveraUrls.MFClientes = ConfigurationManager.AppSettings["PrimaveraLista_MFClientes"];
-            PrimaveraUrls.MFArtigos = ConfigurationManager.AppSettings["PrimaveraLista_MFArtigos"];
-            PrimaveraUrls.MFFaturas = ConfigurationManager.AppSettings["PrimaveraLista_MFFaturas"];
 
             sendAutomaticallyDrafts = bool.Parse(ConfigurationManager.AppSettings["sendAutomaticallyDrafts"]);
             ccConfirmations = ConfigurationManager.AppSettings["ccConfirmations"];
@@ -279,14 +231,6 @@ namespace engimatrix.Config
                 string.IsNullOrEmpty(IMAPPort) ||
                 string.IsNullOrEmpty(EmailPassword) ||
                 string.IsNullOrEmpty(SMTPPort) ||
-                string.IsNullOrEmpty(PrimaveraApiUrl) ||
-                string.IsNullOrEmpty(PrimaveraReadUsername) ||
-                string.IsNullOrEmpty(PrimaveraWriteUsername) ||
-                string.IsNullOrEmpty(PrimaveraPassword) ||
-                string.IsNullOrEmpty(PrimaveraCompany) ||
-                string.IsNullOrEmpty(PrimaveraInstance) ||
-                string.IsNullOrEmpty(PrimaveraGrantType) ||
-                string.IsNullOrEmpty(PrimaveraLine) ||
                 string.IsNullOrEmpty(ChristmasGif) ||
                 string.IsNullOrEmpty(Logo) ||
                 string.IsNullOrEmpty(HereApiKey) ||
@@ -302,41 +246,6 @@ namespace engimatrix.Config
                 throw new InvalidOperationException("One or more configuration settings are missing.");
             }
 
-            // Validate PrimaveraUrls
-            if (PrimaveraUrls == null ||
-                string.IsNullOrEmpty(PrimaveraUrls.Artigos) ||
-                string.IsNullOrEmpty(PrimaveraUrls.ArtigosUnidades) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Clientes) ||
-                string.IsNullOrEmpty(PrimaveraUrls.CondPagamento) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Dimensoes) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Distritos) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Familias) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Fornecedores) ||
-                string.IsNullOrEmpty(PrimaveraUrls.LinhaDimensao) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Marcas) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Moedas) ||
-                string.IsNullOrEmpty(PrimaveraUrls.MoradasAlternativas) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Paises) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Pendentes) ||
-                string.IsNullOrEmpty(PrimaveraUrls.PrecoCompra) ||
-                string.IsNullOrEmpty(PrimaveraUrls.PrecoVenda) ||
-                string.IsNullOrEmpty(PrimaveraUrls.StockDisponivelArtigo) ||
-                string.IsNullOrEmpty(PrimaveraUrls.StockDisponivelArtigoArmazem) ||
-                string.IsNullOrEmpty(PrimaveraUrls.SubFamilias) ||
-                string.IsNullOrEmpty(PrimaveraUrls.TaxasIVA) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Unidades) ||
-                string.IsNullOrEmpty(PrimaveraUrls.UnidadesConversao) ||
-                string.IsNullOrEmpty(PrimaveraUrls.Modelos) ||
-                string.IsNullOrEmpty(PrimaveraUrls.EncomendasCabecalhos) ||
-                string.IsNullOrEmpty(PrimaveraUrls.EncomendasLinhas) ||
-                string.IsNullOrEmpty(PrimaveraUrls.MFClientes) ||
-                string.IsNullOrEmpty(PrimaveraUrls.MFArtigos) ||
-                string.IsNullOrEmpty(PrimaveraUrls.MFFaturas)
-            )
-            {
-                Log.Error("PrimaveraUrls is not valid!");
-                throw new InvalidOperationException("PrimaveraUrls is not valid.");
-            }
         }
 
         public static async Task LoadDinamicConfigsAsync()

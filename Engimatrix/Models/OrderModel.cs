@@ -83,7 +83,6 @@ public static class OrderModel
     // get by orderToken
     public static OrderItem? GetOrderByToken(string orderToken, string execute_user)
     {
-
         Dictionary<string, string> dic = new Dictionary<string, string>
         {
             { "@orderToken", orderToken }
@@ -234,7 +233,6 @@ public static class OrderModel
                 .SetDescription(data["transport_description"])
                 .Build();
         }
-
 
         DateTime? canceledAt = string.IsNullOrEmpty(data["canceled_at"]) ? null : Convert.ToDateTime(data["canceled_at"]);
         DateTime? confirmedAt = string.IsNullOrEmpty(data["confirmed_at"]) ? null : Convert.ToDateTime(data["confirmed_at"]);
@@ -424,7 +422,6 @@ public static class OrderModel
         return orderNoAuth;
     }
 
-
     public static OrderDTONoAuth? GetOrderDTOByTokenNoAuth(string orderToken, string execute_user)
     {
         OrderItem? orderItem = GetOrderByToken(orderToken, execute_user) ?? throw new InputNotValidException("GetOrderDTOByTokenNoAuth - Order not found with token " + orderToken);
@@ -479,7 +476,7 @@ public static class OrderModel
         return new AddressFillingDetails(municipality_cc, district_dd, cp4, cp3, postalCodeItem);
     }
 
-    public async static Task<AddressFillingDetails?> GetClientAddressFillingDetails(string clientCode, string executeUser)
+    public static async Task<AddressFillingDetails?> GetClientAddressFillingDetails(string clientCode, string executeUser)
     {
         MFPrimaveraClientItem? client = await PrimaveraClientModel.GetPrimaveraClient(clientCode) ?? throw new InputNotValidException("Client not found with code " + clientCode);
 
@@ -495,7 +492,6 @@ public static class OrderModel
         }
 
         return address;
-
     }
 
     // Insert
@@ -595,7 +591,7 @@ public static class OrderModel
         return order;
     }
 
-    public async static Task<List<OrderDTO>> GetToValidateOperatorPendingOrders(string execute_user, bool? isDraft, DateOnly? startDate, DateOnly? endDate, bool? isPendingAdminApproval, bool? isPendingCreditApproval)
+    public static async Task<List<OrderDTO>> GetToValidateOperatorPendingOrders(string execute_user, bool? isDraft, DateOnly? startDate, DateOnly? endDate, bool? isPendingAdminApproval, bool? isPendingCreditApproval)
     {
         if (isPendingAdminApproval.HasValue && isPendingAdminApproval.Value)
         {
@@ -607,7 +603,7 @@ public static class OrderModel
             return await GetToValidatePendingCreditApprovalOrders(execute_user, startDate, endDate);
         }
 
-        // the status can be the following: 
+        // the status can be the following:
         // Aguarda_Validacao, Pendente_Administracao, Erro, Aprovado_Direcao_Comercial
         List<string> statuses =
         [
@@ -621,7 +617,7 @@ public static class OrderModel
         return await GetAuditOrders(execute_user, statuses, isDraft, startDate, endDate);
     }
 
-    public async static Task<List<OrderDTO>> GetToValidatePendingAdminApprovalOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
+    public static async Task<List<OrderDTO>> GetToValidatePendingAdminApprovalOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
     {
         List<string> statuses =
         [
@@ -631,7 +627,7 @@ public static class OrderModel
         return await GetAuditOrders(execute_user, statuses, null, startDate, endDate);
     }
 
-    public async static Task<List<OrderDTO>> GetToValidatePendingCreditApprovalOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
+    public static async Task<List<OrderDTO>> GetToValidatePendingCreditApprovalOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
     {
         List<string> statuses =
         [
@@ -641,7 +637,7 @@ public static class OrderModel
         return await GetAuditOrders(execute_user, statuses, null, startDate, endDate);
     }
 
-    public async static Task<List<OrderDTO>> GetToValidateClientPendingOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
+    public static async Task<List<OrderDTO>> GetToValidateClientPendingOrders(string execute_user, DateOnly? startDate, DateOnly? endDate)
     {
         List<string> statuses =
         [
@@ -651,7 +647,7 @@ public static class OrderModel
         return await GetAuditOrders(execute_user, statuses, true, startDate, endDate);
     }
 
-    public async static Task<List<OrderDTO>> GetAuditOrders(string execute_user, List<string> requiredStatuses, bool? isDraft, DateOnly? startDate, DateOnly? endDate)
+    public static async Task<List<OrderDTO>> GetAuditOrders(string execute_user, List<string> requiredStatuses, bool? isDraft, DateOnly? startDate, DateOnly? endDate)
     {
         Dictionary<string, string> dic = [];
 
@@ -702,7 +698,6 @@ public static class OrderModel
         if (!response.operationResult) { throw new DatabaseException("Something went wrong getting the order with the filtered emails from the database"); }
 
         if (response.out_data.Count == 0) { return []; }
-
 
         List<string> filteredEmailTokens = [.. response.out_data
             .Select(x => x["order_email_token"])
@@ -1067,14 +1062,10 @@ public static class OrderModel
             return false;
         }
 
-        // get the pending invoices, orders and current order to check if all summed up is higher than the clients credit
-        (List<PrimaveraOrderItem> orders, List<MFPrimaveraInvoiceItem> invoices) = await ClientModel.GetCreditClientStatisticsForRating(clientCode);
-
-        decimal ordersTotal = PrimaveraOrderModel.GetOrdersTotal([.. orders.Select(x => x.primavera_order_header)]);
-        MFPrimaveraInvoiceTotalItem invoicesTotal = PrimaveraInvoiceModel.CalculateInvoicesTotal(invoices);
+        MFPrimaveraInvoiceTotalItem invoicesTotal = new(50, 100, 200);
         OrderTotalItem orderTotal = CalculateOrderTotal(order.token, executeUser);
 
-        decimal totalClientCredit = orderTotal.totalDiscountPlusTax + ordersTotal + (decimal)invoicesTotal.valor_pendente;
+        decimal totalClientCredit = orderTotal.totalDiscountPlusTax + 1000 + (decimal)invoicesTotal.valor_pendente;
 
         if (totalClientCredit > plafound)
         {
@@ -1183,7 +1174,7 @@ public static class OrderModel
         return orders;
     }
 
-    public async static Task<(AddressFillingDetails? addressDetails, List<OrderProductItem> orderProducts)> PatchClient(string orderToken, string clientCode, string client_nif, string execute_user)
+    public static async Task<(AddressFillingDetails? addressDetails, List<OrderProductItem> orderProducts)> PatchClient(string orderToken, string clientCode, string client_nif, string execute_user)
     {
         if (!Util.IsValidNif(client_nif))
         {
@@ -1230,9 +1221,8 @@ public static class OrderModel
         return (address, updatedProducts);
     }
 
-    public async static Task<AddressFillingDetails?> PatchClientAddress(OrderItem order, string clientCode, string executeUser)
+    public static async Task<AddressFillingDetails?> PatchClientAddress(OrderItem order, string clientCode, string executeUser)
     {
-
         AddressFillingDetails? address = await GetClientAddressFillingDetails(clientCode, executeUser);
         if (address is null)
         {
@@ -1404,7 +1394,7 @@ public static class OrderModel
             { "@contact", contact }
         };
 
-        string query = @"UPDATE `order` 
+        string query = @"UPDATE `order`
             SET observations = @observations, contact = @contact
             WHERE token = @token";
 
@@ -1442,5 +1432,4 @@ public static class OrderModel
             throw new Exception("Something went wrong changing the order status in the database");
         }
     }
-
 }

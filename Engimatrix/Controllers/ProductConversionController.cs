@@ -53,7 +53,6 @@ namespace Engimatrix.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("dto")]
         [RequestLimit]
@@ -127,46 +126,6 @@ namespace Engimatrix.Controllers
             {
                 Log.Error("GetProductConversionById endpoint - Error - " + e);
                 return new ProductConversionItemResponse(ResponseErrorMessage.InternalError, language);
-            }
-        }
-
-        [HttpPost]
-        [Route("sync-primavera")]
-        [RequestLimit]
-        [ValidateReferrer]
-        public async Task<ActionResult<SyncPrimaveraStatsResponse>> SyncPrimavera(string key)
-        {
-            string language = this.Request.Headers["client-lang"];
-            if (string.IsNullOrEmpty(language))
-            {
-                language = ConfigManager.defaultLanguage;
-            }
-            string token = this.Request.Headers["Authorization"];
-            string executer_user = "System";
-            if (!string.IsNullOrEmpty(token))
-            {
-                executer_user = UserModel.GetUserByToken(token);
-            }
-
-            try
-            {
-                if (string.IsNullOrEmpty(key) || !key.Equals(ConfigManager.engimatrixInternalApiKey, StringComparison.Ordinal))
-                {
-                    return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InvalidArgs, language);
-                }
-
-                SyncPrimaveraStats stats = await ProductConversionPrimaveraModel.SyncPrimavera(executer_user);
-                return new SyncPrimaveraStatsResponse(stats, ResponseSuccessMessage.Success, language);
-            }
-            catch (DatabaseException e)
-            {
-                Log.Error("SyncPrimavera endpoint - Error in database - " + e);
-                return new SyncPrimaveraStatsResponse(ResponseErrorMessage.DatabaseQueryError, language);
-            }
-            catch (Exception e)
-            {
-                Log.Error("SyncPrimavera endpoint - Error - " + e);
-                return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InternalError, language);
             }
         }
     }

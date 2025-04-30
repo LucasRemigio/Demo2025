@@ -12,47 +12,11 @@ namespace engimatrix.Models;
 
 public static class OrderPrimaveraDocumentModel
 {
-    public static readonly string baseQuery = @"SELECT id, order_token, name, type, 
+    public static readonly string baseQuery = @"SELECT id, order_token, name, type,
             series, number, created_at, created_by, invoice_html
             FROM order_primavera_document ";
 
-
-    private async static Task<OrderPrimaveraDocumentItem> CreateOrderDocumentsCommon(
-        string orderToken,
-        string executeUser,
-        Func<string, string, Task<PrimaveraDocumentCreationResponse>> createDocumentFunc)
-    {
-        PrimaveraDocumentCreationResponse primaveraDocResponse = await createDocumentFunc(orderToken, executeUser);
-
-        OrderPrimaveraDocumentItem primaveraDocInfo = PrimaveraDocumentModel.GetOrderDocumentItemFromResponse(primaveraDocResponse);
-        PrimaveraDocument primaveraDocument = await Primavera.GetDocumentAsync(primaveraDocInfo.type, primaveraDocInfo.series, primaveraDocInfo.number);
-
-        string invoice = await OrderInvoiceModel.GenerateInvoice(primaveraDocument, orderToken, executeUser);
-
-        primaveraDocInfo.order_token = orderToken;
-        primaveraDocInfo.invoice_html = invoice;
-        await Create(primaveraDocInfo, executeUser);
-
-        Log.Debug($"Order primavera document created successfully. Order token: {orderToken}, " +
-        $"Document type: {primaveraDocInfo.type}, Document series: {primaveraDocInfo.series}, Document number: {primaveraDocInfo.number}");
-
-        // lock the product prices
-        OrderProductModel.LockOrderProductPrices(orderToken, executeUser);
-
-        return primaveraDocInfo;
-    }
-
-    public async static Task<OrderPrimaveraDocumentItem> CreateOrderDocuments(string orderToken, string executeUser)
-    {
-        return await CreateOrderDocumentsCommon(orderToken, executeUser, PrimaveraDocumentModel.CreateDocument);
-    }
-
-    public async static Task<OrderPrimaveraDocumentItem> CreateOrderDocumentsFromQuotation(string orderToken, string executeUser)
-    {
-        return await CreateOrderDocumentsCommon(orderToken, executeUser, PrimaveraDocumentModel.CreateOrderFromQuotation);
-    }
-
-    public async static Task Create(OrderPrimaveraDocumentItem doc, string executeUser)
+    public static async Task Create(OrderPrimaveraDocumentItem doc, string executeUser)
     {
         if (!IsDocValid(doc))
         {
@@ -170,7 +134,7 @@ public static class OrderPrimaveraDocumentModel
         return response.rowsAffected > 0;
     }
 
-    public async static Task<string> ConvertHtmlToPdfBase64(string html)
+    public static async Task<string> ConvertHtmlToPdfBase64(string html)
     {
         if (string.IsNullOrWhiteSpace(html))
         {
@@ -218,7 +182,6 @@ public static class OrderPrimaveraDocumentModel
         return pdfBytes;
     }
 
-
     public static bool IsDocValid(OrderPrimaveraDocumentItem doc)
     {
         Dictionary<string, string> fields = new()
@@ -242,7 +205,4 @@ public static class OrderPrimaveraDocumentModel
 
         return true;
     }
-
-
-
 }

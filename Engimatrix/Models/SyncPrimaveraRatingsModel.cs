@@ -7,145 +7,15 @@ using engimatrix.Exceptions;
 using engimatrix.ModelObjs;
 using engimatrix.ModelObjs.Primavera;
 using engimatrix.Utils;
+
 namespace engimatrix.Models;
 
 public static class SyncPrimaveraRatingsModel
 {
-
     /*  ============================================================================================================================================================
-    *               Historical Volume Ratings 
+    *               Historical Volume Ratings
     *   ============================================================================================================================================================
     */
-
-    public async static Task<SyncPrimaveraStats> SyncPrimaveraHistoricalVolumeRating(string executeUser)
-    {
-        /*
-        The clients are sorted following the ABC method, where the most prevalent clients are assigned better ratings
-        Article: https://www.thinkleansixsigma.com/article/abc-analysis/
-
-        Steps are as follows =>
-        Sort Clients:
-            Sort all clients by total revenue in descending order.
-
-        Calculate Cumulative %:
-            For each client in the sorted list:
-            Compute cumulative revenue as you iterate.
-            Stop assigning "A" when cumulative reaches 80%.
-            Assign "B" until cumulative reaches 95%.
-            Assign "C" to the rest.
-
-        Example:
-            Total Revenue: $1,000,000
-            Client 1: $500,000 → Cumulative 50% → A
-            Client 2: $300,000 → Cumulative 80% → A
-            Client 3: $100,000 → Cumulative 90% → B
-            Client 4: $50,000 → Cumulative 95% → B
-            Client 5: $50,000 → Cumulative 100% → C
-        */
-
-        Stopwatch stopwatch = new();
-        stopwatch.Start();
-        int totalSyncs = 0;
-        int historicalVolumeRatingTypeId = (int)RatingTypes.RatingType.HistoricalVolume;
-
-        // the all the clients from ourdatabase
-        List<ClientItem> clients = ClientModel.GetClients(executeUser);
-        // hash the ratings by client code
-        Dictionary<string, ClientRatingItem> creditRatingsByClientCode = ClientRatingModel.GetClientRatingsByTypeByClientCodeHashed(historicalVolumeRatingTypeId, executeUser);
-        // Hash the orders by client code
-        Dictionary<string, List<PrimaveraOrderHeaderItem>> ordersByClientCode = await PrimaveraOrderModel.GetPrimaveraOrderHeadersByClientCodeHashed();
-
-        List<HistoricalVolumeByClientItem> historicalVolumes = [];
-        decimal totalRevenue = 0;
-        foreach (ClientItem client in clients)
-        {
-            // First we need to organize the clients by their total spendings
-
-            // get the client orders
-            if (!ordersByClientCode.TryGetValue(client.code, out List<PrimaveraOrderHeaderItem>? clientOrders))
-            {
-                // client has no orders, proceed
-            }
-
-            // get the client total
-            decimal clientTotal = PrimaveraOrderModel.GetOrdersTotal(clientOrders);
-
-            if (clientTotal > 0)
-            {
-                // Add client to the list for sorting after this foreach
-                HistoricalVolumeByClientItem historicalVolume = new(client.code, clientTotal);
-                historicalVolumes.Add(historicalVolume);
-                totalRevenue += clientTotal;
-                continue;
-            }
-
-            ClientRatingItem minimumClientRating = new ClientRatingItemBuilder().SetClientCode(client.code).SetRatingTypeId(historicalVolumeRatingTypeId).SetRating('D').Build();
-            // check if the rating is the same as the one in the database
-            if (!creditRatingsByClientCode.TryGetValue(client.code, out ClientRatingItem? clientRating))
-            {
-                Log.Debug($"Client ratings of code {client.code} not found in database. Creating new rating.");
-                continue;
-            }
-
-            if (clientRating.rating == minimumClientRating.rating)
-            {
-                if (!string.IsNullOrEmpty(clientRating.updated_by))
-                {
-                    continue;
-                }
-
-                Log.Debug($"Keeping the same rating for client {client.code} to mark it as updated");
-            }
-
-            // patch the client rating if not updated and not the same
-            Log.Debug($"Updating client code {client.code} - Without any order - rating from rating {clientRating.rating} to rating {minimumClientRating.rating}");
-            ClientRatingModel.PatchClientRating(minimumClientRating, executeUser);
-            totalSyncs++;
-        }
-
-        // now sort by total
-        historicalVolumes.Sort((a, b) => b.orders_total.CompareTo(a.orders_total));
-
-        decimal cumulativeRevenue = 0;
-        foreach (HistoricalVolumeByClientItem clientVolume in historicalVolumes)
-        {
-            ClientRatingItem updatedClientRating = new ClientRatingItemBuilder().SetClientCode(clientVolume.client_code).SetRatingTypeId(historicalVolumeRatingTypeId).SetRating('D').Build();
-
-            // Calculate the cumulative percentage
-            cumulativeRevenue += clientVolume.orders_total;
-            decimal cumulativePercentage = cumulativeRevenue / totalRevenue;
-
-            // Assign the rating based on the cumulative percentage
-            updatedClientRating.rating = GetHistoricalVolumeRating(cumulativePercentage);
-
-            // check if the rating is the same as the one in the database
-            if (!creditRatingsByClientCode.TryGetValue(clientVolume.client_code, out ClientRatingItem? clientRating))
-            {
-                Log.Debug($"Client {clientVolume.client_code} not found in database. Creating new rating.");
-                continue;
-            }
-
-            if (clientRating.rating == updatedClientRating.rating)
-            {
-                if (!string.IsNullOrEmpty(clientRating.updated_by))
-                {
-                    continue;
-                }
-
-                Log.Debug($"Keeping the same rating for client {clientVolume.client_code} to mark it as updated");
-            }
-
-            // patch the rating
-            Log.Debug($"Updating client rating of code {clientVolume.client_code} from with cumulative percentage of {cumulativePercentage}% with rating {clientRating.rating} to rating {updatedClientRating.rating}");
-            ClientRatingModel.PatchClientRating(updatedClientRating, executeUser);
-            totalSyncs++;
-        }
-
-        stopwatch.Stop();
-        Log.Debug($"SyncPrimaveraHistoricalVolumeRating finished in {stopwatch.ElapsedMilliseconds}ms");
-        SyncPrimaveraStats stats = new(stopwatch.ElapsedMilliseconds, totalSyncs);
-        return stats;
-    }
 
     public static char GetHistoricalVolumeRating(decimal cumulativePercentage)
     {
@@ -163,13 +33,12 @@ public static class SyncPrimaveraRatingsModel
         }
     }
 
-
     /*  =======================================================================================================================================================
-    *               Credit Ratings 
+    *               Credit Ratings
     *   =======================================================================================================================================================
     */
 
-    public async static Task<SyncPrimaveraStats> SyncPrimaveraCreditRating(string executeUser)
+    public static async Task<SyncPrimaveraStats> SyncPrimaveraCreditRating(string executeUser)
     {
         // TODO: make sure the clients are already synced with primavera, or this will not find the clients
         Stopwatch stopwatch = new();
@@ -294,7 +163,7 @@ public static class SyncPrimaveraRatingsModel
     }
 
     /*  =============================================================================================================================================================
-    *               Payment Compliance Ratings 
+    *               Payment Compliance Ratings
     *   =============================================================================================================================================================
     */
 
@@ -306,9 +175,6 @@ public static class SyncPrimaveraRatingsModel
 
         // the all the clients from ourdatabase
         List<ClientItem> clients = ClientModel.GetClients(executeUser);
-
-        // get all the documents
-        Dictionary<string, List<MFPrimaveraInvoiceItem>> invoicesByClient = await PrimaveraInvoiceModel.GetPrimaveraInvoicesHashedByClientCode();
 
         // get the clients ratings for credit
         List<ClientRatingItem> clientRatings = ClientRatingModel.GetClientRatingsByType((int)RatingTypes.RatingType.PaymentCompliance, executeUser);
@@ -328,13 +194,8 @@ public static class SyncPrimaveraRatingsModel
         */
         foreach (ClientItem client in clients)
         {
-            if (!invoicesByClient.TryGetValue(client.code, out List<MFPrimaveraInvoiceItem>? invoices))
-            {
-                // nothing, we want to mark as updated even if no invoices found
-            }
-
             // calculate the average payment time and get the rating
-            AveragePaymentTimeItem? averagePaymentTime = CalculateAveragePaymentTime(invoices);
+            AveragePaymentTimeItem? averagePaymentTime = new AveragePaymentTimeItemBuilder().SetAverageDeadlineTimeDays(1).SetAveragePaymentTimeDays(2).Build();
 
             char rating = GetPaymentComplianceRating(averagePaymentTime);
 
@@ -392,7 +253,7 @@ public static class SyncPrimaveraRatingsModel
         }
 
         // the invoice is paid if the ValorPendente is 0 (zero), even if the dataLiquidacao is null
-        // there are two types of invoices: 
+        // there are two types of invoices:
         // The ones that are paid => ValorLiquidacao = ValorTotal and DataLiquidaçao filled in
         // and the ones that are unpaid => Valor liquidaçao < ValorTotal and DataLiquidaçao is null
 
@@ -486,5 +347,4 @@ public static class SyncPrimaveraRatingsModel
             _ => 'D'
         };
     }
-
 }

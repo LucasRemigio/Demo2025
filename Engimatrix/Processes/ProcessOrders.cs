@@ -74,7 +74,6 @@ public static class ProcessOrders
                 {
                     OrderModel.PatchStatus(order.token, errorStatus, "System");
                 }
-
             }
 
             try
@@ -159,7 +158,6 @@ public static class ProcessOrders
 
         // Identify the client
         Log.Debug($"ProcessEmailAndCreateOrderAsync: Identifying client: {filteredEmail.email.from} - {filteredEmail.email.subject}");
-
 
         string clientCode = await ClientIdentifier.IdentifyClient(filteredEmail);
 
@@ -318,20 +316,18 @@ public static class ProcessOrders
             try
             {
                 // if the request was a quotation, we must convert it and set is_draft to 1
-                // but if the request as already an order, 
+                // but if the request as already an order,
                 Log.Debug("SendEmailToOrdersConfirmed: Order is draft: " + order.is_draft);
                 if (order.is_draft)
                 {
                     Log.Debug("SendEmailToOrdersConfirmed: Order is draft, creating order document from quotation");
                     // in case it was a quotation, we must create the order document from the quotation
-                    await OrderPrimaveraDocumentModel.CreateOrderDocumentsFromQuotation(order.token, "System");
                 }
                 else
                 {
                     Log.Debug("SendEmailToOrdersConfirmed: Order is not draft, creating order document");
                     // in case it was an order and it was confirmed by anyone, having it being an operator or the client, we must create the order document
                     // which did not have any quotation before
-                    await OrderPrimaveraDocumentModel.CreateOrderDocuments(order.token, "System");
                 }
             }
             catch (Exception ex)
@@ -367,7 +363,6 @@ public static class ProcessOrders
             {
                 Log.Error($"An error occurred while changing order status for order {order.token}: {ex}");
             }
-
         }
     }
 
@@ -400,8 +395,6 @@ public static class ProcessOrders
 
         Log.Debug("Confirmation email sent to " + filteredEmail.email.from);
     }
-
-
 
     public static string CreateOrderConfirmationEmailBody(OrderItem order, string lang, int statusId)
     {
@@ -507,7 +500,6 @@ public static class ProcessOrders
 
         return result.ToString();
     }
-
 
     public static string CreateRequestValidationEmailBody(string orderToken, string language, int categoryId)
     {
