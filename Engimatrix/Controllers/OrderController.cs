@@ -609,4 +609,33 @@ public class OrderController : ControllerBase
             return new GenericResponse(ResponseErrorMessage.InternalError, language);
         }
     }
+
+    [HttpPatch]
+    [Route("{orderToken}/toggle-resolved")]
+    [RequestLimit]
+    [ValidateReferrer]
+    [Authorize]
+    public ActionResult<GenericResponse> ToggleOrderResolvedStatus(string orderToken)
+    {
+        string language = this.Request.Headers["client-lang"];
+        if (string.IsNullOrEmpty(language))
+        {
+            language = ConfigManager.defaultLanguage;
+        }
+
+        string token = this.Request.Headers["Authorization"];
+        string executer_user = UserModel.GetUserByToken(token);
+
+        try
+        {
+            OrderModel.ToggleResolvedStatus(orderToken, executer_user);
+
+            return new GenericResponse(ResponseSuccessMessage.Success, language);
+        }
+        catch (Exception e)
+        {
+            Log.Error("Filtered endpoint - Error - " + e);
+            return new GenericResponse(ResponseErrorMessage.InternalError, language);
+        }
+    }
 }

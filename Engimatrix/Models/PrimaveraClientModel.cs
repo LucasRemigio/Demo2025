@@ -10,20 +10,21 @@ namespace engimatrix.Models;
 
 public static class PrimaveraClientModel
 {
+    public static string Contribuinte = "999999990";
     public static readonly List<MFPrimaveraClientItem> mockClients =
         [
             new MFPrimaveraClientItem
             {
                 Cliente = "015001",
                 Nome = "Metalúrgica Portuguesa, Lda",
-                Contribuinte = "507452361",
-                Morada = "Rua da Indústria, 123",
-                Morada1 = "Zona Industrial",
-                Localidade = "Braga",
-                CodPostal = "4700",
-                CodPostalLocalidade = "4700-352 Braga",
+                Contribuinte = Contribuinte,
+                Morada = "Rua Afonso de Albuquerque",
+                Morada1 = null,
+                Localidade = "Leiria",
+                CodPostal = "2400-080",
+                CodPostalLocalidade = "LEIRIA",
                 Pais = "PT",
-                Distrito = "Braga",
+                Distrito = "Leiria",
                 Telemovel = "916745231",
                 Email = "geral@metalurgicapt.pt",
                 CondPag = "30 dias",
@@ -38,21 +39,21 @@ public static class PrimaveraClientModel
                 EmailCliente = "compras@metalurgicapt.pt",
                 EmailQualidade = "qualidade@metalurgicapt.pt",
                 TipoTerceiro = "Cliente",
-                Carro = "Entrega no cliente"
+                Carro = "001"
             },
 
             new MFPrimaveraClientItem
             {
                 Cliente = "014968",
                 Nome = "Construções Silva & Filhos, SA",
-                Contribuinte = "503198726",
-                Morada = "Av. da Liberdade, 45",
+                Contribuinte = Contribuinte,
+                Morada = "Rua da Almada",
                 Morada1 = "3º Andar",
-                Localidade = "Lisboa",
-                CodPostal = "1250",
-                CodPostalLocalidade = "1250-141 Lisboa",
+                Localidade = "Porto",
+                CodPostal = "4050-035",
+                CodPostalLocalidade = "PORTO",
                 Pais = "PT",
-                Distrito = "Lisboa",
+                Distrito = "Porto",
                 Telemovel = "939876543",
                 Email = "info@silvafilhos.pt",
                 CondPag = "60 dias",
@@ -67,19 +68,19 @@ public static class PrimaveraClientModel
                 EmailCliente = "encomendas@silvafilhos.pt",
                 EmailQualidade = null,
                 TipoTerceiro = "Cliente",
-                Carro = "Transporte próprio"
+                Carro = "001"
             },
 
             new MFPrimaveraClientItem
             {
                 Cliente = "010064",
                 Nome = "Estruturas Metálicas do Norte",
-                Contribuinte = "508765432",
-                Morada = "Parque Industrial, Lote 7",
+                Contribuinte = Contribuinte,
+                Morada = "Rua Alto das Torres",
                 Morada1 = null,
-                Localidade = "Porto",
-                CodPostal = "4450",
-                CodPostalLocalidade = "4450-231 Porto",
+                Localidade = "Vila Nova de Gaia",
+                CodPostal = "4430-010",
+                CodPostalLocalidade = "VILA NOVA DE GAIA",
                 Pais = "PT",
                 Distrito = "Porto",
                 Telemovel = "927654321",
@@ -96,7 +97,7 @@ public static class PrimaveraClientModel
                 EmailCliente = "compras@emn.pt",
                 EmailQualidade = "qualidade@emn.pt",
                 TipoTerceiro = "Cliente",
-                Carro = "Levantamento"
+                Carro = "001"
             }
         ];
     private static Dictionary<string, MFPrimaveraClientItem> cachedPrimaveraClients = [];

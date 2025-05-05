@@ -1432,4 +1432,56 @@ public static class OrderModel
             throw new Exception("Something went wrong changing the order status in the database");
         }
     }
+
+    public static void ToggleResolvedStatus(string orderToken, string executeUser)
+    {
+        // get the order item
+        OrderItem? order = GetOrderByToken(orderToken, executeUser) ?? throw new NotFoundException("Order not found with order token " + orderToken);
+
+        // Properly toggle: If resolved_at exists, set to NULL; otherwise set to current time
+        bool isCurrentlyResolved = order.resolved_at.HasValue;
+        Log.Debug(isCurrentlyResolved.ToString());
+
+        Dictionary<string, string> dic = new()
+        {
+            { "@Token", orderToken }
+        };
+
+        string query = "UPDATE `order` SET ";
+
+        if (isCurrentlyResolved)
+        {
+            // Clear resolved status
+            query += "resolved_by = NULL, resolved_at = NULL ";
+        }
+        else
+        {
+            // Set resolved status
+            dic.Add("@ResolvedBy", executeUser);
+            dic.Add("@ResolvedAt", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+            query += "resolved_by = @ResolvedBy, resolved_at = @ResolvedAt ";
+        }
+
+        query += "WHERE token = @Token";
+
+        SqlExecuterItem response = SqlExecuter.ExecuteFunction(query, dic, executeUser, true, "ToggleOrderResolvedStatus");
+
+        if (!response.operationResult)
+        {
+            throw new Exception($"Something went wrong {(isCurrentlyResolved ? "clearing" : "setting")} the order resolved status in the database");
+        }
+
+        // if the order has a email_token, we must update the filtered email status
+        if (!string.IsNullOrEmpty(order.email_token))
+        {
+            // Only change email status when marking as resolved, not when unmarking
+            if (!isCurrentlyResolved)
+            {
+                string statusId = StatusConstants.StatusCode.RESOLVIDO_MANUALMENTE.ToString();
+                FilteringModel.ChangeEmailStatus(order.email_token, statusId, executeUser);
+            }
+        }
+
+        Log.Debug($"Order {orderToken} resolved status was {(isCurrentlyResolved ? "cleared" : "set")} by {executeUser}");
+    }
 }
