@@ -604,7 +604,6 @@ export class OrderTableComponent implements OnInit, OnDestroy {
                 }
 
                 this.setResolvedStatus(order);
-                this.fetchOrders();
 
                 this._fms.success('email-status-change-success');
             },

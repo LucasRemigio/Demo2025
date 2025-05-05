@@ -91,7 +91,7 @@ public static class OrderModel
         string query = "SELECT id, token, email_token, is_delivery, postal_code, address, " +
             "city, district, locality, client_code, is_draft, cancel_reason_id, canceled_by, canceled_at, " +
             "confirmed_by, confirmed_at, transport_id, maps_address, distance, travel_time, " +
-            "observations, contact " +
+            "observations, contact, resolved_by, resolved_at " +
             "FROM `order` " +
             "WHERE `token` = @orderToken";
 
@@ -112,6 +112,7 @@ public static class OrderModel
         int cancelReasonId = string.IsNullOrEmpty(data["cancel_reason_id"]) ? 0 : Convert.ToInt32(data["cancel_reason_id"]);
         DateTime? canceledAt = string.IsNullOrEmpty(data["canceled_at"]) ? null : Convert.ToDateTime(data["canceled_at"]);
         DateTime? confirmedAt = string.IsNullOrEmpty(data["confirmed_at"]) ? null : Convert.ToDateTime(data["confirmed_at"]);
+        DateTime? resolvedAt = string.IsNullOrEmpty(data["resolved_at"]) ? null : Convert.ToDateTime(data["resolved_at"]);
         int transportId = string.IsNullOrEmpty(data["transport_id"]) ? 0 : Convert.ToInt32(data["transport_id"]);
         int distance = string.IsNullOrEmpty(data["distance"]) ? 0 : Convert.ToInt32(data["distance"]);
         int travelTime = string.IsNullOrEmpty(data["travel_time"]) ? 0 : Convert.ToInt32(data["travel_time"]);
@@ -139,6 +140,8 @@ public static class OrderModel
             .SetTravelTime(travelTime)
             .SetObservations(data["observations"])
             .SetContact(data["contact"])
+            .SetResolvedBy(data["resolved_by"])
+            .SetResolvedAt(resolvedAt)
             .Build();
 
         if (ConfigManager.isProduction)
