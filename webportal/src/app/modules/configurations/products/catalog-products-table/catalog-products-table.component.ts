@@ -117,7 +117,7 @@ export class CatalogProductsTableComponent implements OnInit {
             minHeight: '200px',
             height: 'auto',
             maxWidth: '80vw',
-            minWidth: '50vw',
+            minWidth: '30vw',
             width: 'auto',
             data: {
                 families: this.productFamilies,

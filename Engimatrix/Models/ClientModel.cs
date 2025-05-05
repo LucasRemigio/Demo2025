@@ -62,20 +62,27 @@ public static class ClientModel
         // The search query must split the words and then search for either the code or the name
         List<MFPrimaveraClientItem> primaveraClients = [.. (await PrimaveraClientModel.GetPrimaveraClients()).Values];
 
-        // given the search query is empty, we must get the top 20 clients with most orders
-        if (string.IsNullOrEmpty(search_query))
+        List<string> words = [];
+        if (!string.IsNullOrEmpty(search_query))
         {
-            List<string> clientCodes = GetTop20ClientsWithMostOrders(execute_user);
-            return await GetClientsByCode(clientCodes, execute_user);
+            words = [.. search_query.Split(' ')];
         }
 
-        List<string> words = [.. search_query.Split(' ')];
+        List<string> primaveraCodes;
+        if (words.Count > 0)
+        {
+            primaveraCodes = [.. primaveraClients
+                .Where(client => words.Any(word => client.Cliente?.Contains(word, StringComparison.OrdinalIgnoreCase) == true ||
+                                client.Nome?.Contains(word, StringComparison.OrdinalIgnoreCase) == true))
+                .Select(client => client.Cliente ?? string.Empty)];
+        }
+        else
+        {
+            // If no search words provided, return all client codes
+            primaveraCodes = [.. primaveraClients
+                .Select(client => client.Cliente ?? string.Empty)];
+        }
 
-        // given the search query is not empty, we must search for the client code or the name
-        List<string> primaveraCodes = [.. primaveraClients
-            .Where(client => words.Any(word => client.Cliente?.Contains(word, StringComparison.OrdinalIgnoreCase) == true ||
-                            client.Nome?.Contains(word, StringComparison.OrdinalIgnoreCase) == true))
-            .Select(client => client.Cliente ?? string.Empty)];
 
         //limit the codes to 20
         primaveraCodes = [.. primaveraCodes.Take(20)];

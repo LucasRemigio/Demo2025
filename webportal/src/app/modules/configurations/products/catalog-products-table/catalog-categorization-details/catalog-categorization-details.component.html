@@ -37,15 +37,35 @@
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Type -->
                     <div class="font-semibold">{{ t("Product.type") }}</div>
-                    <div>{{ product.type.name }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.type?.name">
+                            {{
+                                product.type?.name || t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
 
                     <!-- Material -->
                     <div class="font-semibold">{{ t("Product.material") }}</div>
-                    <div>{{ product.material.name }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.material?.name">
+                            {{
+                                product.material?.name ||
+                                    t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
 
                     <!-- Shape -->
                     <div class="font-semibold">{{ t("Product.shape") }}</div>
-                    <div>{{ product.shape.name }}</div>
+                    <div>
+                        <span [class.text-gray-500]="!product.shape?.name">
+                            {{
+                                product.shape?.name ||
+                                    t("Product.not-specified")
+                            }}
+                        </span>
+                    </div>
 
                     <!-- Finishing -->
                     <div class="font-semibold">

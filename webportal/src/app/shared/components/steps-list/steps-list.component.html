@@ -1,4 +1,4 @@
-<div class="px-8 py-2" >
+<div class="px-8 py-2">
     <ol>
         <ng-container
             *ngFor="let step of steps; let last = last; trackBy: trackByFn"
@@ -24,11 +24,11 @@
                     <div
                         class="flex items-center justify-center w-8 h-8 rounded-full flex-0 ring-2 ring-inset ring-transparent bg-card dark:bg-blue-500"
                         [ngClass]="{
-                            'orange-bg dark:orange-bg text-white group-hover:bg-orange-300':
+                            'orange-bg dark:orange-bg text-white group-hover:bg-indigo-300':
                                 step.order < currentStep,
-                            'ring-orange text-orange ring-orange-600':
+                            'ring-indigo text-indigo-500 ring-indigo-600':
                                 step.order === currentStep,
-                            'ring-gray-300 dark:ring-blue-200 group-hover:ring-orange-300 ':
+                            'ring-gray-300 dark:ring-blue-200 group-hover:ring-indigo-300 ':
                                 step.order > currentStep
                         }"
                     >
@@ -50,7 +50,7 @@
                         <!-- Upcoming step -->
                         <ng-container *ngIf="step.order > currentStep">
                             <div
-                                class="font-semibold text-md text-hint group-hover:text-orange-300"
+                                class="font-semibold text-md text-hint group-hover:text-indigo-300"
                             >
                                 {{ step.order + 1 }}
                             </div>

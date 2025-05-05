@@ -5,7 +5,7 @@
         <div *ngFor="let rating of ratings" class="flex flex-row gap-4">
             <!-- Current Rating Card -->
             <div
-                class="flex-1 p-4 text-center bg-white border border-orange-600 rounded shadow"
+                class="flex-1 p-4 text-center bg-white border border-indigo-600 rounded shadow"
                 style="min-width: 250px; max-width: 300px"
                 [matTooltip]="getWhoVerifiedRating(rating.rating_type.id)"
                 matTooltipClass="text-center whitespace-pre-line px-2 py-2"
@@ -17,7 +17,7 @@
                     {{ t("Product.weight") }}:
                     <strong>{{ rating.rating_type.weight }}</strong>
                 </p>
-                <p class="mt-2 text-4xl font-bold orange-text">
+                <p class="mt-2 text-4xl font-bold text-primary">
                     <strong>{{ rating.rating_discount.rating }}</strong>
                 </p>
                 <p>
