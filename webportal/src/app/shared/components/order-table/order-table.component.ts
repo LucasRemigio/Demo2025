@@ -547,7 +547,7 @@ export class OrderTableComponent implements OnInit, OnDestroy {
             case PendingClientConfirmationEnum.CONFIRMED:
                 return 'text-green-600';
             case PendingClientConfirmationEnum.PENDING:
-                return 'text-orange-600';
+                return 'text-indigo-600';
             case PendingClientConfirmationEnum.NOT_PENDING:
                 return 'text-gray-300';
             default:
@@ -647,7 +647,7 @@ export class OrderTableComponent implements OnInit, OnDestroy {
 
     getOrderResolvedTextColor(order: OrderDTO): string {
         if (this.isOrderResolved(order)) {
-            return 'text-orange-600';
+            return 'text-indigo-600';
         }
 
         return 'text-gray-300';

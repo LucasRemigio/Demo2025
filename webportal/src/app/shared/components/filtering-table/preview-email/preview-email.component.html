@@ -124,7 +124,7 @@
                                 >
                                     <button
                                         mat-button
-                                        class="flex items-center p-1 pr-2 text-white orange-bg hover:bg-orange-700 rounded-2xl"
+                                        class="flex items-center p-1 pr-2 text-white orange-bg hover:bg-indigo-700 rounded-2xl"
                                         (click)="changeEmailStatus()"
                                         [disabled]="isLoading"
                                     >
@@ -146,7 +146,7 @@
                                     <div class="flex items-center">
                                         <button
                                             mat-button
-                                            class="flex items-center p-1 text-white shadow-md orange-bg hover:bg-orange-700 rounded-2xl"
+                                            class="flex items-center p-1 text-white shadow-md orange-bg hover:bg-indigo-700 rounded-2xl"
                                             (click)="changeEmailStatus()"
                                             [disabled]="isLoading"
                                         >
@@ -191,10 +191,10 @@
                                     <button
                                         mat-menu-item
                                         (click)="printEmail(true, false)"
-                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-orange-100"
+                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-indigo-100"
                                     >
                                         <mat-icon
-                                            class="text-orange-600"
+                                            class="text-indigo-600"
                                             [svgIcon]="
                                                 'heroicons_solid:document'
                                             "
@@ -210,10 +210,10 @@
                                             data.emailAttachments.length === 0
                                         "
                                         (click)="printEmail(false, true)"
-                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-orange-100"
+                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-indigo-100"
                                     >
                                         <mat-icon
-                                            class="text-orange-600"
+                                            class="text-indigo-600"
                                             [svgIcon]="
                                                 'heroicons_solid:paper-clip'
                                             "
@@ -229,10 +229,10 @@
                                             data.emailAttachments.length === 0
                                         "
                                         (click)="printEmail(true, true)"
-                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-orange-100"
+                                        class="flex justify-start p-2 transition-all duration-200 rounded-md hover:bg-indigo-100"
                                     >
                                         <mat-icon
-                                            class="text-orange-600"
+                                            class="text-indigo-600"
                                             [svgIcon]="
                                                 'heroicons_solid:printer'
                                             "

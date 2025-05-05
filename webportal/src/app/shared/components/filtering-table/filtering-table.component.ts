@@ -618,9 +618,9 @@ export class FilteringTableComponent implements OnInit, OnDestroy, OnChanges {
     getEmailResolvedTextColor(email: FilteredEmail): string {
         switch (this.emailResolvedStatus(email)) {
             case ResolvedStatusEnum.RESOLVED:
-                return 'text-orange-600';
+                return 'text-indigo-600';
             case ResolvedStatusEnum.RESOLVEDPREV:
-                return 'text-orange-100';
+                return 'text-indigo-100';
             case ResolvedStatusEnum.UNRESOLVED:
                 return 'text-gray-300';
             default:

@@ -312,7 +312,7 @@ export class EditAllClientRatingsComponent implements OnInit {
             case 'C':
                 return 'bg-amber-100 text-amber-800 border border-amber-300'; // Amber
             case 'D':
-                return 'bg-orange-100 text-orange-800 border border-orange-300'; // Orange
+                return 'bg-indigo-100 text-indigo-800 border border-indigo-300'; // Orange
             default:
                 return 'bg-red-100 text-red-700 border border-red-300'; // Red
         }
