@@ -456,7 +456,6 @@ export class ValidateDetailsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((updatedProducts) => {
                 this.currentProducts = updatedProducts;
-                console.log('updated products', updatedProducts);
             });
 
         this._productUpdateService.orderTotalUpdated

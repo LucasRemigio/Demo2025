@@ -110,7 +110,6 @@ export class RatingsTableComponent implements OnInit, OnChanges {
 
             this.clientRatingsMap.set(client.code, ratingsMap);
         });
-
     }
 
     // Method to retrieve the rating for a specific client and rating type id

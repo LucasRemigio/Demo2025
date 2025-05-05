@@ -407,7 +407,7 @@ public static class ProcessOrders
         {
             if (string.IsNullOrEmpty(orderAddress))
             {
-                orderAddress = "Client picks up at Masterferro";
+                orderAddress = "Client picks up at Engibots";
             }
             result.Append("<p>Dear Customer,</p>");
             result.Append("<br/><br/>");
@@ -424,13 +424,13 @@ public static class ProcessOrders
             result.Append("</table>");
             result.Append("<br/><br/>");
             result.Append("<p>Thank you for your order!</p>");
-            result.Append("<p>The Masterferro team wishes you a wonderful day!</p>");
+            result.Append("<p>The Engibots team wishes you a wonderful day!</p>");
         }
         else
         {
             if (string.IsNullOrEmpty(orderAddress))
             {
-                orderAddress = "Cliente levanta na Masterferro";
+                orderAddress = "Cliente levanta na Engibots";
             }
             result.Append("<p>Estimado Cliente,</p>");
             result.Append("<br/><br/>");
@@ -447,7 +447,7 @@ public static class ProcessOrders
             result.Append("</table>");
             result.Append("<br/><br/>");
             result.Append("<p>Agradecemos a sua encomenda!</p>");
-            result.Append("<p>A sua equipa da Masterferro deseja-lhe a continuação de um excelente dia!</p>");
+            result.Append("<p>A sua equipa da Engibots deseja-lhe a continuação de um excelente dia!</p>");
         }
 
         string signature = SignatureModel.GetDefaultFormattedSignature(string.Empty);
@@ -524,7 +524,7 @@ public static class ProcessOrders
             result.Append("<br>");
             result.Append("<p>We appreciate your cooperation and look forward to assisting you with your request!</p>");
             result.Append("<br>");
-            result.Append("<p>The Masterferro team wishes you a wonderful day!</p>");
+            result.Append("<p>The Engibots team wishes you a wonderful day!</p>");
             result.Append("<br/>");
         }
         else
@@ -537,7 +537,7 @@ public static class ProcessOrders
             result.Append("<br>");
             result.Append("<p>Agradecemos a sua colaboração e estamos à disposição para ajudar com a sua solicitação!</p>");
             result.Append("<br>");
-            result.Append("<p>A sua equipa da Masterferro deseja-lhe um excelente dia!</p>");
+            result.Append("<p>A sua equipa da Engibots deseja-lhe um excelente dia!</p>");
             result.Append("<br/>");
         }
 

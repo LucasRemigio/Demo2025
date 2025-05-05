@@ -8,7 +8,7 @@ public class ClientRatingDTO
     public RatingTypeItem rating_type { get; set; }
     public RatingDiscountItem rating_discount { get; set; }
     public DateTime? rating_valid_until { get; set; }
-    public RatingDiscountItem recommended_rating { get; set; }
+    public RatingDiscountItem recommended_rating_discount { get; set; }
     public DateTime? updated_at { get; set; }
     public string? updated_by { get; set; }
     public DateTime created_at { get; set; }
@@ -47,7 +47,7 @@ public class ClientRatingDTOBuilder
 
     public ClientRatingDTOBuilder SetRecommendedRating(RatingDiscountItem recommendedRating)
     {
-        clientRatingDTO.recommended_rating = recommendedRating;
+        clientRatingDTO.recommended_rating_discount = recommendedRating;
         return this;
     }
 

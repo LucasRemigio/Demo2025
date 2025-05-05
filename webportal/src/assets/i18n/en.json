@@ -840,7 +840,7 @@
         "search-by-filters": "Search by sender, email subject or order title",
         "validate": "Validate",
         "no-orders-to-validate": "There are no orders to validate",
-        "already-confirmed": "The order has been already confirmed. If you want to make any changes to your order, please contact comercial@masterferro.pt",
+        "already-confirmed": "The order has been already confirmed. If you want to make any changes to your order, please contact email@engibots.pt",
         "report-human-success": "Your order has been successfully reported for human intervention",
         "origin-email": "Email that originated the order",
         "no-attachments": "No attachments found!",

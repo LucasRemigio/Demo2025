@@ -14,7 +14,7 @@ const generatePalette = require(path.resolve(
  * Tailwind-like color palettes automatically
  */
 const customPalettes = {
-    brand: generatePalette("#df4d11"),
+    brand: generatePalette("#6200ff"),
 };
 
 /**
@@ -25,7 +25,7 @@ const themes = {
     default: {
         primary: {
             ...colors.gray,
-            DEFAULT: "#df4d11",
+            DEFAULT: "#6200ff",
         },
         "on-primary": {
             ...colors.white,
@@ -33,7 +33,7 @@ const themes = {
         },
         accent: {
             ...colors.blueGray,
-            DEFAULT: "#df4d11",
+            DEFAULT: "#50e6ae",
         },
         warn: {
             ...colors.red,

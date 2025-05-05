@@ -6,7 +6,7 @@
         <div class="flex justify-start space-x-2">
             <button
                 mat-flat-button
-                class="flex items-center p-1 pr-2 mb-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-orange-600"
+                class="flex items-center p-1 pr-2 mb-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-indigo-600"
                 (click)="toggleRecipientField()"
             >
                 <mat-icon
@@ -27,7 +27,7 @@
 
             <button
                 mat-flat-button
-                class="flex items-center p-1 pr-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-orange-600"
+                class="flex items-center p-1 pr-2 text-white transition duration-200 orange-bg rounded-3xl hover:bg-indigo-600"
                 (click)="toggleCcBccFields()"
             >
                 <mat-icon
@@ -210,12 +210,10 @@
                     <b>{{ t("attachments") }}:</b>
                 </mat-label>
 
-
                 <!-- Attachment button - Now with inline-flex and width-auto -->
                 <button
                     mat-flat-button
                     class="inline-flex items-center px-4 py-2 text-white transition duration-300 bg-blue-500 upload-btn rounded-2xl hover:bg-blue-700 hover:shadow-md"
-
                     (click)="fileUpload.click()"
                 >
                     <mat-icon
@@ -223,7 +221,6 @@
                         svgIcon="heroicons_outline:paper-clip"
                     ></mat-icon>
                     <span class="text-base font-medium">
-
                         {{ t("Email.attach") }}
                     </span>
                 </button>
