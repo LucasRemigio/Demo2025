@@ -72,7 +72,7 @@ public static class PrimaveraClientModel
 
             new MFPrimaveraClientItem
             {
-                Cliente = "10064",
+                Cliente = "010064",
                 Nome = "Estruturas Metálicas do Norte",
                 Contribuinte = "508765432",
                 Morada = "Parque Industrial, Lote 7",

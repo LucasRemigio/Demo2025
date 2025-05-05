@@ -2,7 +2,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
     GenericResponse,
     TimeElapsedResponse,
@@ -19,12 +19,16 @@ import {
     SegmentsResponse,
     SyncClientResponse,
 } from './clients.types';
+import { ClientsMockService } from './clients-mock.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ClientsService {
-    constructor(private _httpClient: HttpClient) {}
+    constructor(
+        private _httpClient: HttpClient,
+        private _mock: ClientsMockService
+    ) {}
 
     /**
      * Get All cancel reasons
@@ -89,12 +93,8 @@ export class ClientsService {
         clientCode: string,
         isOnlyPastMonth: boolean = false
     ): Observable<ClientPrimaveraOrdersResponse> {
-        return this._httpClient.get<ClientPrimaveraOrdersResponse>(
-            environment.currrentBaseURL +
-                '/api/primavera-orders/client/' +
-                clientCode +
-                (isOnlyPastMonth ? '/month' : '')
-        );
+        // Wrap the mock data in an Observable using 'of'
+        return of(this._mock.getMockClientOrders(clientCode, isOnlyPastMonth));
     }
 
     getClientPrimaveraInvoices(
