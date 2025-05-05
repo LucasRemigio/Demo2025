@@ -51,10 +51,10 @@ namespace engimatrix.Config
         public static decimal MFLat = 0;
         public static decimal MFLng = 0;
 
-        public static string MasterferroAddress = "Av. Barros e Soares, 531";
-        public static string MasterferroCity = "Nogueira";
-        public static string MasterferroPostalCode = "4715-213";
-        public static string MasterferroPostalCodeLocality = "Braga";
+        public static string MasterferroAddress = "R. Nova da Alfândega";
+        public static string MasterferroCity = "Porto";
+        public static string MasterferroPostalCode = "4050-430";
+        public static string MasterferroPostalCodeLocality = "Porto";
         public static string MasterferroCountry = "PT";
 
         public static int delayMinutesBetweenRepeatedEmailChecks = 10;
