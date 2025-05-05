@@ -7,6 +7,7 @@ using engimatrix.Exceptions;
 using engimatrix.ModelObjs;
 using engimatrix.ModelObjs.Primavera;
 using engimatrix.Utils;
+using engimatrix.Views;
 using Smartsheet.Api.Models;
 namespace engimatrix.Models;
 
@@ -227,10 +228,12 @@ public static class ClientRatingModel
     {
         string query = "SELECT cr.client_code AS client_code, rt.id AS rating_type_id, rt.description AS rating_type_description, " +
             "rt.slug AS rating_type_slug, rt.weight AS rating_type_weight, rd.rating AS rating_discount_rating, rd.percentage AS rating_discount_percentage, " +
-            "cr.updated_at, cr.updated_by, cr.created_at, cr.created_by " +
+            "cr.updated_at, cr.updated_by, cr.created_at, cr.created_by, cr.rating_valid_until, " +
+            "rrd.rating AS recommended_rating, rrd.percentage AS recommended_rating_percentage " +
             "FROM mf_client_rating cr " +
                 "JOIN mf_rating_type rt ON cr.rating_type_id = rt.id " +
                 "JOIN mf_rating_discount rd ON rd.rating = cr.rating " +
+                "JOIN mf_rating_discount rrd ON rrd.rating = cr.recommended_rating " +
             "ORDER BY cr.client_code, rt.id;";
         SqlExecuterItem response = SqlExecuter.ExecuteFunction(query, [], execute_user, false, "getClientRatingsDTO");
 
@@ -245,12 +248,17 @@ public static class ClientRatingModel
         {
             RatingTypeItem rating_type = new(Int32.Parse(item["rating_type_id"]), item["rating_type_description"], item["rating_type_slug"], Decimal.Parse(item["rating_type_weight"], CultureInfo.InvariantCulture));
             RatingDiscountItem rating_discount = new(Convert.ToChar(item["rating_discount_rating"]), Decimal.Parse(item["rating_discount_percentage"], CultureInfo.InvariantCulture));
+            RatingDiscountItem recommendedRating = new(Convert.ToChar(item["recommended_rating"]), Decimal.Parse(item["recommended_rating_percentage"], CultureInfo.InvariantCulture));
             DateTime createdAt = !string.IsNullOrEmpty(item["created_at"]) ? DateTime.Parse(item["created_at"]) : default;
             DateTime? updatedAt = !string.IsNullOrEmpty(item["updated_at"]) ? DateTime.Parse(item["updated_at"]) : null;
+            DateTime? ratingValidUntil = !string.IsNullOrEmpty(item["rating_valid_until"]) ? DateTime.Parse(item["rating_valid_until"]) : null;
+
             ClientRatingDTO clientRating = new ClientRatingDTOBuilder()
                 .SetClientCode(item["client_code"])
                 .SetRatingType(rating_type)
                 .SetRatingDiscount(rating_discount)
+                .SetRecommendedRating(recommendedRating)
+                .SetRatingValidUntil(ratingValidUntil)
                 .SetCreatedBy(item["created_by"])
                 .SetCreatedAt(createdAt)
                 .SetUpdatedBy(item["updated_by"])
@@ -260,6 +268,25 @@ public static class ClientRatingModel
         }
 
         return clientRatings;
+    }
+    public static void UpdateClientRatings(UpdateClientRatings ratings, string clientCode, string execute_user)
+    {
+        foreach (UpdateClientRatingItem rating in ratings.ratings)
+        {
+            if (!rating.IsValid())
+            {
+                throw new InputNotValidException("Error getting record for client ratings");
+            }
+
+            ClientRatingItem clientRating = new ClientRatingItemBuilder()
+                .SetClientCode(clientCode)
+                .SetRatingTypeId(rating.rating_type_id)
+                .SetRating(rating.rating)
+                .SetRatingValidUntil(rating.rating_valid_until)
+                .Build();
+
+            PatchClientRating(clientRating, execute_user);
+        }
     }
 
     public static List<ClientRatingDTO> GetClientRatingsByCodeDTO(string client_code, string execute_user)

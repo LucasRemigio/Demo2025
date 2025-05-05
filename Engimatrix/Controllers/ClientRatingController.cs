@@ -60,4 +60,42 @@ public class ClientRatingsController : ControllerBase
             return new ClientRatingItemResponse(ResponseErrorMessage.InternalError, language);
         }
     }
+
+    [HttpPut]
+    [Route("{clientCode}")]
+    [RequestLimit]
+    [ValidateReferrer]
+    [Authorize]
+    public ActionResult<ClientRatingItemResponse> UpdateClientRatings(string clientCode, UpdateClientRatings req)
+    {
+        string language = this.Request.Headers["client-lang"];
+        if (string.IsNullOrEmpty(language))
+        {
+            language = ConfigManager.defaultLanguage;
+        }
+        string token = this.Request.Headers["Authorization"];
+        string executer_user = UserModel.GetUserByToken(token);
+
+        if (!req.IsValid())
+        {
+            return new ClientRatingItemResponse(ResponseErrorMessage.InvalidArgs, language);
+        }
+
+        try
+        {
+            ClientRatingModel.UpdateClientRatings(req, clientCode, executer_user);
+
+            return new ClientRatingItemResponse(ResponseSuccessMessage.Success, language);
+        }
+        catch (InputNotValidException e)
+        {
+            Log.Error("UpdateClientRatings endpoint - Error - " + e);
+            return new ClientRatingItemResponse(ResponseErrorMessage.InvalidArgs, language);
+        }
+        catch (Exception e)
+        {
+            Log.Error("UpdateClientRatings endpoint - Error - " + e);
+            return new ClientRatingItemResponse(ResponseErrorMessage.InternalError, language);
+        }
+    }
 }

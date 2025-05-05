@@ -18,6 +18,7 @@ import { FlashMessageService } from 'app/shared/components/flash-message/flash-m
 import { ClientsService } from '../clients.service';
 import {
     Client,
+    ClientCodeResponse,
     ClientRatingDTO,
     RatingSlugs,
     RatingType,
@@ -25,6 +26,7 @@ import {
     SyncPrimaveraStatsResponse,
 } from '../clients.types';
 import { PrimaveraSyncingService } from '../primavera-syncing.service';
+import { EditAllClientRatingsComponent } from './edit-all-client-ratings/edit-all-client-ratings.component';
 import { EditClientRatingComponent } from './edit-client-rating/edit-client-rating.component';
 import { ViewClientPrimaveraInvoicesComponent } from './view-client-primavera-invoices/view-client-primavera-invoices.component';
 import { ViewClientPrimaveraOrdersComponent } from './view-client-primavera-orders/view-client-primavera-orders.component';
@@ -108,6 +110,7 @@ export class RatingsTableComponent implements OnInit, OnChanges {
 
             this.clientRatingsMap.set(client.code, ratingsMap);
         });
+
     }
 
     // Method to retrieve the rating for a specific client and rating type id
@@ -144,6 +147,37 @@ export class RatingsTableComponent implements OnInit, OnChanges {
 
         const dialogRef = this._matDialog.open(
             EditClientRatingComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this._flashMessageService.success('edit-client-rating-success');
+
+                this.refreshRequested.emit();
+            }
+        });
+    }
+
+    editAllRatings(client: Client): void {
+        // Find the rating type based on the slug
+
+        // open the dialog to edit the segment
+        const dialogConfig: MatDialogConfig = {
+            maxHeight: '80vh',
+            minHeight: '200px',
+            height: 'auto',
+            maxWidth: '80vw',
+            minWidth: '500px',
+            width: 'auto',
+            data: {
+                client,
+                ratings: client.ratings,
+            },
+        };
+
+        const dialogRef = this._matDialog.open(
+            EditAllClientRatingsComponent,
             dialogConfig
         );
 
@@ -325,7 +359,25 @@ export class RatingsTableComponent implements OnInit, OnChanges {
             }
         );
 
-        const label =
+        let label: string = '';
+
+        if (rating.rating_valid_until) {
+            const formatedValidUntil = new Date(
+                rating.rating_valid_until
+            ).toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            });
+
+            label +=
+                this._transloco.translate('rating-valid-until') +
+                ' ' +
+                formatedValidUntil +
+                ' \n';
+        }
+
+        label +=
             this._transloco.translate('rating-updated-at') +
             ' ' +
             formatedDateTime +

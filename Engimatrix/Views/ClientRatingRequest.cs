@@ -15,4 +15,47 @@ namespace engimatrix.Views
             return Config.RatingConstants.IsValidRating(rating);
         }
     }
+
+    public class UpdateClientRatings
+    {
+        public List<UpdateClientRatingItem> ratings { get; set; }
+
+        public bool IsValid()
+        {
+            foreach (UpdateClientRatingItem rating in ratings)
+            {
+                if (!rating.IsValid())
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    public class UpdateClientRatingItem
+    {
+        public int rating_type_id { get; set; }
+        public char rating { get; set; }
+        public DateTime rating_valid_until { get; set; }
+
+        public bool IsValid()
+        {
+            if (!Config.RatingConstants.IsValidRating(rating))
+            {
+                return false;
+            }
+
+            if (!Config.RatingTypes.IsValidClientRatingType(rating_type_id))
+            {
+                return false;
+            }
+
+            if (rating_valid_until < DateTime.Now)
+            {
+                return false;
+            }
+
+            return true;
+        }
+    }
 }

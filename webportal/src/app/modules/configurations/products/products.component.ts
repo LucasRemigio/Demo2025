@@ -1,4 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+/* eslint-disable @typescript-eslint/naming-convention */
+import {
+    AfterViewInit,
+    Component,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
+import { MatTabGroup } from '@angular/material/tabs';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen';
 import {
     Family,
@@ -19,7 +28,9 @@ import {
     styleUrls: ['./products.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, AfterViewInit {
+    @ViewChild('tabGroup') tabGroup: MatTabGroup;
+
     productDiscounts: ProductDiscountDTO[] = [];
     catalogProducts: ProductCatalogDTO[];
     productConversions: ProductConversionDTO[] = [];
@@ -32,9 +43,18 @@ export class ProductsComponent implements OnInit {
 
     selectedProductFamilyCatalog: string = '';
 
+    // Define tab IDs
+    readonly TAB_IDS = {
+        DISCOUNTS: 'discounts',
+        CATALOG: 'catalog',
+        CONVERSIONS: 'conversions',
+    };
+
     constructor(
         private _productsService: ProductsService,
-        private _fuseSplashScreenService: FuseSplashScreenService
+        private _fuseSplashScreenService: FuseSplashScreenService,
+        private _router: Router,
+        private _route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
@@ -43,6 +63,17 @@ export class ProductsComponent implements OnInit {
         this.fetchConversions();
         this._productsService.getProductFamilies().subscribe((response) => {
             this.productFamilies = response.product_families;
+        });
+    }
+
+    ngAfterViewInit(): void {
+        // Wait for the view to be initialized before selecting the tab
+        this._route.queryParams.subscribe((params) => {
+            const tab = params['tab'];
+            if (tab) {
+                // Navigate to the appropriate tab based on name
+                this.selectTabByName(tab);
+            }
         });
     }
 
@@ -112,5 +143,42 @@ export class ProductsComponent implements OnInit {
                 console.error('ERRO!');
             }
         );
+    }
+
+    onTabChange(event: any): void {
+        // Get tab index
+        const tabIndex = event.index;
+
+        // Use a lookup to convert index to tab ID
+        const tabIds = [
+            this.TAB_IDS.DISCOUNTS,
+            this.TAB_IDS.CATALOG,
+            this.TAB_IDS.CONVERSIONS,
+        ];
+        const tabId = tabIds[tabIndex] || '';
+
+        this._router.navigate([], {
+            relativeTo: this._route,
+            queryParams: { tab: tabId },
+            queryParamsHandling: 'merge',
+        });
+    }
+
+    selectTabByName(tabId: string): void {
+        if (!this.tabGroup) {
+            return;
+        }
+
+        // Map tabId to index using indexOf
+        const tabIds = [
+            this.TAB_IDS.DISCOUNTS,
+            this.TAB_IDS.CATALOG,
+            this.TAB_IDS.CONVERSIONS,
+        ];
+        const index = tabIds.indexOf(tabId);
+
+        if (index !== -1) {
+            this.tabGroup.selectedIndex = index;
+        }
     }
 }

@@ -1,8 +1,10 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
     GenericResponse,
     TimeElapsedResponse,
@@ -18,6 +20,7 @@ import {
     RatingTypesResponse,
     SegmentsResponse,
     SyncClientResponse,
+    UpdateClientRatingsRequest,
 } from './clients.types';
 import { ClientsMockService } from './clients-mock.service';
 
@@ -33,9 +36,15 @@ export class ClientsService {
     /**
      * Get All cancel reasons
      */
-    getAllClients(): Observable<ClientsResponse> {
+    getAllClients(limit?: number): Observable<ClientsResponse> {
+        let params = new HttpParams();
+        if (limit !== undefined) {
+            params = params.append('limit', limit.toString());
+        }
+
         return this._httpClient.get<ClientsResponse>(
-            environment.currrentBaseURL + '/api/clients'
+            environment.currrentBaseURL + '/api/clients',
+            { params }
         );
     }
 
@@ -93,7 +102,6 @@ export class ClientsService {
         clientCode: string,
         isOnlyPastMonth: boolean = false
     ): Observable<ClientPrimaveraOrdersResponse> {
-        // Wrap the mock data in an Observable using 'of'
         return of(this._mock.getMockClientOrders(clientCode, isOnlyPastMonth));
     }
 
@@ -153,5 +161,19 @@ export class ClientsService {
                 code +
                 '/rate-credit'
         );
+    }
+
+    updateAllClientRatings(
+        clientCode: string,
+        updateRequest: UpdateClientRatingsRequest
+    ): Observable<any> {
+        return this._httpClient
+            .put<any>(
+                environment.currrentBaseURL +
+                    '/api/clients/ratings/' +
+                    clientCode,
+                updateRequest
+            )
+            .pipe(catchError((error) => throwError(error)));
     }
 }

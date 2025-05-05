@@ -1,3 +1,4 @@
+import { BoundElementProperty } from '@angular/compiler';
 import {
     ChangeDetectorRef,
     Component,
@@ -60,9 +61,7 @@ export class ViewClientPrimaveraOrdersComponent implements OnInit, OnChanges {
             .getClientPrimaveraOrders(this.client.code)
             .subscribe(
                 (response) => {
-                    console.log(response);
                     this.orders = response.primavera_orders;
-                    console.log(this.orders);
                     this.clientTotal = response.total;
                 },
                 (error) => {},

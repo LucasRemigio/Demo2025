@@ -172,27 +172,20 @@ export class EmailActionsService {
     /***
      * Changes the status of an email based on its current status.
      * @param token The token identifying the email.
-     * @param orderToChangeStatus The current order/email data (which includes its status).
+     * @param email The current order/email data (which includes its status).
      * @returns An observable that emits the API response.
      */
-    changeEmailStatus(
-        token: string,
-        orderToChangeStatus: FilteredEmail
-    ): Observable<any> {
+    changeEmailStatus(token: string, email: FilteredEmail): Observable<any> {
         // Determine the new status based on the current status.
         let newStatus = EMAIL_STATUSES.RESOLVIDO_MANUALMENTE;
         if (
-            orderToChangeStatus.status ===
-                EMAIL_STATUSES.TRIAGEM_REALIZADA.description ||
-            orderToChangeStatus.status ===
-                EMAIL_STATUSES.AGUARDA_VALIDACAO.description
+            email.status === EMAIL_STATUSES.TRIAGEM_REALIZADA.description ||
+            email.status === EMAIL_STATUSES.AGUARDA_VALIDACAO.description
         ) {
             newStatus = EMAIL_STATUSES.RESOLVIDO_MANUALMENTE;
         } else if (
-            orderToChangeStatus.status ===
-                EMAIL_STATUSES.RESOLVIDO_MANUALMENTE.description ||
-            orderToChangeStatus.status ===
-                EMAIL_STATUSES.TRIAGEM_REALIZADA.description
+            email.status === EMAIL_STATUSES.RESOLVIDO_MANUALMENTE.description ||
+            email.status === EMAIL_STATUSES.TRIAGEM_REALIZADA.description
         ) {
             newStatus = EMAIL_STATUSES.TRIAGEM_REALIZADA;
         }

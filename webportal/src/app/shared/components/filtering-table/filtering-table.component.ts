@@ -14,12 +14,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { UserService } from 'app/core/user/user.service';
-import { saveAs } from 'file-saver';
 import { MatDialog } from '@angular/material/dialog';
 import { PageChangeEvent } from '@progress/kendo-angular-grid';
-import { MatDialogConfig } from '@angular/material/dialog';
-import { PreviewEmailComponent } from './preview-email/preview-email.component';
-import { PreviewRepliesComponent } from './preview-replies/preview-replies.component';
 import { TranslocoService } from '@ngneat/transloco';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import moment from 'moment';
@@ -39,7 +35,6 @@ import {
 } from 'app/modules/filtering/filtering.types';
 import { FilteringService } from 'app/modules/filtering/filtering.service';
 import { Category } from 'app/modules/common/common.types';
-import { FwdEmailComponent } from './fwd-email/fwd-email.component';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen';
 import { environment } from 'environments/environment';
 import { FlashMessageService } from 'app/shared/components/flash-message/flash-message.service';
@@ -50,7 +45,6 @@ import {
 } from '../filtering-validate/details/details.types';
 import { AuditHubService } from './audit-hub.service';
 import { EmailActionsService } from './email-actions.service';
-import { Router } from '@angular/router';
 
 export const MY_FORMATS = {
     parse: {

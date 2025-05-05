@@ -1,0 +1,340 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6 max-w-240 md:min-w-160">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 text-white flex-0 sm:pr-5 sm:pl-8 orange-bg"
+        >
+            <div class="text-lg font-medium">
+                {{ t("edit-all-client-ratings") }} -
+                {{ client.primavera_client.nome }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Flash Message -->
+        <div class="px-6 pt-4" *ngIf="flashMessage">
+            <div
+                class="flex items-center p-4 rounded-md"
+                [ngClass]="{
+                    'bg-green-100 text-green-800': flashMessage === 'success',
+                    'bg-red-100 text-red-800': flashMessage === 'error'
+                }"
+            >
+                <mat-icon
+                    class="mr-2"
+                    [ngClass]="{
+                        'text-green-500': flashMessage === 'success',
+                        'text-red-500': flashMessage === 'error'
+                    }"
+                    [svgIcon]="
+                        flashMessage === 'success'
+                            ? 'heroicons_outline:check'
+                            : 'heroicons_outline:x'
+                    "
+                ></mat-icon>
+                <span [innerText]="flashMessageText"></span>
+            </div>
+        </div>
+
+        <!-- Loading Indicator Spinner -->
+        <div
+            class="flex items-center justify-center w-full h-full my-auto"
+            *ngIf="isLoading"
+        >
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Form -->
+        <div
+            class="flex flex-col flex-auto p-6 overflow-y-auto text-base text-black sm:p-8"
+            *ngIf="!isLoading"
+        >
+            <form [formGroup]="ratingForm" (ngSubmit)="save()">
+                <!-- All ratings in a table -->
+                <div
+                    class="p-4 mb-6 border border-gray-200 rounded-md shadow-sm bg-gray-50"
+                >
+                    <h3 class="mb-4 text-lg font-medium">
+                        {{ t("client-ratings") }}
+                    </h3>
+
+                    <div formArrayName="ratings" class="overflow-x-auto">
+                        <div class="relative overflow-y-auto max-h-96">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="sticky top-0 z-10 bg-white">
+                                    <tr>
+                                        <!-- New checkbox column -->
+                                        <th
+                                            class="w-16 px-4 py-2 font-medium text-center text-gray-700"
+                                        >
+                                            <mat-checkbox
+                                                [checked]="allRatingsSelected"
+                                                [indeterminate]="
+                                                    someRatingsSelected
+                                                "
+                                                (change)="
+                                                    toggleAllRatings(
+                                                        $event.checked
+                                                    )
+                                                "
+                                            >
+                                            </mat-checkbox>
+                                        </th>
+                                        <th
+                                            class="px-4 py-2 font-medium text-left text-gray-700"
+                                        >
+                                            {{ t("rating-type") }}
+                                        </th>
+                                        <th
+                                            class="px-4 py-2 font-medium text-center text-gray-700"
+                                        >
+                                            {{ t("current") }}
+                                        </th>
+
+                                        <th
+                                            class="px-4 py-2 font-medium text-center text-gray-700"
+                                        >
+                                            {{ t("recommended") }}
+                                        </th>
+                                        <th
+                                            class="px-4 py-2 font-medium text-left text-gray-700"
+                                        >
+                                            {{ t("new-rating") }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody
+                                    class="bg-white divide-y divide-gray-200"
+                                >
+                                    <tr
+                                        *ngFor="
+                                            let ratingControl of ratingsFormArray.controls;
+                                            let i = index
+                                        "
+                                        [formGroupName]="i"
+                                        class="hover:bg-gray-50"
+                                    >
+                                        <!-- Checkbox cell -->
+                                        <td class="px-4 py-3 text-center">
+                                            <mat-checkbox
+                                                formControlName="selected"
+                                            ></mat-checkbox>
+                                        </td>
+
+                                        <!-- Rest of the cells remain unchanged -->
+
+                                        <!-- Rating Type Name -->
+                                        <td class="px-4 py-3">
+                                            {{
+                                                t(
+                                                    "Ratings." +
+                                                        ratingControl.get(
+                                                            "rating_type_name"
+                                                        ).value
+                                                )
+                                            }}
+                                        </td>
+
+                                        <!-- Current Rating -->
+                                        <td class="px-4 py-3 text-center">
+                                            <span
+                                                *ngIf="
+                                                    ratingControl.get(
+                                                        'current_rating'
+                                                    ).value
+                                                "
+                                                class="inline-block px-3 py-1 text-base rounded-md"
+                                                [style.background-color]="
+                                                    getRatingBgColor(
+                                                        ratingControl.get(
+                                                            'current_rating'
+                                                        ).value
+                                                    )
+                                                "
+                                                [style.color]="
+                                                    getRatingColor(
+                                                        ratingControl.get(
+                                                            'current_rating'
+                                                        ).value
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    ratingControl.get(
+                                                        "current_rating"
+                                                    ).value
+                                                }}
+                                            </span>
+                                            <span
+                                                *ngIf="
+                                                    !ratingControl.get(
+                                                        'current_rating'
+                                                    ).value
+                                                "
+                                                class="text-gray-400"
+                                                >—</span
+                                            >
+                                        </td>
+
+                                        <!-- Recommended Rating -->
+                                        <td class="px-4 py-3 text-center">
+                                            <span
+                                                *ngIf="
+                                                    ratingControl.get(
+                                                        'recommended_rating'
+                                                    ).value
+                                                "
+                                                class="inline-block px-3 py-1 text-base rounded-md"
+                                                [style.background-color]="
+                                                    getRatingBgColor(
+                                                        ratingControl.get(
+                                                            'recommended_rating'
+                                                        ).value
+                                                    )
+                                                "
+                                                [style.color]="
+                                                    getRatingColor(
+                                                        ratingControl.get(
+                                                            'recommended_rating'
+                                                        ).value
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    ratingControl.get(
+                                                        "recommended_rating"
+                                                    ).value
+                                                }}
+                                            </span>
+                                            <span
+                                                *ngIf="
+                                                    !ratingControl.get(
+                                                        'recommended_rating'
+                                                    ).value
+                                                "
+                                                class="text-gray-400"
+                                                >—</span
+                                            >
+                                        </td>
+
+                                        <!-- Rating Value Selection - Add visual indicator of selected rating -->
+                                        <td class="px-4 py-3">
+                                            <mat-form-field class="w-full">
+                                                <mat-select
+                                                    formControlName="rating"
+                                                    required
+                                                    (selectionChange)="
+                                                        onRatingSelected(
+                                                            ratingControl
+                                                        )
+                                                    "
+                                                >
+                                                    <mat-option
+                                                        *ngFor="
+                                                            let ratingDiscount of ratingDiscounts
+                                                        "
+                                                        [value]="
+                                                            ratingDiscount.rating
+                                                        "
+                                                    >
+                                                        <span
+                                                            class="inline-flex items-center"
+                                                        >
+                                                            <span
+                                                                class="inline-block w-4 h-4 mr-2 rounded-full"
+                                                                [style.background-color]="
+                                                                    getRatingColor(
+                                                                        ratingDiscount.rating
+                                                                    )
+                                                                "
+                                                            ></span>
+                                                            {{
+                                                                ratingDiscount.rating
+                                                            }}
+                                                        </span>
+                                                    </mat-option>
+                                                </mat-select>
+                                                <mat-error
+                                                    *ngIf="
+                                                        ratingControl
+                                                            .get('rating')
+                                                            .hasError(
+                                                                'required'
+                                                            )
+                                                    "
+                                                >
+                                                    {{ t("rating-required") }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Single Valid Until Date for all ratings -->
+                <div
+                    class="p-4 mb-6 border border-gray-200 rounded-md shadow-sm bg-gray-50"
+                >
+                    <h3 class="mb-4 text-lg font-medium">
+                        {{ t("validity-period") }}
+                    </h3>
+                    <mat-form-field class="w-full">
+                        <mat-label>{{ t("valid-until-date") }}</mat-label>
+                        <input
+                            matInput
+                            formControlName="global_valid_until"
+                            [matDatepicker]="globalPicker"
+                            required
+                            (dateChange)="onGlobalDateChange($event)"
+                        />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="globalPicker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #globalPicker></mat-datepicker>
+                        <mat-error
+                            *ngIf="
+                                ratingForm
+                                    .get('global_valid_until')
+                                    .hasError('required')
+                            "
+                        >
+                            {{ t("valid-until-required") }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end mt-6">
+                    <!-- Cancel Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 mr-2 text-white transition-colors duration-200 bg-gray-500 rounded-md hover:bg-gray-400"
+                        type="button"
+                        (click)="close()"
+                    >
+                        {{ t("cancel") }}
+                    </button>
+
+                    <!-- Save Button -->
+                    <button
+                        mat-button
+                        class="px-4 py-2 text-white transition-colors duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+                        [disabled]="ratingForm.invalid"
+                        type="submit"
+                    >
+                        {{ t("save-changes") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

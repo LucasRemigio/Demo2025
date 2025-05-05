@@ -58,7 +58,7 @@
                             t("Dashboard.filter-by-period")
                         }}</mat-label>
                         <mat-select
-                            [value]="'0'"
+                            [value]="selectedPreset"
                             (selectionChange)="onSelectionChange($event.value)"
                             style="color: #000000"
                         >
@@ -230,7 +230,6 @@
                     </kendo-grid-column>
 
                     <kendo-grid-column
-                        *ngIf="isDraft"
                         [sortable]="true"
                         [filterable]="false"
                         field="resolved_at"
@@ -246,9 +245,9 @@
                                     )
                                 }"
                             >
-                                <!-- this, instead of manually resolved, should indicate if the quotation is pending client approval-->
-                                <!-- Resolved status button as icon-->
+                                <!-- Client Pending Adjudication status button as icon-->
                                 <mat-icon
+                                    *ngIf="isDraft"
                                     mat-icon-button
                                     class="w-10 h-10"
                                     [class]="getPendingClientColor(dataItem)"
@@ -258,7 +257,32 @@
                                         )
                                     "
                                     matTooltipClass="text-center whitespace-pre-line px-2 py-2"
+                                    [svgIcon]="'heroicons_solid:user'"
+                                >
+                                </mat-icon>
+
+                                <!-- Resolved status button as icon-->
+                                <mat-icon
+                                    mat-icon-button
+                                    class="w-10 h-10 cursor-pointer"
+                                    [class]="
+                                        getOrderResolvedTextColor(dataItem)
+                                    "
+                                    [matTooltip]="
+                                        isOrderResolved(dataItem)
+                                            ? t('Email.already-resolved') +
+                                              ' ' +
+                                              dataItem.resolved_by +
+                                              ' - ' +
+                                              (dataItem.resolved_at
+                                                  | date
+                                                      : 'dd/MM/yyyy HH:mm:ss')
+                                            : t('Email.mark-resolved')
+                                    "
+                                    matTooltipClass="text-center whitespace-pre-line px-2 py-2"
                                     [svgIcon]="'heroicons_solid:check-circle'"
+                                    [disabled]="isLoadingOrderStatusChange"
+                                    (click)="manuallyResolve(dataItem)"
                                 >
                                 </mat-icon>
 

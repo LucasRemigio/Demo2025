@@ -7,6 +7,8 @@ namespace engimatrix.ModelObjs
         public string client_code { get; set; }
         public int rating_type_id { get; set; }
         public char rating { get; set; }
+        public DateTime? rating_valid_until { get; set; }
+        public char recommended_rating { get; set; }
         public DateTime? updated_at { get; set; }
         public string? updated_by { get; set; }
         public DateTime? created_at { get; set; }
@@ -32,6 +34,18 @@ namespace engimatrix.ModelObjs
         public ClientRatingItemBuilder SetRating(char rating)
         {
             clientRatingItem.rating = rating;
+            return this;
+        }
+
+        public ClientRatingItemBuilder SetRatingValidUntil(DateTime? ratingValidUntil)
+        {
+            clientRatingItem.rating_valid_until = ratingValidUntil;
+            return this;
+        }
+
+        public ClientRatingItemBuilder SetRecommendedRating(char recommendedRating)
+        {
+            clientRatingItem.recommended_rating = recommendedRating;
             return this;
         }
 

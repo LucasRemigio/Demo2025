@@ -17,9 +17,11 @@ import {
     MAT_DATE_FORMATS,
 } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen';
 import { translate, TranslocoService } from '@ngneat/transloco';
 import { PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -40,10 +42,12 @@ import { AuditHubService } from '../filtering-table/audit-hub.service';
 import { EmailActionsService } from '../filtering-table/email-actions.service';
 import {
     FilteredEmail,
+    Order,
     OrderDTO,
     ResolvedStatus,
 } from '../filtering-validate/details/details.types';
 import { FlashMessageService } from '../flash-message/flash-message.service';
+import { GenericConfirmationPopupComponent } from '../generic-confirmation-popup/generic-confirmation-popup.component';
 
 export const MY_FORMATS = {
     parse: {
@@ -100,9 +104,11 @@ export class OrderTableComponent implements OnInit, OnDestroy {
 
     startDate: Date;
     endDate: Date;
+    selectedPreset: string = '0'; // Default to "Hoje" (Today)
     dateRangeForm: FormGroup;
     statusId: number = 0;
     localStorageName: string = 'order-audit-filter';
+    isLoadingOrderStatusChange: boolean = false;
 
     state: any = {
         skip: 0,
@@ -137,7 +143,6 @@ export class OrderTableComponent implements OnInit, OnDestroy {
             value: 200,
         },
     ];
-    resolvedStatusEnums = ResolvedStatus;
 
     private refreshInterval: any;
 
@@ -155,7 +160,10 @@ export class OrderTableComponent implements OnInit, OnDestroy {
         private _fms: FlashMessageService,
         private _auditHubWs: AuditHubService,
         private _orderService: OrderService,
-        private _emailActionsService: EmailActionsService
+        private _emailActionsService: EmailActionsService,
+        private _matDialog: MatDialog,
+        private _router: Router,
+        private _route: ActivatedRoute
     ) {
         this.isAdmin = this._userService.isAdmin();
 
@@ -186,6 +194,14 @@ export class OrderTableComponent implements OnInit, OnDestroy {
         this.savedFilter = this.getLocalStorageFilters();
 
         this.subscribeToChanges();
+
+        // Read date parameters from URL using snapshot (much simpler)
+        const params = this._route.snapshot.queryParams;
+
+        // Handle preset date selection
+        if (params['preset']) {
+            this.onSelectionChange(params['preset']);
+        }
 
         this.fetchOrders();
     }
@@ -434,6 +450,7 @@ export class OrderTableComponent implements OnInit, OnDestroy {
     }
 
     onSelectionChange(event: string): void {
+        this.selectedPreset = event;
         const today = new Date();
         const yesterday = moment(today).subtract(1, 'days').toDate();
 
@@ -478,7 +495,24 @@ export class OrderTableComponent implements OnInit, OnDestroy {
             end: this.endDate,
         });
 
+        this.updateUrlParams();
+
         this.fetchOrders();
+    }
+
+    updateUrlParams(): void {
+        // Create the query params object
+        const queryParams: any = {
+            preset: this.selectedPreset,
+        };
+
+        // Update the URL with the new parameters without navigating
+        this._router.navigate([], {
+            relativeTo: this._route,
+            queryParams: queryParams,
+            queryParamsHandling: 'merge', // Keep other query params
+            replaceUrl: true, // Don't add to browser history
+        });
     }
 
     // This function will be called when first value of date range is set
@@ -551,5 +585,71 @@ export class OrderTableComponent implements OnInit, OnDestroy {
             default:
                 return translate('pending-validation');
         }
+    }
+
+    /* --------------------------------------------------------------------------
+     *   Manually Resolved
+     * --------------------------------------------------------------------------
+     */
+
+    manuallyResolve(order: OrderDTO): void {
+        this.isLoadingOrderStatusChange = true;
+        this._cdr.detectChanges();
+
+        this._orderService.toggleResolved(order.token).subscribe(
+            (response: any) => {
+                if (response.result_code < 0) {
+                    this._fms.error('email-status-change-error');
+                    return;
+                }
+
+                this.setResolvedStatus(order);
+                this.fetchOrders();
+
+                this._fms.success('email-status-change-success');
+            },
+            (error) => {
+                this._fms.error('email-status-change-error');
+            },
+            () => {
+                this.isLoadingOrderStatusChange = false;
+                // change the order status in place
+                this._cdr.markForCheck();
+            }
+        );
+    }
+
+    setResolvedStatus(order: OrderDTO): void {
+        // Update the order status directly on the reference
+        if (this.isOrderResolved(order)) {
+            // clear the fields
+            order.resolved_by = null;
+            order.resolved_at = null;
+            return;
+        }
+
+        // fill in the fields
+        order.resolved_by = this._userService.getLoggedUserEmail() || 'System';
+        order.resolved_at = new Date();
+    }
+
+    isOrderResolved(order: OrderDTO): boolean {
+        if (!order) {
+            return false;
+        }
+
+        if (order.resolved_by && order.resolved_by !== '') {
+            return true;
+        }
+
+        return false;
+    }
+
+    getOrderResolvedTextColor(order: OrderDTO): string {
+        if (this.isOrderResolved(order)) {
+            return 'text-orange-600';
+        }
+
+        return 'text-gray-300';
     }
 }

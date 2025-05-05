@@ -4,7 +4,7 @@ import { Component, Inject, OnChanges, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslocoService } from '@ngneat/transloco';
-import { ClientRatingDTO } from 'app/modules/configurations/clients/clients.types';
+import { ClientCodeResponse } from 'app/modules/configurations/clients/clients.types';
 import { OrderService } from 'app/shared/components/confirm-order-address/order.service';
 import {
     OrderRatingChangeRequestDto,
@@ -22,7 +22,7 @@ export class ReplyProposedRatingsComponent implements OnInit {
     isLoading: boolean = false;
     proposedRatings: OrderRatingChangeRequestDto[] = [];
     orderRatings: OrderRatingDTO[] = [];
-    clientRatings: ClientRatingDTO[] = [];
+    clientRatings: ClientCodeResponse[] = [];
     ratingFormGroup: FormGroup;
 
     flashMessage: 'success' | 'error' | null = null;
@@ -39,7 +39,7 @@ export class ReplyProposedRatingsComponent implements OnInit {
         public data: {
             ratings: OrderRatingChangeRequestDto[];
             orderRatings: OrderRatingDTO[];
-            clientRatings: ClientRatingDTO[];
+            clientRatings: ClientCodeResponse[];
         }
     ) {
         this.proposedRatings = data.ratings;

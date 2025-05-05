@@ -3,8 +3,13 @@
         class="flex flex-col flex-auto min-w-0 overflow-auto sm:absolute sm:inset-0 bg-card dark:bg-transparent"
     >
         <!-- Tab Navigation -->
-        <mat-tab-group class="mt-4" mat-align-tabs="start">
-            <mat-tab label="{{ t('discounts') }}">
+        <mat-tab-group
+            #tabGroup
+            class="mt-4"
+            mat-align-tabs="start"
+            (selectedTabChange)="onTabChange($event)"
+        >
+            <mat-tab label="{{ t('discounts') }}" data-tab-id="discounts">
                 <app-discounts-table
                     [discounts]="productDiscounts"
                     [productFamilies]="productFamilies"
@@ -13,7 +18,7 @@
                 ></app-discounts-table>
             </mat-tab>
 
-            <mat-tab label="{{ t('catalog') }}">
+            <mat-tab label="{{ t('catalog') }}" data-tab-id="catalog">
                 <app-catalog-products-table
                     [catalogProducts]="catalogProducts"
                     [productFamilies]="productFamilies"
@@ -25,7 +30,7 @@
                 </app-catalog-products-table>
             </mat-tab>
 
-            <mat-tab label="{{ t('conversions') }}">
+            <mat-tab label="{{ t('conversions') }}" data-tab-id="conversions">
                 <app-conversions-table
                     [conversions]="productConversions"
                     [isLoading]="isLoading"

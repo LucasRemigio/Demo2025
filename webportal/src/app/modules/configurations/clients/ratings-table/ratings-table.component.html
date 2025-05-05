@@ -4,12 +4,17 @@
         <div
             class="relative flex flex-col px-6 pb-4 sm:flex-row flex-0 sm:items-center sm:justify-between md:px-0"
         >
+            <!-- Loader -->
             <div
-                class="absolute inset-x-0 bottom-0"
-                *ngIf="isLoading || isAnyRatingLoading"
+                class="fixed left-0 right-0 z-50 top-18"
+                *ngIf="isLoading || isAnyRatingLoading || isLoadingRatingTypes"
             >
-                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+                <mat-progress-bar
+                    class="orange-loader"
+                    [mode]="'indeterminate'"
+                ></mat-progress-bar>
             </div>
+
             <div class="text-4xl font-extrabold tracking-tight">
                 {{ t("clients-ratings") }}
             </div>
@@ -53,7 +58,7 @@
                 class="flex flex-col flex-auto mt-5 ml-20 mr-20 sm:mb-18 sm:overflow-auto"
                 [style.min-width.%]="isSmallScreen() ? 250 : null"
                 style="max-height: 90vh; overflow-y: auto"
-                *ngIf="isLoadingRatingTypes === false"
+                *ngIf="!isLoadingRatingTypes && !isLoadingMap"
             >
                 <kendo-grid
                     [kendoGridBinding]="clients"
@@ -109,7 +114,7 @@
                         >
                             <ng-template kendoGridCellTemplate let-dataItem>
                                 <!-- Lookup the rating for this client and rating type id -->
-                                <span
+                                <div
                                     [matTooltip]="
                                         getRatingTooltip(
                                             dataItem.code,
@@ -117,7 +122,7 @@
                                         )
                                     "
                                     matTooltipClass="text-center whitespace-pre-line px-2 py-2"
-                                    class="flex items-center justify-center whole-cell"
+                                    class="flex flex-col items-center justify-center whole-cell"
                                     [style.backgroundColor]="
                                         getRatingColor(
                                             dataItem.code,
@@ -125,13 +130,39 @@
                                         )
                                     "
                                 >
-                                    {{
-                                        getRatingByClientCodeAndType(
-                                            dataItem.code,
-                                            ratingType.id
-                                        )?.rating_discount.rating || "N/A"
-                                    }}
-                                </span>
+                                    <!-- Current rating (prominently displayed) -->
+                                    <span class="text-lg font-bold">
+                                        {{
+                                            getRatingByClientCodeAndType(
+                                                dataItem.code,
+                                                ratingType.id
+                                            )?.rating_discount.rating || "N/A"
+                                        }}
+                                    </span>
+
+                                    <!-- Recommended rating (smaller, lighter) -->
+                                    <span
+                                        class="text-sm text-gray-600"
+                                        *ngIf="
+                                            getRatingByClientCodeAndType(
+                                                dataItem.code,
+                                                ratingType.id
+                                            )?.recommended_rating_discount
+                                                ?.rating
+                                        "
+                                    >
+                                        <span class="opacity-70"
+                                            >{{ t("suggested") }}:
+                                        </span>
+                                        {{
+                                            getRatingByClientCodeAndType(
+                                                dataItem.code,
+                                                ratingType.id
+                                            )?.recommended_rating_discount
+                                                ?.rating
+                                        }}
+                                    </span>
+                                </div>
                             </ng-template>
                         </kendo-grid-column>
                     </ng-container>
@@ -179,6 +210,21 @@
                                         [svgIcon]="
                                             'heroicons_solid:trending-up'
                                         "
+                                    >
+                                    </mat-icon>
+                                </button>
+
+                                <!-- Edit client potential volume rating button -->
+                                <button
+                                    mat-icon-button
+                                    class="w-8 h-8 min-h-8"
+                                    [matTooltip]="t('edit-ratings', {})"
+                                    style="background-color: #5a5a5a"
+                                    (click)="editAllRatings(dataItem)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:pencil'"
                                     >
                                     </mat-icon>
                                 </button>

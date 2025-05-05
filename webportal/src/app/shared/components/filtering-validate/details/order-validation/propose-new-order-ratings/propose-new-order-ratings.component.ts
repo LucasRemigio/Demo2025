@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslocoService } from '@ngneat/transloco';
 import { ClientsService } from 'app/modules/configurations/clients/clients.service';
 import {
-    ClientRatingDTO,
+    ClientCodeResponse,
     RatingDiscount,
 } from 'app/modules/configurations/clients/clients.types';
 import { GenericResponse } from 'app/modules/configurations/products/products.types';
@@ -21,7 +21,7 @@ import { OrderRatingDTO, ProposeNewRating } from '../../details.types';
 export class ProposeNewOrderRatingsComponent implements OnInit {
     isLoading: boolean = false;
     ratings: OrderRatingDTO[] = [];
-    clientRatings: ClientRatingDTO[] = [];
+    clientRatings: ClientCodeResponse[] = [];
     ratingDiscounts: RatingDiscount[] = [];
     ratingFormGroup: FormGroup;
 
@@ -39,7 +39,7 @@ export class ProposeNewOrderRatingsComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA)
         public data: {
             orderRatings: OrderRatingDTO[];
-            clientRatings: ClientRatingDTO[];
+            clientRatings: ClientCodeResponse[];
         }
     ) {
         this.ratings = data.orderRatings;

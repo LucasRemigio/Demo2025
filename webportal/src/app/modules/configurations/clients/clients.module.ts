@@ -17,9 +17,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SegmentsTableComponent } from './segments-table/segments-table.component';
 import { ChangeClientSegmentComponent } from './segments-table/change-client-segment/change-client-segment.component';
 import { EditClientRatingComponent } from './ratings-table/edit-client-rating/edit-client-rating.component';
-import { InvoiceCardComponent } from './ratings-table/view-client-primavera-invoices/invoice-card/invoice-card.component';
 import { ViewClientPrimaveraOrdersModule } from './ratings-table/view-client-primavera-orders/view-client-primavera-orders.module';
 import { ViewClientPrimaveraInvoicesModule } from './ratings-table/view-client-primavera-invoices/view-client-primavera-invoices.module';
+import { EditAllClientRatingsModule } from './ratings-table/edit-all-client-ratings/edit-all-client-ratings.module';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
     declarations: [
@@ -43,8 +44,10 @@ import { ViewClientPrimaveraInvoicesModule } from './ratings-table/view-client-p
         MatTabsModule,
         MatSelectModule,
         MatProgressSpinnerModule,
+        MatProgressBarModule,
         ViewClientPrimaveraOrdersModule,
         ViewClientPrimaveraInvoicesModule,
+        EditAllClientRatingsModule,
     ],
 })
 export class ClientsModule {}

@@ -3,8 +3,13 @@
         class="flex flex-col flex-auto min-w-0 overflow-auto sm:absolute sm:inset-0 bg-card dark:bg-transparent"
     >
         <!-- Tab Navigation -->
-        <mat-tab-group class="mt-4" mat-align-tabs="start">
-            <mat-tab label="{{ t('segments') }}">
+        <mat-tab-group
+            #tabGroup
+            class="mt-4"
+            mat-align-tabs="start"
+            (selectedTabChange)="onTabChange($event)"
+        >
+            <mat-tab label="{{ t('segments') }}" data-tab-id="segments">
                 <app-segments-table
                     [clients]="clients"
                     [isLoading]="isLoading"
@@ -12,7 +17,7 @@
                 ></app-segments-table>
             </mat-tab>
 
-            <mat-tab label="{{ t('ratings') }}">
+            <mat-tab label="{{ t('ratings') }}" data-tab-id="ratings">
                 <app-ratings-table
                     [clients]="clients"
                     [isLoading]="isLoading"

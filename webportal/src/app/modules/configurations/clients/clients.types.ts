@@ -38,8 +38,20 @@ export interface Client {
     weighted_rating: number;
 }
 
-export interface ClientRatingDTO extends BaseRatingDTO {
+export interface ClientCodeResponse extends BaseRatingDTO {
     client_code: string;
+}
+
+export interface ClientRatingDTO {
+    client_code: string;
+    rating_type: RatingType;
+    rating_discount: RatingDiscount;
+    rating_valid_until: string;
+    recommended_rating_discount: RatingDiscount;
+    updated_at: string;
+    updated_by: string;
+    created_at: string;
+    created_by: string;
 }
 
 export interface BaseRatingDTO {
@@ -169,4 +181,14 @@ export interface ClientPrimaveraInvoicesResponse extends BaseResponse {
 export interface AveragePaymentTime {
     average_payment_time_days: number;
     average_deadline_time_days: number;
+}
+
+export interface UpdateClientRatings {
+    rating_type_id: number;
+    rating: string;
+    rating_valid_until: string;
+}
+
+export interface UpdateClientRatingsRequest {
+    ratings: UpdateClientRatings[];
 }

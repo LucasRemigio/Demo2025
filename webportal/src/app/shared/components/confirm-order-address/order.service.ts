@@ -272,6 +272,14 @@ export class OrderService {
         );
     }
 
+    toggleResolved(orderToken: string): Observable<GenericResponse> {
+        return this._httpClient.patch<GenericResponse>(
+            environment.currrentBaseURL +
+                `/api/orders/${orderToken}/toggle-resolved`,
+            {}
+        );
+    }
+
     getOrdersToValidate(
         startDate: Date,
         endDate: Date,
