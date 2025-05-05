@@ -10,6 +10,14 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
 })
 export class GenerateAuditEmailComponent implements OnInit {
     emailForm: FormGroup;
+
+    emailTemplates: any[] = [
+        {
+            name: 1,
+            body: 'Solicito cotação e disponibilidade de stock para:\n\nObra ob240102\n15 - Varão red. 12 liso\n12 - Pranchetas 50*10\n1 - UPN 200 c/6.00 mts\n\nObra _Rio Este\n1 - UPN 120 c/7.00 mts\n1 - HEB 140 c/3.50 mts\n90 - Varão Redondo 20 liso\n30 - Pranchetas 50*10',
+        },
+    ];
+
     constructor(
         public matDialogRef: MatDialogRef<GenerateAuditEmailComponent>,
         private _formBuilder: FormBuilder
@@ -29,6 +37,10 @@ export class GenerateAuditEmailComponent implements OnInit {
         });
     }
 
+    selectTemplate(templateBody: string): void {
+        this.emailForm.get('body').setValue(templateBody);
+    }
+
     close(): void {
         this.matDialogRef.close();
     }
@@ -40,7 +52,6 @@ export class GenerateAuditEmailComponent implements OnInit {
         }
         // close the dialog with the text
         const emailContent = this.emailForm.get('body')?.value;
-        console.log(emailContent);
         this.matDialogRef.close(emailContent);
     }
 }
