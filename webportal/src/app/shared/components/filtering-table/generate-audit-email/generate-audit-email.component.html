@@ -1,0 +1,74 @@
+<ng-container *transloco="let t">
+    <div class="flex flex-col max-h-screen -m-6">
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between h-16 pl-6 pr-3 orange-bg flex-0 sm:pr-5 sm:pl-8"
+        >
+            <div class="text-lg font-medium">
+                {{ t("Filtering.origin-email") }}
+            </div>
+            <button mat-icon-button (click)="close()" [tabIndex]="-1">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <!-- Body with textarea -->
+        <form [formGroup]="emailForm" (ngSubmit)="sendEmail()">
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="mb-4">
+                    <label for="emailContent" class="block mb-2 font-medium">{{
+                        t("Filtering.email-content")
+                    }}</label>
+                    <textarea
+                        id="emailContent"
+                        formControlName="body"
+                        class="w-full p-3 border rounded min-h-[200px]"
+                        placeholder="{{ t('Filtering.type-your-message') }}"
+                        rows="10"
+                    ></textarea>
+                    <div
+                        *ngIf="
+                            emailForm.get('body')?.invalid &&
+                            emailForm.get('body')?.dirty
+                        "
+                        class="mt-1 text-red-600"
+                    >
+                        <div
+                            *ngIf="emailForm.get('body')?.errors?.['required']"
+                        >
+                            {{ t("Filtering.email-content-required") }}
+                        </div>
+                        <div
+                            *ngIf="emailForm.get('body')?.errors?.['minlength']"
+                        >
+                            {{ t("Filtering.email-content-min-length") }}
+                        </div>
+                        <div
+                            *ngIf="emailForm.get('body')?.errors?.['maxlength']"
+                        >
+                            {{ t("Filtering.email-content-max-length") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer with actions -->
+            <div class="flex justify-end p-6">
+                <button mat-button (click)="close()">
+                    {{ t("cancel") }}
+                </button>
+                <button
+                    mat-raised-button
+                    type="submit"
+                    color="primary"
+                    class="ml-2"
+                >
+                    {{ t("send") }}
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-container>

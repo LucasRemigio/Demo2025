@@ -297,7 +297,7 @@ public static class MasterFerro
         return emailBody;
     }
 
-    private static async Task CategorizeAndProcessEmailAsync(MimeMessage message, string folderName, MailKit.UniqueId uid, string account, string token)
+    public static async Task CategorizeAndProcessEmailAsync(MimeMessage message, string folderName, MailKit.UniqueId uid, string account, string token)
     {
         try
         {
@@ -331,7 +331,7 @@ public static class MasterFerro
         }
     }
 
-    private static int GetStatusFromCategoryAndFolder(int category, string folderToSave)
+    public static int GetStatusFromCategoryAndFolder(int category, string folderToSave)
     {
         int status = StatusConstants.StatusCode.TRIAGEM_REALIZADA;
 
@@ -389,7 +389,7 @@ public static class MasterFerro
         }
     }
 
-    private static FilteredEmail CreateFilteredEmail(MimeMessage message, string account, string category, string status, string token, string confidence, string isValidated)
+    public static FilteredEmail CreateFilteredEmail(MimeMessage message, string account, string category, string status, string token, string confidence, string isValidated)
     {
         string emailBody = EmailHelper.ExtractEmailBodyFromMessage(message);
         if (string.IsNullOrEmpty(emailBody))

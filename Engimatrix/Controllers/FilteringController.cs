@@ -604,5 +604,36 @@ namespace engimatrix.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("generate-audit-email")]
+        [RequestLimit]
+        [ValidateReferrer]
+        [Authorize]
+        public async Task<ActionResult<BaseResponse>> GenerateAuditEmail([FromBody] GenerateAuditEmailRequest req)
+        {
+            string language = this.Request.Headers["client-lang"];
+            if (string.IsNullOrEmpty(language))
+            {
+                language = ConfigManager.defaultLanguage;
+            }
+
+            string token = this.Request.Headers["Authorization"];
+            string executer_user = UserModel.GetUserByToken(token);
+
+            try
+            {
+                await FilteringModel.GenerateAuditEmail(req.body);
+
+                return new BaseResponse(ResponseSuccessMessage.Success, language);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Filtered CheckIfOrderIsConfirmed endpoint - Error - " + e);
+                return new BaseResponse(ResponseErrorMessage.InternalError, language);
+            }
+        }
+
+
     }
 }

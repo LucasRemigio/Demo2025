@@ -585,4 +585,11 @@ export class FilteringService {
             {}
         );
     }
+
+    generateAuditEmail(emailBody: string): Observable<any> {
+        return this._httpClient.post<any>(
+            environment.currrentBaseURL + '/api/filtering/generate-audit-email',
+            { body: emailBody }
+        );
+    }
 }

@@ -27,6 +27,19 @@
                 class="flex items-center flex-shrink-0 mt-6 space-x-4 sm:mt-0 sm:ml-4"
                 style="align-items: center"
             >
+                <!-- Export to CSV Button -->
+                <div>
+                    <button
+                        class="p-2 text-white rounded-md orange-btn"
+                        matTooltip="{{ t('generate-audit-email') }}"
+                        (click)="generateAuditEmail()"
+                    >
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:plus'"
+                        ></mat-icon>
+                    </button>
+                </div>
                 <!-- Filter Checkbox -->
                 <div>
                     <mat-form-field class="flex-auto md:w-40">

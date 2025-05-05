@@ -7,7 +7,10 @@ using engimatrix.ModelObjs;
 using engimatrix.Models;
 using engimatrix.Utils;
 using Engimatrix.ModelObjs;
+using MailKit;
+using MailKit.Net.Imap;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 
 namespace Engimatrix.Models;
 
@@ -1115,5 +1118,50 @@ public class FilteringModel
         }
 
         return false;
+    }
+
+    public async static Task GenerateAuditEmail(string emailBody)
+    {
+        // this will call the master ferro process to filter the email
+        string account = ConfigManager.MailboxAccount[0];
+        using ImapClient client = await EmailServiceMailkit.GetAutenticatedImapClientAsync(account);
+        IMailFolder folder = client.GetFolder(ConfigManager.InboxFolder);
+
+        // create the MimeMessage 
+        MimeMessage message = new MimeMessage();
+        message.From.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
+        message.To.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
+        message.Subject = "Audit Email";
+        message.Body = new TextPart("plain")
+        {
+            Text = emailBody
+        };
+
+        string token = Guid.NewGuid().ToString();
+
+        try
+        {
+            OpenAiEmailCategorization? categorization = await OpenAI.ProcessMoveEmailCategoryOpenAI(message);
+            if (categorization is null)
+            {
+                Log.Debug("Open AI response came null, creating default categorization...");
+                categorization = new OpenAiEmailCategorizationBuilder().SetConfianca("0").SetCategoria("").Build();
+            }
+            Log.Debug("Categoria: " + categorization.categoria + " / Confiança: " + categorization.confianca);
+
+            // In case the OpenAI gives an error, we need to send to the error folder. By giving the confidence of 0, the next function will get the Error folder
+            if (string.IsNullOrEmpty(categorization.confianca)) { categorization.confianca = "0"; }
+
+            (string folderToSave, int categoryToSave) = EmailCategorizer.GetFolderNameAndCategoryConstantFromCategory(categorization.categoria, categorization.confianca);
+            int status = MasterFerro.GetStatusFromCategoryAndFolder(categoryToSave, folderToSave);
+            // Check if the email is a forward and update the sender if necessary
+
+            FilteredEmail filteredEmail = MasterFerro.CreateFilteredEmail(message, account, categoryToSave.ToString(), status.ToString(), token, categorization.confianca, "0");
+            MasterFerro.SaveFilteredEmailAndAttachments(filteredEmail, message);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error categorizing email with   subject: {message.Subject}, from: {message.From} with message: {ex}");
+        }
     }
 }

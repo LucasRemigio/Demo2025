@@ -23,4 +23,9 @@ namespace engimatrix.Views
             return true;
         }
     }
+
+    public class GenerateAuditEmailRequest
+    {
+        public string body { get; set; }
+    }
 }

@@ -41,6 +41,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FuseAlertModule } from '@fuse/components/alert';
 import { EmailFwdListComponent } from './fwd-email/email-fwd-list/email-fwd-list.component';
 import { EmailReplyFormModule } from '../email-reply-form/email-reply-form.module';
+import { GenerateAuditEmailComponent } from './generate-audit-email/generate-audit-email.component';
 
 @NgModule({
     declarations: [
@@ -49,6 +50,7 @@ import { EmailReplyFormModule } from '../email-reply-form/email-reply-form.modul
         PreviewRepliesComponent,
         FwdEmailComponent,
         EmailFwdListComponent,
+        GenerateAuditEmailComponent,
     ],
     imports: [
         EmailReplyFormModule,

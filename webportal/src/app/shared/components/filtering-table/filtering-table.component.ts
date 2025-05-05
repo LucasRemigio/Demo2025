@@ -12,9 +12,9 @@ import {
 } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from 'app/core/user/user.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PageChangeEvent } from '@progress/kendo-angular-grid';
 import { TranslocoService } from '@ngneat/transloco';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
@@ -45,6 +45,7 @@ import {
 } from '../filtering-validate/details/details.types';
 import { AuditHubService } from './audit-hub.service';
 import { EmailActionsService } from './email-actions.service';
+import { GenerateAuditEmailComponent } from './generate-audit-email/generate-audit-email.component';
 
 export const MY_FORMATS = {
     parse: {
@@ -175,7 +176,8 @@ export class FilteringTableComponent implements OnInit, OnDestroy, OnChanges {
         private _fuseSplashScreenService: FuseSplashScreenService,
         private _flashMessageService: FlashMessageService,
         private _auditHubWs: AuditHubService,
-        private _emailActionsService: EmailActionsService
+        private _emailActionsService: EmailActionsService,
+        private _md: MatDialog
     ) {
         this.isAdmin = this._userService.isAdmin();
 
@@ -626,5 +628,48 @@ export class FilteringTableComponent implements OnInit, OnDestroy, OnChanges {
             default:
                 return 'text-gray-300';
         }
+    }
+
+    generateAuditEmail(): void {
+        const dialogConfig: MatDialogConfig = {
+            maxHeight: '160vh',
+            maxWidth: '80vw',
+            minWidth: '60vw',
+            width: '60vh',
+        };
+
+        const dialogRef = this._md.open(
+            GenerateAuditEmailComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            // send the email body to the backend
+            this._filteringService
+                .generateAuditEmail(result)
+                .subscribe((response) => {
+                    if (response) {
+                        this.flashMessage = 'success';
+                        this.flashMessageText = this.translocoService.translate(
+                            'audit-email-sent',
+                            {}
+                        );
+                        this._flashMessageService.success(
+                            this.flashMessageText
+                        );
+                    } else {
+                        this.flashMessage = 'error';
+                        this.flashMessageText = this.translocoService.translate(
+                            'audit-email-error',
+                            {}
+                        );
+                        this._flashMessageService.error(this.flashMessageText);
+                    }
+                });
+        });
     }
 }
