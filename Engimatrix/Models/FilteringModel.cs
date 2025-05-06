@@ -1134,7 +1134,9 @@ public class FilteringModel
         MimeMessage message = new MimeMessage();
         message.From.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
         message.To.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
-        message.Subject = "Audit Email";
+        string subject = $"Auditoria";
+        message.Subject = subject;
+
         message.Body = new TextPart("html")
         {
             Text = emailBody
