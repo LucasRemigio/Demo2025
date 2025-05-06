@@ -321,4 +321,5 @@ public class ClientController : ControllerBase
             return new SyncPrimaveraStatsResponse(ResponseErrorMessage.InternalError, language);
         }
     }
+
 }

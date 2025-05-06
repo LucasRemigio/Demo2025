@@ -96,12 +96,13 @@
                                         [ngClass]="
                                             'bg-' +
                                             getColorByPercentage(
-                                                creditPercentage
+                                                getCreditUsagePercentage
                                             ) +
                                             '-500'
                                         "
                                         [ngStyle]="{
-                                            width: creditPercentage + '%'
+                                            width:
+                                                getCreditUsagePercentage + '%'
                                         }"
                                     ></div>
                                 </div>
@@ -109,10 +110,12 @@
                                     class="text-sm"
                                     [ngClass]="
                                         'text-' +
-                                        getColorByPercentage(creditPercentage) +
+                                        getColorByPercentage(
+                                            getCreditUsagePercentage
+                                        ) +
                                         '-500'
                                     "
-                                    >{{ creditPercentage }}%</span
+                                    >{{ getCreditUsagePercentage }}%</span
                                 >
                             </div>
                         </div>

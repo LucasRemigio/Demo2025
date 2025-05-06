@@ -57,6 +57,7 @@ public static class ClientModel
         return clients;
     }
 
+
     public static async Task<List<ClientDTO>> SearchClients(string? search_query, string execute_user)
     {
         // The search query must split the words and then search for either the code or the name

@@ -76,37 +76,21 @@ export class CreditOrderValidationComponent implements OnInit {
 
     fetchClientOrders(): void {
         this.isLoading = true;
-        this._clientService
-            .getClientPendingPrimaveraOrdersAndInvoices(this.order.client.code)
-            .subscribe((response) => {
-                if (response.result_code <= 0) {
-                    if (response.result_code === -72) {
-                        // primavera api error
-                        this._fms.nterror(response.result);
-                        this.isLoading = false;
-                        return;
-                    }
+        this.ordersTotal = 12597;
+        this.invoicesTotal = {
+            valor_total: 9450,
+            valor_pendente: 7560,
+            valor_liquidacao: 1890,
+        };
 
-                    this._fms.error('error-server');
-                    this.isLoading = false;
-                    return;
-                }
-                const { orders, invoices, invoices_total, orders_total } =
-                    response;
-                this.orders = orders;
-                this.ordersTotal = orders_total;
-                this.invoices = invoices;
-                this.invoicesTotal = invoices_total;
-                this.usedPlafound =
-                    this.ordersTotal + this.invoicesTotal.valor_pendente;
-                this.isLoading = false;
-                this.creditPercentage = this.getCreditUsagePercentage();
-                this._cdr.markForCheck();
-            });
+        this.usedPlafound =
+            this.ordersTotal + this.invoicesTotal.valor_pendente;
+        this.isLoading = false;
+        this._cdr.markForCheck();
     }
 
     // Add this method to your client-details.component.ts file
-    getCreditUsagePercentage(): number {
+    get getCreditUsagePercentage(): number {
         if (!this.order.client?.primavera_client?.plafoundCesce) {
             return 0;
         }
