@@ -28,7 +28,7 @@ public static class OrderPrimaveraDocumentModel
         primaveraDocInfo.order_token = orderToken;
         primaveraDocInfo.invoice_html = invoice;
         primaveraDocInfo.name = "Ordem de Venda";
-        primaveraDocInfo.type = "Ordem de Venda";
+        primaveraDocInfo.type = "ORC";
         primaveraDocInfo.series = "A";
         primaveraDocInfo.number = "1";
         await Create(primaveraDocInfo, executeUser);
@@ -58,6 +58,12 @@ public static class OrderPrimaveraDocumentModel
         if (!exists)
         {
             throw new NotFoundException("Order not found");
+        }
+
+        // if the tipoDoc is ORC, check if there is any previous ORC and delete it
+        if (doc.type.Equals("ORC", StringComparison.OrdinalIgnoreCase))
+        {
+            await CancelLastQuotation(doc.order_token, executeUser);
         }
 
         doc.invoice_html = await ConvertHtmlToPdfBase64(doc.invoice_html);
@@ -93,6 +99,41 @@ public static class OrderPrimaveraDocumentModel
         {
             throw new DatabaseException($"Failed to create order_primavera_document");
         }
+    }
+
+    private static async Task CancelLastQuotation(string orderToken, string executeUser)
+    {
+        OrderPrimaveraDocumentItem? lastDocument = GetLastOrderDoc(orderToken, executeUser);
+
+        if (!IsLastDocumentOrc(lastDocument))
+        {
+            Log.Debug("Last document is not an orçamento, skipping cancelation.");
+            return;
+        }
+
+        // delete the last document from the database
+        bool success = Delete(lastDocument.id, orderToken, executeUser);
+        if (!success)
+        {
+            Log.Error($"Failed to delete last document from database with id {lastDocument.id} and order token {orderToken}.");
+        }
+
+        Log.Debug($"Last document deleted from our database with id {lastDocument.id} and order token {orderToken}.");
+    }
+
+    private static bool IsLastDocumentOrc(OrderPrimaveraDocumentItem? doc)
+    {
+        if (doc is null)
+        {
+            return false;
+        }
+
+        if (!doc.type.Equals("ORC", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public static List<OrderPrimaveraDocumentItem> GetOrderDocs(string orderToken, string executeUser)

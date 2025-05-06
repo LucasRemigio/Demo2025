@@ -219,15 +219,10 @@
     <div class="top-info">
       <!-- Enterprise Info -->
       <div class="enterprise-info">
-        <p><strong>Master Ferro, Lda.</strong></p>
-        <p>Contribuinte N.º 514400188</p>
-        <p>Av. Barros e Soares, 531</p>
-        <p>Nogueira</p>
-        <p>4715-213 Braga</p>
-        <p>Telef. +351 253689010 * &bull; Fax +351 253684753</p>
-        <p>Capital Social: 50 000,00 EUR</p>
-        <p>Cons. Reg. Com. Guimarães</p>
-        <p>Matrícula N. 514400188</p>
+        <p><a href="http://engibots.com">engibots.com</a></p>
+        <p>Av. D. João II, Lote 1.07.2.1,</p>
+        <p>Piso 0, Parque das Nações,</p>
+        <p>1990-096 Lisboa</p>
       </div>
 
       <!-- Client Info -->
@@ -239,7 +234,7 @@
 
     <!-- Invoice Info -->
     <div class="invoice-info">
-      <h2>Orçamentos {{documentNumber}}</h2>
+      <h2>Orçamentos</h2>
       <p>Proposta</p>
     </div>
 
@@ -253,36 +248,18 @@
           <th>V/N.º Contrib.</th>
           <th>Moeda</th>
           <th>Câmbio</th>
-          <th>Data</th>
           <th>Cliente</th>
-          <th>Vendedor</th>
-          <th>Referências</th>
+          <th>Desc. Cli.</th>
+          <th>Desc. Fin.</th>
         </tr>
         <!-- First row of data -->
         <tr>
           <td>{{clientContribuinte}}</td>
           <td>EUR</td>
           <td>1,00</td>
-          <td>{{dataDoc}}</td>
           <td>{{clientCode}}</td>
-          <td>{{vendedor}}</td>
-          <td>{{referencias}}</td>
-        </tr>
-        <!-- Third row of headings -->
-        <tr>
-          <th>Desc. Cli.</th>
-          <th>Desc. Fin.</th>
-          <th>Vencimento</th>
-          <th>Cond. Pagamento</th>
-          <th>Ref.</th>
-        </tr>
-        <!-- Third row of data -->
-        <tr>
           <td>{{descontoCliente}}</td>
           <td>{{descontoFinal}}</td>
-          <td>{{vencimentoFatura}}</td>
-          <td>{{condPagamento}}</td>
-          <td>{{referencia}}</td>
         </tr>
       </thead>
     </table>
@@ -356,10 +333,9 @@
             <tbody>
               <tr>
                 <td>
-                  <p>N/ Morada - {{dataDocHora}}</p>
-                  <p>Av. Barros e Soares, 531</p>
-                  <p>Nogueira</p>
-                  <p>4715-213 Braga</p>
+                  <p>N/ Morada</p>
+                  <p>Av. D. João II, Lote 1.07.2.1,</p>
+                  <p>Piso 0, Parque das Nações,</p>
                   <p>Portugal</p>
                 </td>
                 <td>
@@ -440,21 +416,10 @@
     <!-- Footer -->
     <div class="footer">
       <p class="small-text">
-        Sede e Armazém: Avenida Barros e Soares, 531 - Nogueira, 4715 - 213
-        Braga | Tel.: (+351) 253 689 010 * &bull; Fax: (+351) 253 684 753 &bull;
-        Fax Comercial (+351) 253 686 154
-      </p>
-      <p class="small-text">
-        Armazém 2 : Rua dos Mártires - Azurém - 4800 - 054 Guimarães | Tel.:
-        (+351) 253 413 685 * &bull; Fax: (+351) 253 412 155
-      </p>
-      <p class="small-text">
         <a href="http://www.engibots.com" target="_blank" class="no-link"
           >www.engibots.com</a
         >
       </p>
-      <!-- Asterisk footnote -->
-      <p class="small-text asterisk-note">*Chamada para a rede fixa nacional</p>
     </div>
   </body>
 </html>
