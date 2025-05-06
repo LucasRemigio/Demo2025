@@ -38,17 +38,6 @@ export class ComposeComponent implements OnInit {
 
     isSendingEmail: boolean = false;
 
-    quillModules = {
-        toolbar: [
-            ['bold', 'italic', 'underline'],
-            ['blockquote', 'code-block'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            [{ indent: '-1' }, { indent: '+1' }],
-            [{ header: [1, 2, 3, 4, 5, 6, false] }],
-            [{ color: [] }, { background: [] }],
-            [{ align: [] }],
-        ],
-    };
 
     constructor(
         private fb: FormBuilder,

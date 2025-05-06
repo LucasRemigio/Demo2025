@@ -1120,19 +1120,22 @@ public class FilteringModel
         return false;
     }
 
-    public async static Task GenerateAuditEmail(string emailBody)
+    public async static Task GenerateAuditEmail(string emailBody, string executeUser)
     {
         // this will call the master ferro process to filter the email
         string account = ConfigManager.MailboxAccount[0];
         using ImapClient client = await EmailServiceMailkit.GetAutenticatedImapClientAsync(account);
         IMailFolder folder = client.GetFolder(ConfigManager.InboxFolder);
 
+        string signature = SignatureModel.GetDefaultFormattedSignature(executeUser);
+        emailBody = emailBody + "<br><br><br><br>" + signature;
+
         // create the MimeMessage 
         MimeMessage message = new MimeMessage();
         message.From.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
         message.To.Add(new MailboxAddress(ConfigManager.MailboxAccount[0], ConfigManager.MailboxAccount[0]));
         message.Subject = "Audit Email";
-        message.Body = new TextPart("plain")
+        message.Body = new TextPart("html")
         {
             Text = emailBody
         };

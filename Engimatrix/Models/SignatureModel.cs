@@ -85,22 +85,28 @@ namespace engimatrix.Models
                 senderName = UserModel.GetUserNameByEmail(execute_user);
             }
 
-            string masterFerroLocation = "https://maps.app.goo.gl/Mpkjg8S5qrVTd3Gs6";
+            string greeting = $@" 
+            <p>
+                <strong>{senderName}</strong><br>
+                <a href=""http://engibots.com/"">engibots.com</a><br><br>
 
-            string greeting = $@"
-                <p>{senderName}</p>
-                <div style='max-width: 200px;'>
-                    <img src='https://engibots.github.io/ImageHost/masterferro_logo.png' alt='Logo' style='width: 100%; height: auto; display: block;' />
-                </div>
-                <p>| Master Ferro, Lda |</p>
-                <p>| <a href='mailto:{execute_user}'>{execute_user}</a> | <a href='http://www.masterferro.pt'>www.masterferro.pt</a> |</p>
-                <p>| Chamada para a rede fixa / m&oacute;vel nacional |</p>
-                <p>| <a href='{masterFerroLocation}'>Av. Barros e Soares, 531 | 4715-213 Braga | Portugal</a> |</p>
+                <strong>E:</strong>
+                <a href=""mailto:ricardo.silva@engibots.com"">ricardo.silva@engibots.com</a><br>
+
+                <strong>T:</strong> (+351) 213 303 720<br>
+                <strong>M:</strong> (+351) 919 817 211<br><br>
+
+                <strong>A:</strong><br>
+                Av.D.João II, Lote 1.07.2.1, Piso 0<br>
+                Parque das Nações<br>
+                1990 - 096 Lisboa<br><br>
+
+                <a href=""https://www.linkedin.com/company/engibots/"">LinkedIn · engibots</a>
+
                 <div>
-                    <b>Aviso de Confidencialidade</b>
-                    <p>Este e-mail e quaisquer ficheiros inform&aacute;ticos com ele transmitidos s&atilde;o confidenciais e destinados ao conhecimento e uso exclusivo do respetivo destinat&aacute;rio, n&atilde;o podendo o conte&uacute;do dos mesmos ser alterado. Caso tenha recebido este e-mail indevidamente, queira informar de imediato o remetente e proceder &agrave; elimina&ccedil;&atilde;o da mensagem. O correio eletr&oacute;nico n&atilde;o garante a confidencialidade dos conte&uacute;dos das mensagens, nem a rece&ccedil;&atilde;o adequada dos mesmos. Caso o destinat&aacute;rio deste e-mail tenha qualquer obje&ccedil;&atilde;o &agrave; utiliza&ccedil;&atilde;o deste meio dever&aacute; contactar de imediato o remetente.</p>
+                    <img src='https://engibots.github.io/ImageHost/Engibots/signature.png' alt='Logo' style='width: 100%; height: auto; display: block;' />
                 </div>
-                <br><br><br>";
+            </p> ";
 
             return greeting;
         }

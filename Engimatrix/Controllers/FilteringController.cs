@@ -623,7 +623,7 @@ namespace engimatrix.Controllers
 
             try
             {
-                await FilteringModel.GenerateAuditEmail(req.body);
+                await FilteringModel.GenerateAuditEmail(req.body, executer_user);
 
                 return new BaseResponse(ResponseSuccessMessage.Success, language);
             }

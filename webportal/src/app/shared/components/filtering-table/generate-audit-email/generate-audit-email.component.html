@@ -40,13 +40,14 @@
                     <label for="emailContent" class="block mb-2 font-medium">{{
                         t("Filtering.email-content")
                     }}</label>
-                    <textarea
+                    <!-- Body (Quill editor) -->
+                    <quill-editor
                         id="emailContent"
                         formControlName="body"
                         class="w-full p-3 border rounded min-h-[200px]"
+                        [module]="quillModules"
                         placeholder="{{ t('Filtering.type-your-message') }}"
-                        rows="10"
-                    ></textarea>
+                    ></quill-editor>
                     <div
                         *ngIf="
                             emailForm.get('body')?.invalid &&
