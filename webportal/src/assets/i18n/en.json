@@ -500,6 +500,12 @@
 
     "at": " at ",
 
+    "send": "Send",
+    "generate-audit-email": "Generate Audit Email",
+    "audit-email-sent": "Audit email sent successfully",
+    "audit-email-error": "Error sending audit email",
+    "audit-email-sending": "Sending audit email",
+
     "Candidature": {
         "progress": "Progress",
         "less-active-clients": "Less active clients",
@@ -756,7 +762,14 @@
         "client-pending": "Awaiting client confirmation",
         "pending-credit-approval": "Awaiting credit approval",
         "cards-view": "Card view",
-        "table-view": "Table view"
+        "table-view": "Table view",
+        "generate-email": "Generate email",
+        "select-template": "Select template",
+        "email-content": "Email content",
+        "type-your-message": "Type your message",
+        "email-content-required": "Email content is required",
+        "email-content-min-length": "Email content must be at least 10 characters",
+        "email-content-max-length": "Email content must be at most 5000 characters"
     },
 
     "Email": {

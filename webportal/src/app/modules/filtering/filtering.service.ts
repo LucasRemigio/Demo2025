@@ -25,6 +25,7 @@ import {
     FilteredEmailDTOResponse,
 } from 'app/shared/components/filtering-validate/details/details.types';
 import { BaseResponse } from '../configurations/clients/clients.types';
+import { GenericResponse } from '../configurations/products/products.types';
 
 @Injectable({
     providedIn: 'root',
@@ -586,8 +587,8 @@ export class FilteringService {
         );
     }
 
-    generateAuditEmail(emailBody: string): Observable<any> {
-        return this._httpClient.post<any>(
+    generateAuditEmail(emailBody: string): Observable<GenericResponse> {
+        return this._httpClient.post<GenericResponse>(
             environment.currrentBaseURL + '/api/filtering/generate-audit-email',
             { body: emailBody }
         );

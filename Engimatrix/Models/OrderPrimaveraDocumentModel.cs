@@ -16,6 +16,37 @@ public static class OrderPrimaveraDocumentModel
             series, number, created_at, created_by, invoice_html
             FROM order_primavera_document ";
 
+    private async static Task<OrderPrimaveraDocumentItem> CreateOrderDocumentsCommon(
+        string orderToken,
+        string executeUser
+      )
+    {
+        OrderPrimaveraDocumentItem primaveraDocInfo = new();
+
+        string invoice = await OrderInvoiceModel.GenerateInvoice(orderToken, executeUser);
+
+        primaveraDocInfo.order_token = orderToken;
+        primaveraDocInfo.invoice_html = invoice;
+        primaveraDocInfo.name = "Ordem de Venda";
+        primaveraDocInfo.type = "Ordem de Venda";
+        primaveraDocInfo.series = "A";
+        primaveraDocInfo.number = "1";
+        await Create(primaveraDocInfo, executeUser);
+
+        Log.Debug($"Order primavera document created successfully. Order token: {orderToken}, " +
+        $"Document type: {primaveraDocInfo.type}, Document series: {primaveraDocInfo.series}, Document number: {primaveraDocInfo.number}");
+
+        // lock the product prices
+        OrderProductModel.LockOrderProductPrices(orderToken, executeUser);
+
+        return primaveraDocInfo;
+    }
+
+    public async static Task<OrderPrimaveraDocumentItem> CreateOrderDocuments(string orderToken, string executeUser)
+    {
+        return await CreateOrderDocumentsCommon(orderToken, executeUser);
+    }
+
     public static async Task Create(OrderPrimaveraDocumentItem doc, string executeUser)
     {
         if (!IsDocValid(doc))

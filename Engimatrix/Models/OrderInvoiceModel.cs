@@ -14,7 +14,7 @@ public static class OrderInvoiceModel
 {
     // this basically grabs the template and changes the variables
     // for the correct values intended for the invoice
-    public async static Task<string> GenerateInvoice(PrimaveraDocument primaveraDoc, string orderToken, string executeUser)
+    public async static Task<string> GenerateInvoice(string orderToken, string executeUser)
     {
         OrderItem? orderItem = OrderModel.GetOrderByToken(orderToken, executeUser) ?? throw new NotFoundException("Order not found");
 
@@ -27,7 +27,6 @@ public static class OrderInvoiceModel
         template = FillProductsContent(template, orderToken, executeUser);
         template = FillClientInfo(template, client);
         template = FillAddressInfo(template, orderItem, client);
-        template = FillPrimaveraDetails(template, primaveraDoc);
         template = FillOrderDetails(template, orderItem, executeUser);
         template = template.Replace("{{masterferroLogo}}", ConfigManager.Logo);
 
@@ -215,30 +214,5 @@ public static class OrderInvoiceModel
         return template;
     }
 
-    private static string FillPrimaveraDetails(string template, PrimaveraDocument primaveraDoc)
-    {
-        // Primavera Info are CondPagamento, which will be able to calculate dataVencimento
-        // Also the numeroDocumento
-        int daysToPay = Convert.ToInt16(primaveraDoc.CondPag);
-        string condPagamento = $"Pagamento a {daysToPay} dias";
-
-        template = template.Replace("{{documentNumber}}", primaveraDoc.Documento);
-        template = template.Replace("{{condPagamento}}", condPagamento);
-
-        string dataDoc = primaveraDoc.DataDoc.ToString("yyyy-MM-dd");
-        string dataDocHora = primaveraDoc.DataDoc.ToString("yyyy-MM-dd / HH:mm");
-        string dataVencimento = primaveraDoc.DataVenc.ToString("yyyy-MM-dd");
-
-        template = template.Replace("{{dataDoc}}", dataDoc);
-        template = template.Replace("{{dataDocHora}}", dataDocHora);
-        template = template.Replace("{{vencimentoFatura}}", dataVencimento);
-
-        template = template.Replace("{{referencia}}", primaveraDoc.Referencia);
-        template = template.Replace("{{referencias}}", primaveraDoc.Referencia);
-
-        template = template.Replace("{{vendedor}}", primaveraDoc.Linhas[0].Vendedor);
-
-        return template;
-    }
 
 }

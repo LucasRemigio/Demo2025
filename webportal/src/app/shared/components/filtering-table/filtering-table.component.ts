@@ -648,28 +648,32 @@ export class FilteringTableComponent implements OnInit, OnDestroy, OnChanges {
                 return;
             }
 
+            // sending email....
+            this.isLoading = true;
+            this._flashMessageService.info('audit-email-sending');
+
             // send the email body to the backend
-            this._filteringService
-                .generateAuditEmail(result)
-                .subscribe((response) => {
-                    if (response) {
-                        this.flashMessage = 'success';
-                        this.flashMessageText = this.translocoService.translate(
-                            'audit-email-sent',
-                            {}
-                        );
-                        this._flashMessageService.success(
-                            this.flashMessageText
-                        );
-                    } else {
-                        this.flashMessage = 'error';
-                        this.flashMessageText = this.translocoService.translate(
-                            'audit-email-error',
-                            {}
-                        );
-                        this._flashMessageService.error(this.flashMessageText);
+            this._filteringService.generateAuditEmail(result).subscribe(
+                (response) => {
+                    this._flashMessageService.clear();
+                    if (response.result_code < 0) {
+                        this._flashMessageService.error('audit-email-error');
+                        return;
                     }
-                });
+
+                    this._flashMessageService.success('audit-email-sent');
+
+                    this.isLoading = false;
+                },
+                (error) => {
+                    this._flashMessageService.error('audit-email-error');
+                    this.isLoading = false;
+                },
+                () => {
+                    this.refreshData();
+                    this._changeDetectorRef.markForCheck();
+                }
+            );
         });
     }
 }

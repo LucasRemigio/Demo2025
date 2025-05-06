@@ -490,6 +490,12 @@
 
     "at": " às ",
 
+    "send": "Enviar",
+    "generate-audit-email": "Gerar email de auditoria",
+    "audit-email-sent": "Email de auditoria enviado",
+    "audit-email-error": "Erro ao enviar email de auditoria",
+    "audit-email-sending": "A enviar email de auditoria",
+
     "Logs": {
         "logs": "Registos",
         "operation": "Ação",
@@ -731,7 +737,15 @@
         "client-pending": "Aguarda confirmação do cliente",
         "pending-credit-approval": "Aguarda aprovação de crédito",
         "cards-view": "Vista em cartões",
-        "table-view": "Vista em tabela"
+        "table-view": "Vista em tabela",
+
+        "generate-email": "Gerar email",
+        "select-template": "Selecionar modelo",
+        "email-content": "Conteúdo do email",
+        "type-your-message": "Escreva a sua mensagem",
+        "email-content-required": "Conteúdo do email é obrigatório",
+        "email-content-min-length": "Conteúdo do email deve ter pelo menos 10 caracteres",
+        "email-content-max-length": "Conteúdo do email deve ter no máximo 5000 caracteres"
     },
 
     "Order": {

@@ -160,7 +160,7 @@ namespace engimatrix.Config
             ERPpassword = ConfigurationManager.AppSettings["ERPpassword"];
 
             ChristmasGif = Util.ImageToBase64("Emails/logo/MasterferroHappyChristmas.gif");
-            Logo = Util.ImageToBase64("Emails/logo/masterferro_logo.png");
+            Logo = Util.ImageToBase64("Emails/logo/engibots.png");
             companyName = ConfigurationManager.AppSettings["company_name"];
             productShortName = ConfigurationManager.AppSettings["product_short_name"];
             productFullName = ConfigurationManager.AppSettings["product_full_name"];
