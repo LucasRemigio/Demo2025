@@ -174,7 +174,7 @@ namespace engimatrix.Emails
 
                             // Send the email to the destinatary
                             using MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient();
-                            await client.ConnectAsync(ConfigManager.EmailServer, Int32.Parse(ConfigManager.SMTPPort), true);
+                            await client.ConnectAsync(ConfigManager.EmailServerSMTP, Int32.Parse(ConfigManager.SMTPPort), true);
                             await client.AuthenticateAsync(ConfigManager.SystemEmail, ConfigManager.SystemPassword);
                             await client.SendAsync(message);
                             await client.DisconnectAsync(true);
@@ -391,7 +391,8 @@ namespace engimatrix.Emails
                 foreach (string var in body.Split("\n"))
                 {
                     newBody += "<p>" + var + "</p>";
-                };
+                }
+                ;
                 newBody = newBody + "<br/>" + singnature;
 
                 List<string> toRecipients = new List<string>();

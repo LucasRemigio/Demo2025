@@ -35,8 +35,8 @@ namespace engimatrix.Config
 
         public static string SystemEmail = string.Empty;
         public static string SystemPassword = string.Empty;
-        public static string EmailServer = string.Empty;
-        public static string EmailPassword = string.Empty;
+        public static string EmailServerIMAP = string.Empty;
+        public static string EmailServerSMTP = string.Empty;
         public static string IMAPPort = string.Empty;
         public static string SMTPPort = string.Empty;
 
@@ -178,8 +178,8 @@ namespace engimatrix.Config
             imageMaxHeight = ConfigurationManager.AppSettings["imageMaxHeight"];
             imageMaxWidth = ConfigurationManager.AppSettings["imageMaxWidth"];
 
-            EmailServer = ConfigurationManager.AppSettings["EmailServer"];
-            EmailPassword = ConfigurationManager.AppSettings["EmailPassword"];
+            EmailServerIMAP = ConfigurationManager.AppSettings["EmailServerIMAP"];
+            EmailServerSMTP = ConfigurationManager.AppSettings["EmailServerSMTP"];
             IMAPPort = ConfigurationManager.AppSettings["IMAPPort"];
             SMTPPort = ConfigurationManager.AppSettings["SMTPPort"];
 
@@ -227,9 +227,9 @@ namespace engimatrix.Config
                 string.IsNullOrEmpty(SentFolder) ||
                 string.IsNullOrEmpty(ReceiptsFolder) ||
                 string.IsNullOrEmpty(SpamFolder) ||
-                string.IsNullOrEmpty(EmailServer) ||
                 string.IsNullOrEmpty(IMAPPort) ||
-                string.IsNullOrEmpty(EmailPassword) ||
+                string.IsNullOrEmpty(EmailServerIMAP) ||
+                string.IsNullOrEmpty(EmailServerSMTP) ||
                 string.IsNullOrEmpty(SMTPPort) ||
                 string.IsNullOrEmpty(ChristmasGif) ||
                 string.IsNullOrEmpty(Logo) ||

@@ -29,7 +29,7 @@ namespace engimatrix.Connector
             // DEBUG
             account = account.Split("_")[0];
 
-            string server = ConfigManager.EmailServer;
+            string server = isImap ? ConfigManager.EmailServerIMAP : ConfigManager.EmailServerSMTP;
             int port = Int32.Parse(isImap ? ConfigManager.IMAPPort : ConfigManager.SMTPPort);
             bool isSecure = true;
             string username = account;
